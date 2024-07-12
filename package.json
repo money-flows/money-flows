@@ -9,7 +9,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "next lint --max-warnings=0",
-    "lint:fix": "next lint --max-warnings=0 --fix"
+    "lint:fix": "next lint --max-warnings=0 --fix",
+    "type-check": "tsc"
   },
   "dependencies": {
     "react": "^18",
