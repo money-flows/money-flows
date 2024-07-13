@@ -113,4 +113,34 @@ export const accounts = new Hono()
 
       return c.json({ data });
     },
+  )
+  .delete(
+    "/:id",
+    clerkMiddleware(),
+    zValidator("param", z.object({ id: z.string().optional() })),
+    async (c) => {
+      const auth = getAuth(c);
+      const { id } = c.req.valid("param");
+
+      if (!id) {
+        return c.json({ error: "Missing account ID" }, 400);
+      }
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const [data] = await db
+        .delete(account)
+        .where(and(eq(account.userId, auth.userId), eq(account.id, id)))
+        .returning({
+          id: account.id,
+        });
+
+      if (!data) {
+        return c.json({ error: "Account not found" }, 404);
+      }
+
+      return c.json({ data });
+    },
   );
