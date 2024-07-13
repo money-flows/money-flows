@@ -5,9 +5,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useCreateAccount } from "@/hooks/use-create-account";
-import { useNewAccount } from "@/hooks/use-new-account";
 
+import { useCreateAccount } from "../api/use-create-account";
+import { useNewAccount } from "../hooks/use-new-account";
 import { AccountForm, AccountFormValues } from "./account-form";
 
 export function NewAccountSheet() {
