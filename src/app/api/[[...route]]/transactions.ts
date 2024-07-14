@@ -1,7 +1,7 @@
-import { addDay, parse } from "@formkit/tempo";
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
+import { endOfDay, endOfToday, parse, startOfDay, subDays } from "date-fns";
 import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
@@ -31,11 +31,15 @@ export const transactions = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const defaultTo = new Date();
-      const defaultFrom = addDay(defaultTo, -30);
+      const defaultTo = endOfToday();
+      const defaultFrom = startOfDay(subDays(defaultTo, 30));
 
-      const startDate = from ? parse(from, "YYYY-MM-DD") : defaultFrom;
-      const endDate = to ? parse(to, "YYYY-MM-DD") : defaultTo;
+      const startDate = from
+        ? parse(from, "yyyy-MM-dd", new Date())
+        : defaultFrom;
+      const endDate = to
+        ? endOfDay(parse(to, "yyyy-MM-dd", new Date()))
+        : defaultTo;
 
       const data = await db
         .select({

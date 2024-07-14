@@ -1,4 +1,4 @@
-import { format } from "@formkit/tempo";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { SelectSingleEventHandler } from "react-day-picker";
 
@@ -29,7 +29,7 @@ export function DatePicker({ value, onChange, disabled }: DatePickerProps) {
           <CalendarIcon className="mr-2 size-4" />
           {value ? (
             <span className="tabular-nums tracking-tighter">
-              {format(value, "YYYY/MM/DD")}
+              {format(value, "yyyy/MM/dd")}
             </span>
           ) : (
             <span>日付を選択</span>

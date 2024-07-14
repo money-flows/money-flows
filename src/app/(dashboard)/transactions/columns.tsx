@@ -1,7 +1,7 @@
 "use client";
 
-import { format } from "@formkit/tempo";
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { InferResponseType } from "hono";
 
 import { client } from "@/lib/hono";
@@ -26,7 +26,7 @@ export const columns: ColumnDef<Transaction>[] = [
     header: "取引日",
     cell: ({ row }) => (
       <span className="tabular-nums tracking-tighter">
-        {format(row.original.date, "YYYY/MM/DD")}
+        {format(row.original.date, "yyyy/MM/dd")}
       </span>
     ),
   },
