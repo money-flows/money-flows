@@ -113,6 +113,7 @@ export const transactions = new Hono()
         .values({
           id: createId(),
           ...values,
+          date: new Date(values.date),
         })
         .returning();
 
@@ -148,7 +149,10 @@ export const transactions = new Hono()
       const [data] = await db
         .with(transactionsToUpdate)
         .update(transaction)
-        .set(values)
+        .set({
+          ...values,
+          date: new Date(values.date),
+        })
         .where(
           inArray(
             transaction.id,

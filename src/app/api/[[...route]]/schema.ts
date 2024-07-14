@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import {
   insertAccountSchema as DBInsertAccountSchema,
   insertTransactionSchema as DBInsertTransactionSchema,
@@ -9,4 +11,6 @@ export const insertAccountSchema = DBInsertAccountSchema.pick({
 
 export const insertTransactionSchema = DBInsertTransactionSchema.omit({
   id: true,
+}).extend({
+  date: z.string().date(),
 });
