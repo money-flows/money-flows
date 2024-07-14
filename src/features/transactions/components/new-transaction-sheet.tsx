@@ -14,7 +14,7 @@ import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 
 import { useCreateTransaction } from "../api/use-create-transaction";
 import { useNewTransaction } from "../hooks/use-new-transaction";
-import { TransactionForm } from "./transaction-form";
+import { TransactionApiFormValues, TransactionForm } from "./transaction-form";
 
 const formSchema = insertTransactionSchema;
 
@@ -40,7 +40,7 @@ export function NewTransactionSheet() {
 
   const isLoading = accountQuery.isLoading;
 
-  const handleSubmit = (values: TransactionFormValues) => {
+  const handleSubmit = (values: TransactionApiFormValues) => {
     createMutation.mutate(values, {
       onSuccess: () => {
         onClose();

@@ -9,6 +9,8 @@ import { getWeekday } from "@/lib/date";
 import { client } from "@/lib/hono";
 import { cn } from "@/lib/utils";
 
+import { Actions } from "./actions";
+
 type Transaction = InferResponseType<
   typeof client.api.transactions.$get,
   200
@@ -40,5 +42,10 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "account",
     header: "口座",
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <Actions id={row.original.id} />,
+    size: 32,
   },
 ];
