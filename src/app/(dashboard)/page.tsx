@@ -1,14 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useNewAccount } from "@/features/accounts/hooks/use-new-account";
+import { DataGrid } from "@/components/data-grid";
 
-export default function Home() {
-  const { onOpen } = useNewAccount();
-
+export default function DashboardPage() {
   return (
-    <div>
-      <Button onClick={onOpen}>口座を追加</Button>
+    <div className="mx-auto -mt-24 w-full max-w-screen-2xl pb-10">
+      <DataGrid />
     </div>
   );
 }
