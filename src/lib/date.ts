@@ -1,4 +1,11 @@
-import { endOfToday, format, startOfDay, subDays } from "date-fns";
+import {
+  eachDayOfInterval,
+  endOfToday,
+  format,
+  isSameDay,
+  startOfDay,
+  subDays,
+} from "date-fns";
 
 export function getWeekday(
   date: Date | string,
@@ -27,4 +34,33 @@ export function formatDateRange(period?: Period) {
   }
 
   return format(period.from, "yyyy/MM/dd");
+}
+
+export function fillMissingDays(
+  activeDays: { date: Date; income: number; expenses: number }[],
+  startDate: Date,
+  endDate: Date,
+) {
+  if (activeDays.length === 0) {
+    return [];
+  }
+
+  const allDays = eachDayOfInterval({
+    start: startDate,
+    end: endDate,
+  });
+
+  return allDays.map((day) => {
+    const found = activeDays.find((d) => isSameDay(d.date, day));
+
+    if (found) {
+      return found;
+    } else {
+      return {
+        date: day,
+        income: 0,
+        expenses: 0,
+      };
+    }
+  });
 }

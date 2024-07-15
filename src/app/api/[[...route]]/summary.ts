@@ -14,6 +14,7 @@ import { z } from "zod";
 
 import { db } from "@/db/drizzle";
 import { account, transaction } from "@/db/schema";
+import { fillMissingDays } from "@/lib/date";
 import { calculatePercentageChange } from "@/lib/number";
 import { coalesce } from "@/lib/sql";
 
@@ -108,6 +109,33 @@ export const summary = new Hono().get(
       lastPeriod.remaining,
     );
 
+    const activeDays = await db
+      .select({
+        date: transaction.date,
+        income:
+          sql`SUM(CASE WHEN ${transaction.amount} > 0 THEN ${transaction.amount} ELSE 0 END)`.mapWith(
+            Number,
+          ),
+        expenses:
+          sql`SUM(CASE WHEN ${transaction.amount} < 0 THEN ABS(${transaction.amount}) ELSE 0 END)`.mapWith(
+            Number,
+          ),
+      })
+      .from(transaction)
+      .innerJoin(account, eq(transaction.accountId, account.id))
+      .where(
+        and(
+          accountId ? eq(account.id, accountId) : undefined,
+          eq(account.userId, auth.userId),
+          gte(transaction.date, startDate),
+          lte(transaction.date, endDate),
+        ),
+      )
+      .groupBy(transaction.date)
+      .orderBy(transaction.date);
+
+    const days = fillMissingDays(activeDays, startDate, endDate);
+
     return c.json({
       data: {
         incomeAmount: currentPeriod.income,
@@ -116,6 +144,7 @@ export const summary = new Hono().get(
         expensesChange,
         remainingAmount: currentPeriod.remaining,
         remainingChange,
+        days,
       },
     });
   },
