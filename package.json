@@ -6,6 +6,7 @@
     "build": "next build",
     "db:generate": "dotenvx run -f .env.local -- drizzle-kit generate",
     "db:migrate": "dotenvx run -f .env.local -- drizzle-kit migrate",
+    "db:seed": "bun ./scripts/seed.ts",
     "db:studio": "dotenvx run -f .env.local -- drizzle-kit studio",
     "dev": "next dev",
     "format": "prettier --write .",
