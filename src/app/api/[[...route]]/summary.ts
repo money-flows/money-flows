@@ -110,10 +110,11 @@ export const summary = new Hono().get(
 
     return c.json({
       data: {
-        currentPeriod,
-        lastPeriod,
+        incomeAmount: currentPeriod.income,
         incomeChange,
+        expensesAmount: currentPeriod.expenses,
         expensesChange,
+        remainingAmount: currentPeriod.remaining,
         remainingChange,
       },
     });
