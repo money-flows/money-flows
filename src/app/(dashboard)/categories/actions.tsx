@@ -29,7 +29,7 @@ export function Actions({ id }: ActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem disabled={false} onClick={() => onOpen(id)}>
             <Edit className="mr-2 size-4" />
-            Edit
+            編集
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
