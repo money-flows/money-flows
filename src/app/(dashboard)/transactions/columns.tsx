@@ -55,12 +55,20 @@ export const columns: ColumnDef<Transaction>[] = [
     },
   },
   {
+    accessorKey: "category",
+    header: "カテゴリー",
+  },
+  {
     accessorKey: "counterparty",
     header: "入金元 ／ 支払先",
   },
   {
     accessorKey: "account",
     header: "口座",
+  },
+  {
+    accessorKey: "memo",
+    header: "メモ",
   },
   {
     id: "actions",
