@@ -63,7 +63,7 @@ export function DataCard({
   variant,
 }: DataCardProps) {
   return (
-    <Card className="border-none drop-shadow-sm">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-2">
           <CardTitle className="line-clamp-1 text-2xl">{title}</CardTitle>
@@ -110,7 +110,7 @@ export function DataCard({
 
 export function DataCardLoading() {
   return (
-    <Card className="h-48 border-none drop-shadow-sm">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-2">
           <Skeleton className="h-8 w-12" />

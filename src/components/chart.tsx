@@ -30,7 +30,7 @@ export function Chart({ data = [] }: ChartProps) {
   };
 
   return (
-    <Card className="border-none drop-shadow-sm">
+    <Card>
       <CardHeader className="flex justify-between space-y-4 lg:flex-row lg:items-center lg:space-y-0">
         <CardTitle className="line-clamp-1 text-xl">収入と支出の推移</CardTitle>
         <Select defaultValue={chartType} onValueChange={onTypeChange}>

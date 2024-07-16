@@ -19,7 +19,7 @@ export default function AccountsPage() {
   if (accountsQuery.isLoading) {
     return (
       <div className="mx-auto -mt-24 w-full max-w-screen-2xl pb-10">
-        <Card className="border-none drop-shadow-sm">
+        <Card>
           <CardHeader>
             <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
               <Skeleton className="h-9 w-20" />
@@ -36,7 +36,7 @@ export default function AccountsPage() {
 
   return (
     <div className="mx-auto -mt-24 w-full max-w-screen-2xl pb-10">
-      <Card className="border-none drop-shadow-sm">
+      <Card>
         <CardHeader>
           <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
             <CardTitle className="line-clamp-1 text-xl">口座一覧</CardTitle>
