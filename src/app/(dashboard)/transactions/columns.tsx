@@ -31,13 +31,32 @@ export const columns: ColumnDef<Transaction>[] = [
     header: "金額",
     cell: ({ row }) => (
       <span className={cn("tabular-nums tracking-tighter")}>
-        {formatCurrency(row.original.amount)}
+        {formatCurrency(Math.abs(row.original.amount))}
       </span>
     ),
   },
   {
-    accessorKey: "payee",
-    header: "取引先",
+    id: "type",
+    header: "種別",
+    cell: ({ row }) => {
+      const isIncome = row.original.amount > 0;
+      if (isIncome) {
+        return (
+          <span className="line-clamp-1 inline rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-600">
+            収入
+          </span>
+        );
+      }
+      return (
+        <span className="line-clamp-1 inline rounded-md bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600">
+          支出
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "counterparty",
+    header: "入金元 ／ 支払先",
   },
   {
     accessorKey: "account",
