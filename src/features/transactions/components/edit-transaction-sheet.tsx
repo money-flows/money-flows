@@ -72,7 +72,7 @@ export function EditTransactionSheet() {
         accountId: transactionQuery.data.accountId,
         amount: transactionQuery.data.amount.toString(),
         date: new Date(transactionQuery.data.date),
-        payee: transactionQuery.data.payee,
+        counterparty: transactionQuery.data.counterparty ?? undefined,
       }
     : undefined;
 

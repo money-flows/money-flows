@@ -20,9 +20,11 @@ import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   amount: z.string(),
-  payee: z.string(),
+  counterparty: z.string(),
   date: z.coerce.date(),
+  memo: z.string(),
   accountId: z.string(),
+  categoryId: z.string(),
 });
 
 const apiSchema = insertTransactionSchema;
@@ -32,7 +34,7 @@ export type TransactionApiFormValues = z.input<typeof apiSchema>;
 
 interface TransactionFormProps {
   id?: string;
-  defaultValues?: TransactionFormValues;
+  defaultValues?: Partial<TransactionFormValues>;
   onSubmit: (values: TransactionApiFormValues) => void;
   onDelete?: () => void;
   disabled?: boolean;
@@ -53,16 +55,21 @@ export const TransactionForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: defaultValues?.amount ?? "",
-      payee: defaultValues?.payee ?? "",
+      counterparty: defaultValues?.counterparty ?? "",
       date: defaultValues?.date ?? new Date(),
+      memo: defaultValues?.memo ?? "",
       accountId: defaultValues?.accountId,
+      categoryId: defaultValues?.categoryId ?? "",
     },
   });
 
   const handleSubmit = (values: TransactionFormValues) => {
     // TODO: Add validation to ensure the required fields are filled
+
     onSubmit({
       ...values,
+      categoryId: values.categoryId === "" ? null : values.categoryId,
+      memo: values.memo === "" ? null : values.memo,
       amount: parseInt(values.amount),
       date: format(values.date, "yyyy-MM-dd"),
     });
@@ -114,7 +121,7 @@ export const TransactionForm = ({
           )}
         />
         <FormField
-          name="payee"
+          name="counterparty"
           control={form.control}
           render={({ field }) => (
             <FormItem>

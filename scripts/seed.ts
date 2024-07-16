@@ -11,6 +11,7 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { account, transaction } from "@/db/schema";
 
 type Account = typeof account.$inferSelect;
+type Transaction = typeof transaction.$inferSelect;
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is missing");
@@ -47,7 +48,10 @@ function generateExpenseAmount() {
   return Math.round(Math.random() * -9_900 - 100);
 }
 
-function generateDailyTransactions(day: Date, accounts: Account[]) {
+function generateDailyTransactions(
+  day: Date,
+  accounts: Account[],
+): Transaction[] {
   const transactionCount = Math.floor(Math.random() * 3); // 0-2 transactions per day
 
   return Array.from({ length: transactionCount }).map((_, i) => {
@@ -61,7 +65,9 @@ function generateDailyTransactions(day: Date, accounts: Account[]) {
       accountId,
       date: day,
       amount,
-      payee: "商人",
+      counterparty: "商人",
+      categoryId: null,
+      memo: null,
     };
   });
 }
@@ -73,7 +79,7 @@ function generateTransactions(accounts: Account[]) {
   return days.flatMap((day) => generateDailyTransactions(day, accounts));
 }
 
-const SEED_ACCOUNTS: (typeof account.$inferSelect)[] = [
+const SEED_ACCOUNTS: Account[] = [
   {
     id: "account_1",
     name: "クレジットカード",
@@ -86,8 +92,7 @@ const SEED_ACCOUNTS: (typeof account.$inferSelect)[] = [
   },
 ];
 
-const SEED_TRANSACTIONS: (typeof transaction.$inferSelect)[] =
-  generateTransactions(SEED_ACCOUNTS);
+const SEED_TRANSACTIONS: Transaction[] = generateTransactions(SEED_ACCOUNTS);
 
 async function main() {
   try {

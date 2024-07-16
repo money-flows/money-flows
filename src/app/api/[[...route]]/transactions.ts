@@ -7,7 +7,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 
 import { db } from "@/db/drizzle";
-import { account, transaction } from "@/db/schema";
+import { account, category, transaction } from "@/db/schema";
 
 import { insertTransactionSchema } from "./schema";
 
@@ -45,13 +45,17 @@ export const transactions = new Hono()
         .select({
           id: transaction.id,
           amount: transaction.amount,
-          payee: transaction.payee,
+          counterparty: transaction.counterparty,
           date: transaction.date,
+          memo: transaction.memo,
           account: account.name,
           accountId: transaction.accountId,
+          category: category.name,
+          categoryId: transaction.categoryId,
         })
         .from(transaction)
         .innerJoin(account, eq(transaction.accountId, account.id))
+        .leftJoin(category, eq(transaction.categoryId, category.id))
         .where(
           and(
             eq(account.userId, auth.userId),
@@ -85,9 +89,11 @@ export const transactions = new Hono()
         .select({
           id: transaction.id,
           amount: transaction.amount,
-          payee: transaction.payee,
+          counterparty: transaction.counterparty,
           date: transaction.date,
+          memo: transaction.memo,
           accountId: transaction.accountId,
+          categoryId: transaction.categoryId,
         })
         .from(transaction)
         .innerJoin(account, eq(transaction.accountId, account.id))
