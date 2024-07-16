@@ -8,9 +8,10 @@ import {
 } from "date-fns";
 import { drizzle } from "drizzle-orm/neon-http";
 
-import { account, transaction } from "@/db/schema";
+import { account, category, transaction } from "@/db/schema";
 
 type Account = typeof account.$inferSelect;
+type Category = typeof category.$inferSelect;
 type Transaction = typeof transaction.$inferSelect;
 
 if (!process.env.DATABASE_URL) {
@@ -24,41 +25,34 @@ if (!process.env.TEST_USER_ID) {
 const sql = neon(process.env.DATABASE_URL);
 const db = drizzle(sql);
 
-function generateIncomeAmount() {
-  // Generate a random amount between 100,000 and 300,000
-  return Math.round(Math.random() * 200_000 + 100_000);
-}
-
-function generateExpenseAmount() {
-  const randomValue = Math.random();
-
-  const isCheap = randomValue < 0.3;
-  if (isCheap) {
-    // Generate a random amount between -100 and -1,000
-    return Math.round(Math.random() * -900 - 100);
+function generateRandomAmount(category: Category) {
+  switch (category.name) {
+    case "食費":
+      return Math.floor(Math.random() * 1000) + 500;
+    case "交通費":
+      return Math.floor(Math.random() * 300) + 200;
+    case "娯楽":
+      return Math.floor(Math.random() * 3000) + 500;
+    case "衣類":
+      return Math.floor(Math.random() * 5000) + 1000;
+    default:
+      throw new Error(`Unknown category: ${category.name}`);
   }
-
-  const isExpensive = randomValue > 0.8;
-  if (isExpensive) {
-    // Generate a random amount between -10,000 and -30,000
-    return Math.round(Math.random() * -20_000 - 10_000);
-  }
-
-  // Generate a random amount between -100 and -10,000
-  return Math.round(Math.random() * -9_900 - 100);
 }
 
 function generateDailyTransactions(
   day: Date,
   accounts: Account[],
+  categories: Category[],
 ): Transaction[] {
-  const transactionCount = Math.floor(Math.random() * 3); // 0-2 transactions per day
+  const transactionCount = Math.floor(Math.random() * 5); // 0-4 transactions per day
 
   return Array.from({ length: transactionCount }).map((_, i) => {
+    const category = categories[Math.floor(Math.random() * categories.length)];
     const accountId = accounts[Math.floor(Math.random() * accounts.length)].id;
 
-    const isIncome = Math.random() > 0.95;
-    const amount = isIncome ? generateIncomeAmount() : generateExpenseAmount();
+    const isExpense = Math.random() < 0.6;
+    const amount = generateRandomAmount(category) * (isExpense ? -1 : 1);
 
     return {
       id: `transaction_${format(day, "yyyy-MM-dd")}_${i}`,
@@ -66,17 +60,19 @@ function generateDailyTransactions(
       date: day,
       amount,
       counterparty: "商人",
-      categoryId: null,
-      memo: null,
+      categoryId: category.id,
+      memo: "初期データ",
     };
   });
 }
 
-function generateTransactions(accounts: Account[]) {
+function generateTransactions(accounts: Account[], categories: Category[]) {
   const endDate = endOfToday();
   const startDate = startOfDay(subDays(endDate, 90));
   const days = eachDayOfInterval({ start: startDate, end: endDate });
-  return days.flatMap((day) => generateDailyTransactions(day, accounts));
+  return days.flatMap((day) =>
+    generateDailyTransactions(day, accounts, categories),
+  );
 }
 
 const SEED_ACCOUNTS: Account[] = [
@@ -92,13 +88,42 @@ const SEED_ACCOUNTS: Account[] = [
   },
 ];
 
-const SEED_TRANSACTIONS: Transaction[] = generateTransactions(SEED_ACCOUNTS);
+const SEED_CATEGORIES: Category[] = [
+  {
+    id: "category_1",
+    name: "食費",
+    userId: process.env.TEST_USER_ID,
+  },
+  {
+    id: "category_2",
+    name: "交通費",
+    userId: process.env.TEST_USER_ID,
+  },
+  {
+    id: "category_3",
+    name: "娯楽",
+    userId: process.env.TEST_USER_ID,
+  },
+  {
+    id: "category_4",
+    name: "衣類",
+    userId: process.env.TEST_USER_ID,
+  },
+];
+
+const SEED_TRANSACTIONS: Transaction[] = generateTransactions(
+  SEED_ACCOUNTS,
+  SEED_CATEGORIES,
+);
 
 async function main() {
   try {
     // Reset database
     await db.delete(transaction).execute();
     await db.delete(account).execute();
+    await db.delete(category).execute();
+    // Seed transactions
+    await db.insert(category).values(SEED_CATEGORIES).execute();
     // Seed accounts
     await db.insert(account).values(SEED_ACCOUNTS).execute();
     // Seed transactions
