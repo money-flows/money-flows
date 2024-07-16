@@ -24,6 +24,10 @@ const routes = [
     label: "口座",
   },
   {
+    href: "/categories",
+    label: "カテゴリー",
+  },
+  {
     href: "/settings",
     label: "設定",
   },
