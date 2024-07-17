@@ -40,6 +40,8 @@ interface TransactionFormProps {
   disabled?: boolean;
   accountOptions: { label: string; value: string }[];
   onCreateAccount: (name: string) => void;
+  categoryOptions: { label: string; value: string }[];
+  onCreateCategory: (name: string) => void;
 }
 
 export const TransactionForm = ({
@@ -50,6 +52,8 @@ export const TransactionForm = ({
   disabled,
   accountOptions,
   onCreateAccount,
+  categoryOptions,
+  onCreateCategory,
 }: TransactionFormProps) => {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
@@ -112,6 +116,25 @@ export const TransactionForm = ({
                   placeholder="口座を選択"
                   options={accountOptions}
                   onCreate={onCreateAccount}
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={disabled}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="categoryId"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>カテゴリー</FormLabel>
+              <FormControl>
+                <Select
+                  placeholder="カテゴリーを選択"
+                  options={categoryOptions}
+                  onCreate={onCreateCategory}
                   value={field.value}
                   onChange={field.onChange}
                   disabled={disabled}

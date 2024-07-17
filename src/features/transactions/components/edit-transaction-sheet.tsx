@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/sheet";
 import { useCreateAccount } from "@/features/accounts/api/use-create-account";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
+import { useCreateCategory } from "@/features/categories/api/use-create-category";
+import { useGetCategories } from "@/features/categories/api/use-get-categories";
 import { useConfirm } from "@/hooks/use-confirm";
 
 import { useDeleteTransaction } from "../api/use-delete-transaction";
@@ -40,12 +42,27 @@ export function EditTransactionSheet() {
     value: account.id,
   }));
 
+  const categoryQuery = useGetCategories();
+  const categoryMutation = useCreateCategory();
+  const handleCreateCategory = (name: string) =>
+    categoryMutation.mutate({
+      name,
+    });
+  const categoryOptions = (categoryQuery.data ?? []).map((category) => ({
+    label: category.name,
+    value: category.id,
+  }));
+
   const isPending =
     editMutation.isPending ||
     deleteMutation.isPending ||
-    accountMutation.isPending;
+    accountMutation.isPending ||
+    categoryMutation.isPending;
 
-  const isLoading = transactionQuery.isLoading || accountQuery.isLoading;
+  const isLoading =
+    transactionQuery.isLoading ||
+    accountQuery.isLoading ||
+    categoryQuery.isLoading;
 
   const handleSubmit = (values: TransactionApiFormValues) => {
     editMutation.mutate(values, {
@@ -70,6 +87,7 @@ export function EditTransactionSheet() {
   const defaultValues = transactionQuery.data
     ? {
         accountId: transactionQuery.data.accountId,
+        categoryId: transactionQuery.data.categoryId ?? "",
         amount: transactionQuery.data.amount.toString(),
         date: new Date(transactionQuery.data.date),
         counterparty: transactionQuery.data.counterparty ?? undefined,
@@ -98,6 +116,8 @@ export function EditTransactionSheet() {
               onDelete={handleDelete}
               accountOptions={accountOptions}
               onCreateAccount={handleCreateAccount}
+              categoryOptions={categoryOptions}
+              onCreateCategory={handleCreateCategory}
             />
           )}
         </SheetContent>
