@@ -1,3 +1,7 @@
+export function calculatePercentage(value: number, total: number) {
+  return Math.round((value / total) * 100);
+}
+
 export function calculatePercentageChange(current: number, previous: number) {
   if (previous === 0) {
     return previous === current ? 0 : 100;

@@ -15,7 +15,7 @@ import { z } from "zod";
 import { db } from "@/db/drizzle";
 import { account, category, transaction } from "@/db/schema";
 import { fillMissingDays } from "@/lib/date";
-import { calculatePercentageChange } from "@/lib/number";
+import { calculatePercentage, calculatePercentageChange } from "@/lib/number";
 import { coalesce } from "@/lib/sql";
 
 export const summary = new Hono().get(
@@ -136,11 +136,18 @@ export const summary = new Hono().get(
       0,
     );
 
-    const finalIncomesCategories = topIncomeCategories;
+    const finalIncomesCategories = topIncomeCategories.map((category) => ({
+      ...category,
+      percentage: calculatePercentage(category.value, currentPeriod.income),
+    }));
     if (otherIncomeCategories.length > 0) {
       finalIncomesCategories.push({
         name: "その他",
         value: otherIncomeCategoriesTotal,
+        percentage: calculatePercentage(
+          otherIncomeCategoriesTotal,
+          currentPeriod.income,
+        ),
       });
     }
 
@@ -171,11 +178,21 @@ export const summary = new Hono().get(
       0,
     );
 
-    const finalExpensesCategories = topExpenseCategories;
+    const finalExpensesCategories = topExpenseCategories.map((category) => ({
+      ...category,
+      percentage: calculatePercentage(
+        category.value,
+        currentPeriod.expenses * -1,
+      ),
+    }));
     if (otherExpenseCategories.length > 0) {
       finalExpensesCategories.push({
         name: "その他",
         value: otherExpenseCategoriesTotal,
+        percentage: calculatePercentage(
+          otherExpenseCategoriesTotal,
+          currentPeriod.expenses * -1,
+        ),
       });
     }
 
