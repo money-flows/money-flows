@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Skeleton } from "./ui/skeleton";
 
 type ChartType = "area" | "bar";
 
@@ -67,6 +68,20 @@ export function Chart({ data = [] }: ChartProps) {
             {chartType === "bar" && <BarVariant data={data} />}
           </>
         )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function ChartLoading() {
+  return (
+    <Card>
+      <CardHeader className="flex justify-between space-y-4 lg:flex-row lg:items-center lg:space-y-0">
+        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-9 w-32" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-[350px] w-full" />
       </CardContent>
     </Card>
   );
