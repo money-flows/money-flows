@@ -8,12 +8,12 @@ import {
   startOfDay,
   subDays,
 } from "date-fns";
-import { and, eq, gte, lte, sql, sum } from "drizzle-orm";
+import { and, desc, eq, gt, gte, lt, lte, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
 import { db } from "@/db/drizzle";
-import { account, transaction } from "@/db/schema";
+import { account, category, transaction } from "@/db/schema";
 import { fillMissingDays } from "@/lib/date";
 import { calculatePercentageChange } from "@/lib/number";
 import { coalesce } from "@/lib/sql";
@@ -109,6 +109,76 @@ export const summary = new Hono().get(
       lastPeriod.remaining,
     );
 
+    const incomeCategories = await db
+      .select({
+        name: category.name,
+        value: sql`SUM(${transaction.amount})`.mapWith(Number),
+      })
+      .from(transaction)
+      .innerJoin(account, eq(transaction.accountId, account.id))
+      .innerJoin(category, eq(transaction.categoryId, category.id))
+      .where(
+        and(
+          eq(account.userId, auth.userId),
+          accountId ? eq(transaction.accountId, accountId) : undefined,
+          gt(transaction.amount, 0),
+          gte(transaction.date, startDate),
+          lte(transaction.date, endDate),
+        ),
+      )
+      .groupBy(category.id)
+      .orderBy(desc(sql`SUM(${transaction.amount})`));
+
+    const topIncomeCategories = incomeCategories.slice(0, 3);
+    const otherIncomeCategories = incomeCategories.slice(3);
+    const otherIncomeCategoriesTotal = otherIncomeCategories.reduce(
+      (total, category) => total + category.value,
+      0,
+    );
+
+    const finalIncomesCategories = topIncomeCategories;
+    if (otherIncomeCategories.length > 0) {
+      finalIncomesCategories.push({
+        name: "その他",
+        value: otherIncomeCategoriesTotal,
+      });
+    }
+
+    const expenseCategories = await db
+      .select({
+        name: category.name,
+        value: sql`SUM(ABS(${transaction.amount}))`.mapWith(Number),
+      })
+      .from(transaction)
+      .innerJoin(account, eq(transaction.accountId, account.id))
+      .innerJoin(category, eq(transaction.categoryId, category.id))
+      .where(
+        and(
+          eq(account.userId, auth.userId),
+          accountId ? eq(transaction.accountId, accountId) : undefined,
+          lt(transaction.amount, 0),
+          gte(transaction.date, startDate),
+          lte(transaction.date, endDate),
+        ),
+      )
+      .groupBy(category.id)
+      .orderBy(desc(sql`SUM(ABS(${transaction.amount}))`));
+
+    const topExpenseCategories = expenseCategories.slice(0, 3);
+    const otherExpenseCategories = expenseCategories.slice(3);
+    const otherExpenseCategoriesTotal = otherExpenseCategories.reduce(
+      (total, category) => total + category.value,
+      0,
+    );
+
+    const finalExpensesCategories = topExpenseCategories;
+    if (otherExpenseCategories.length > 0) {
+      finalExpensesCategories.push({
+        name: "その他",
+        value: otherExpenseCategoriesTotal,
+      });
+    }
+
     const activeDays = await db
       .select({
         date: transaction.date,
@@ -144,6 +214,8 @@ export const summary = new Hono().get(
         expensesChange,
         remainingAmount: currentPeriod.remaining,
         remainingChange,
+        incomeCategories: finalIncomesCategories,
+        expenseCategories: finalExpensesCategories,
         days,
       },
     });
