@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { Trash } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 
@@ -29,7 +28,6 @@ interface TransactionFormProps {
   id?: string;
   defaultValues?: TransactionFormValues;
   onSubmit: (values: TransactionApiFormValues) => void;
-  onDelete?: () => void;
   disabled?: boolean;
   accountOptions: { label: string; value: string }[];
   categoryOptions: { label: string; value: string }[];
@@ -39,7 +37,6 @@ export const TransactionForm = ({
   id,
   defaultValues,
   onSubmit,
-  onDelete,
   disabled,
   accountOptions,
   categoryOptions,
@@ -66,10 +63,6 @@ export const TransactionForm = ({
       amount: parseInt(values.amount),
       date: format(values.date, "yyyy-MM-dd"),
     });
-  };
-
-  const handleDelete = () => {
-    onDelete?.();
   };
 
   return (
@@ -135,18 +128,6 @@ export const TransactionForm = ({
         <Button className="w-full" disabled={disabled}>
           {id ? "更新" : "追加"}
         </Button>
-        {!!id && (
-          <Button
-            type="button"
-            disabled={disabled}
-            onClick={handleDelete}
-            className="w-full"
-            variant="outline"
-          >
-            <Trash className="mr-2 size-4" />
-            削除
-          </Button>
-        )}
       </form>
     </Form>
   );

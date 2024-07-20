@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/sheet";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
-import { useConfirm } from "@/hooks/use-confirm";
 
 import { useDeleteTransaction } from "../api/use-delete-transaction";
 import { useEditTransaction } from "../api/use-edit-transaction";
@@ -20,11 +19,6 @@ import { TransactionForm } from "./transaction-form";
 
 export function EditTransactionSheet() {
   const { isOpen, onClose, id } = useOpenTransaction();
-
-  const [ConfirmDialog, confirm] = useConfirm(
-    "本当に削除しますか？",
-    "この操作は取り消せません。",
-  );
 
   const transactionQuery = useGetTransaction(id);
   const editMutation = useEditTransaction(id);
@@ -57,18 +51,6 @@ export function EditTransactionSheet() {
     });
   };
 
-  const handleDelete = async () => {
-    const ok = await confirm();
-
-    if (ok) {
-      deleteMutation.mutate(undefined, {
-        onSuccess: () => {
-          onClose();
-        },
-      });
-    }
-  };
-
   const defaultValues = transactionQuery.data
     ? {
         accountId: transactionQuery.data.accountId,
@@ -81,31 +63,27 @@ export function EditTransactionSheet() {
     : undefined;
 
   return (
-    <>
-      <ConfirmDialog />
-      <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent className="space-y-4">
-          <SheetHeader>
-            <SheetTitle>取引の編集</SheetTitle>
-            <SheetDescription>取引の情報を変更します。</SheetDescription>
-          </SheetHeader>
-          {isLoading ? (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            <TransactionForm
-              id={id}
-              disabled={isPending}
-              defaultValues={defaultValues}
-              onSubmit={handleSubmit}
-              onDelete={handleDelete}
-              accountOptions={accountOptions}
-              categoryOptions={categoryOptions}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
-    </>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent className="space-y-4">
+        <SheetHeader>
+          <SheetTitle>取引の編集</SheetTitle>
+          <SheetDescription>取引の情報を変更します。</SheetDescription>
+        </SheetHeader>
+        {isLoading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="size-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <TransactionForm
+            id={id}
+            disabled={isPending}
+            defaultValues={defaultValues}
+            onSubmit={handleSubmit}
+            accountOptions={accountOptions}
+            categoryOptions={categoryOptions}
+          />
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }
