@@ -15,6 +15,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import { AccountSelectFormField } from "./account-select-form-field";
 import { CategorySelectFormField } from "./category-select-form-field";
@@ -26,7 +27,7 @@ import {
 
 interface TransactionFormProps {
   id?: string;
-  defaultValues?: Partial<TransactionFormValues>;
+  defaultValues?: TransactionFormValues;
   onSubmit: (values: TransactionApiFormValues) => void;
   onDelete?: () => void;
   disabled?: boolean;
@@ -115,6 +116,18 @@ export const TransactionForm = ({
               <FormLabel>金額</FormLabel>
               <FormControl>
                 <AmountInput {...field} disabled={disabled} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="memo"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>メモ</FormLabel>
+              <FormControl>
+                <Textarea disabled={disabled} {...field} />
               </FormControl>
             </FormItem>
           )}

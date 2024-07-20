@@ -9,9 +9,6 @@ export const formSchema = z.object({
   memo: z.string(),
   accountId: z.string(),
   categoryId: z.string(),
-  language: z.string({
-    required_error: "Please select a language.",
-  }),
 });
 
 export const apiSchema = insertTransactionSchema;
