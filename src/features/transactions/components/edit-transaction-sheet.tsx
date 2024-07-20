@@ -7,9 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useCreateAccount } from "@/features/accounts/api/use-create-account";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
-import { useCreateCategory } from "@/features/categories/api/use-create-category";
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -17,7 +15,8 @@ import { useDeleteTransaction } from "../api/use-delete-transaction";
 import { useEditTransaction } from "../api/use-edit-transaction";
 import { useGetTransaction } from "../api/use-get-transaction";
 import { useOpenTransaction } from "../hooks/use-open-transaction";
-import { TransactionApiFormValues, TransactionForm } from "./transaction-form";
+import { TransactionApiFormValues } from "./schema";
+import { TransactionForm } from "./transaction-form";
 
 export function EditTransactionSheet() {
   const { isOpen, onClose, id } = useOpenTransaction();
@@ -32,32 +31,18 @@ export function EditTransactionSheet() {
   const deleteMutation = useDeleteTransaction(id);
 
   const accountQuery = useGetAccounts();
-  const accountMutation = useCreateAccount();
-  const handleCreateAccount = (name: string) =>
-    accountMutation.mutate({
-      name,
-    });
   const accountOptions = (accountQuery.data ?? []).map((account) => ({
     label: account.name,
     value: account.id,
   }));
 
   const categoryQuery = useGetCategories();
-  const categoryMutation = useCreateCategory();
-  const handleCreateCategory = (name: string) =>
-    categoryMutation.mutate({
-      name,
-    });
   const categoryOptions = (categoryQuery.data ?? []).map((category) => ({
     label: category.name,
     value: category.id,
   }));
 
-  const isPending =
-    editMutation.isPending ||
-    deleteMutation.isPending ||
-    accountMutation.isPending ||
-    categoryMutation.isPending;
+  const isPending = editMutation.isPending || deleteMutation.isPending;
 
   const isLoading =
     transactionQuery.isLoading ||
@@ -115,9 +100,7 @@ export function EditTransactionSheet() {
               onSubmit={handleSubmit}
               onDelete={handleDelete}
               accountOptions={accountOptions}
-              onCreateAccount={handleCreateAccount}
               categoryOptions={categoryOptions}
-              onCreateCategory={handleCreateCategory}
             />
           )}
         </SheetContent>

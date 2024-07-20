@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import * as React from "react";
 
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";

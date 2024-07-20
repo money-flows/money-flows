@@ -1,13 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { Trash } from "lucide-react";
+import * as React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-import { insertTransactionSchema } from "@/app/api/[[...route]]/schema";
 import { AmountInput } from "@/components/amount-input";
 import { DatePicker } from "@/components/date-picker";
-import { Select } from "@/components/select";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,19 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const formSchema = z.object({
-  amount: z.string(),
-  counterparty: z.string(),
-  date: z.coerce.date(),
-  memo: z.string(),
-  accountId: z.string(),
-  categoryId: z.string(),
-});
-
-const apiSchema = insertTransactionSchema;
-
-export type TransactionFormValues = z.input<typeof formSchema>;
-export type TransactionApiFormValues = z.input<typeof apiSchema>;
+import { AccountSelectFormField } from "./account-select-form-field";
+import { CategorySelectFormField } from "./category-select-form-field";
+import {
+  formSchema,
+  TransactionApiFormValues,
+  TransactionFormValues,
+} from "./schema";
 
 interface TransactionFormProps {
   id?: string;
@@ -39,9 +31,7 @@ interface TransactionFormProps {
   onDelete?: () => void;
   disabled?: boolean;
   accountOptions: { label: string; value: string }[];
-  onCreateAccount: (name: string) => void;
   categoryOptions: { label: string; value: string }[];
-  onCreateCategory: (name: string) => void;
 }
 
 export const TransactionForm = ({
@@ -51,9 +41,7 @@ export const TransactionForm = ({
   onDelete,
   disabled,
   accountOptions,
-  onCreateAccount,
   categoryOptions,
-  onCreateCategory,
 }: TransactionFormProps) => {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
@@ -105,44 +93,8 @@ export const TransactionForm = ({
             </FormItem>
           )}
         />
-        <FormField
-          name="accountId"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>口座</FormLabel>
-              <FormControl>
-                <Select
-                  placeholder="口座を選択"
-                  options={accountOptions}
-                  onCreate={onCreateAccount}
-                  value={field.value}
-                  onChange={field.onChange}
-                  disabled={disabled}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          name="categoryId"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>カテゴリー</FormLabel>
-              <FormControl>
-                <Select
-                  placeholder="カテゴリーを選択"
-                  options={categoryOptions}
-                  onCreate={onCreateCategory}
-                  value={field.value}
-                  onChange={field.onChange}
-                  disabled={disabled}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <AccountSelectFormField form={form} options={accountOptions} />
+        <CategorySelectFormField form={form} options={categoryOptions} />
         <FormField
           name="counterparty"
           control={form.control}
