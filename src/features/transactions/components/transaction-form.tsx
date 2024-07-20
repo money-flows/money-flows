@@ -94,7 +94,18 @@ export const TransactionForm = ({
             </FormItem>
           )}
         />
-        <AccountSelectFormField form={form} options={accountOptions} />
+        <FormField
+          name="amount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>金額</FormLabel>
+              <FormControl>
+                <AmountInput {...field} disabled={disabled} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <CategorySelectFormField form={form} options={categoryOptions} />
         <FormField
           name="counterparty"
@@ -108,18 +119,7 @@ export const TransactionForm = ({
             </FormItem>
           )}
         />
-        <FormField
-          name="amount"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>金額</FormLabel>
-              <FormControl>
-                <AmountInput {...field} disabled={disabled} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <AccountSelectFormField form={form} options={accountOptions} />
         <FormField
           name="memo"
           control={form.control}
