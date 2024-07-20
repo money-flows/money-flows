@@ -19,7 +19,7 @@ type Transaction = InferResponseType<
 export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "date",
-    header: "取引日",
+    header: "日付",
     cell: ({ row }) => (
       <span className="tabular-nums tracking-tighter">
         {`${format(row.original.date, "yyyy/MM/dd")} (${getWeekday(row.original.date, "short")})`}
@@ -60,7 +60,7 @@ export const columns: ColumnDef<Transaction>[] = [
   },
   {
     accessorKey: "counterparty",
-    header: "入金元 ／ 支払先",
+    header: "取引先",
   },
   {
     accessorKey: "account",
