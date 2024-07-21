@@ -24,32 +24,30 @@ import {
   TransactionFormValues,
 } from "./schema";
 
-interface TransactionFormProps {
-  id?: string;
-  defaultValues?: TransactionFormValues;
+interface EditTransactionFormProps {
+  initialValues: TransactionFormValues;
   onSubmit: (values: TransactionApiFormValues) => void;
   disabled?: boolean;
   accountOptions: { label: string; value: string }[];
   categoryOptions: { label: string; value: string }[];
 }
 
-export const TransactionForm = ({
-  id,
-  defaultValues,
+export const EditTransactionForm = ({
+  initialValues,
   onSubmit,
   disabled,
   accountOptions,
   categoryOptions,
-}: TransactionFormProps) => {
+}: EditTransactionFormProps) => {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount: defaultValues?.amount ?? "",
-      counterparty: defaultValues?.counterparty ?? "",
-      date: defaultValues?.date ?? new Date(),
-      memo: defaultValues?.memo ?? "",
-      accountId: defaultValues?.accountId,
-      categoryId: defaultValues?.categoryId ?? "",
+      amount: initialValues.amount,
+      counterparty: initialValues.counterparty,
+      date: initialValues.date,
+      memo: initialValues.memo,
+      accountId: initialValues?.accountId,
+      categoryId: initialValues?.categoryId,
     },
   });
 
@@ -126,7 +124,7 @@ export const TransactionForm = ({
           )}
         />
         <Button className="w-full" disabled={disabled}>
-          {id ? "更新" : "追加"}
+          更新
         </Button>
       </form>
     </Form>

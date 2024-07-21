@@ -14,8 +14,8 @@ import { useDeleteTransaction } from "../api/use-delete-transaction";
 import { useEditTransaction } from "../api/use-edit-transaction";
 import { useGetTransaction } from "../api/use-get-transaction";
 import { useOpenTransaction } from "../hooks/use-open-transaction";
+import { EditTransactionForm } from "./edit-transaction-form";
 import { TransactionApiFormValues } from "./schema";
-import { TransactionForm } from "./transaction-form";
 
 export function EditTransactionSheet() {
   const { isOpen, onClose, id } = useOpenTransaction();
@@ -51,17 +51,6 @@ export function EditTransactionSheet() {
     });
   };
 
-  const defaultValues = transactionQuery.data
-    ? {
-        accountId: transactionQuery.data.accountId,
-        categoryId: transactionQuery.data.categoryId ?? "",
-        amount: transactionQuery.data.amount.toString(),
-        date: new Date(transactionQuery.data.date),
-        counterparty: transactionQuery.data.counterparty ?? "",
-        memo: transactionQuery.data.memo ?? "",
-      }
-    : undefined;
-
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="space-y-4">
@@ -69,15 +58,22 @@ export function EditTransactionSheet() {
           <SheetTitle>取引の編集</SheetTitle>
           <SheetDescription>取引の情報を変更します。</SheetDescription>
         </SheetHeader>
-        {isLoading ? (
+        {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
             <Loader2 className="size-6 animate-spin text-muted-foreground" />
           </div>
-        ) : (
-          <TransactionForm
-            id={id}
+        )}
+        {transactionQuery.data && (
+          <EditTransactionForm
             disabled={isPending}
-            defaultValues={defaultValues}
+            initialValues={{
+              accountId: transactionQuery.data.accountId,
+              categoryId: transactionQuery.data.categoryId ?? "",
+              amount: transactionQuery.data.amount.toString(),
+              date: new Date(transactionQuery.data.date),
+              counterparty: transactionQuery.data.counterparty ?? "",
+              memo: transactionQuery.data.memo ?? "",
+            }}
             onSubmit={handleSubmit}
             accountOptions={accountOptions}
             categoryOptions={categoryOptions}
