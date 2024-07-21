@@ -130,6 +130,32 @@ export const transactions = new Hono()
       return c.json({ data });
     },
   )
+  .post(
+    "/bulk-create",
+    clerkMiddleware(),
+    zValidator("json", z.array(insertTransactionSchema)),
+    async (c) => {
+      const auth = getAuth(c);
+      const values = c.req.valid("json");
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const data = await db
+        .insert(transaction)
+        .values(
+          values.map((value) => ({
+            id: createId(),
+            ...value,
+            date: new Date(value.date),
+          })),
+        )
+        .returning();
+
+      return c.json({ data });
+    },
+  )
   .patch(
     "/:id",
     clerkMiddleware(),
