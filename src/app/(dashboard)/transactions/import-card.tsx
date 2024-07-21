@@ -1,13 +1,10 @@
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { ImportTable } from "./import-table";
-
-const dateFormat = "yyyy-MM-dd HH:mm:ss";
-const outputFormat = "yyyy-MM-dd";
 
 const requiredOptions = ["amount", "date", "counterparty"];
 
@@ -91,7 +88,7 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
     const formattedData = arrayOfData.map((item) => ({
       ...item,
       amount: parseInt(item.amount),
-      date: format(parse(item.date, dateFormat, new Date()), outputFormat),
+      date: format(new Date(item.date), "yyyy-MM-dd"),
     }));
 
     onSubmit(formattedData);
