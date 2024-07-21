@@ -72,27 +72,35 @@ export function TopCategoriesCard({
         <CardTitle className="line-clamp-1 text-xl">{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {categories.map((category, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex items-center justify-between text-base">
-              <span>{category.name}</span>
-              <div className="space-x-2">
-                <span className="ml-auto">
-                  {formatCurrency(category.value)}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  ({formatPercentage(category.percentage)})
-                </span>
+        {categories.length > 0 ? (
+          <>
+            {categories.map((category, index) => (
+              <div key={index} className="space-y-1">
+                <div className="flex items-center justify-between text-base">
+                  <span>{category.name}</span>
+                  <div className="space-x-2">
+                    <span className="ml-auto">
+                      {formatCurrency(category.value)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      ({formatPercentage(category.percentage)})
+                    </span>
+                  </div>
+                </div>
+                <Progress
+                  value={category.percentage}
+                  classNames={{
+                    indicator: indicatorVariant({ variant }),
+                  }}
+                />
               </div>
-            </div>
-            <Progress
-              value={category.percentage}
-              classNames={{
-                indicator: indicatorVariant({ variant }),
-              }}
-            />
+            ))}
+          </>
+        ) : (
+          <div className="flex h-32 items-center justify-center rounded-md bg-muted/50 text-muted-foreground">
+            カテゴリーがありません。カテゴリーを追加してみましょう。
           </div>
-        ))}
+        )}
       </CardContent>
     </Card>
   );
