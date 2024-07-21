@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { useState } from "react";
 
+import { TransactionType } from "@/components/transaction-type-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -24,6 +25,10 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
 
   const headers = data[0];
   const body = data.slice(1);
+
+  const [transactionTypes, setTransactionTypes] = useState<TransactionType[]>(
+    Array.from({ length: body.length }, () => "income"),
+  );
 
   const handleTableHeadSelectChange = (
     columnIndex: number,
@@ -85,11 +90,16 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
       }, {});
     });
 
-    const formattedData = arrayOfData.map((item) => ({
-      ...item,
-      amount: parseInt(item.amount),
-      date: format(new Date(item.date), "yyyy-MM-dd"),
-    }));
+    const formattedData = arrayOfData.map((row, index) => {
+      const isIncome = transactionTypes[index] === "income";
+      const parsedAmount = parseInt(row.amount);
+
+      return {
+        ...row,
+        amount: parsedAmount * (isIncome ? 1 : -1),
+        date: format(new Date(row.date), "yyyy-MM-dd"),
+      };
+    });
 
     onSubmit(formattedData);
   };
@@ -126,6 +136,8 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
             body={body}
             selectedColumns={selectedColumns}
             onTableHeadSelectChange={handleTableHeadSelectChange}
+            transactionTypes={transactionTypes}
+            setTransactionTypes={setTransactionTypes}
           />
         </CardContent>
       </Card>
