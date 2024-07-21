@@ -38,7 +38,6 @@ export function TableHeadSelect({
   onChange,
 }: TableHeadSelectProps) {
   const currentSelection = selectedColumns[`column_${columnIndex}`];
-  console.log("currentSelection:", currentSelection);
 
   return (
     <Select

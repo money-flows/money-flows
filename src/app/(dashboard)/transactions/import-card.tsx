@@ -94,8 +94,6 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
       date: format(parse(item.date, dateFormat, new Date()), outputFormat),
     }));
 
-    console.log("formattedData:", formattedData);
-
     onSubmit(formattedData);
   };
 
