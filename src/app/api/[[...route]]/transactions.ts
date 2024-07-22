@@ -247,4 +247,45 @@ export const transactions = new Hono()
 
       return c.json({ data });
     },
+  )
+  .post(
+    "/bulk-delete",
+    clerkMiddleware(),
+    zValidator("json", z.object({ ids: z.array(z.string()) })),
+    async (c) => {
+      const auth = getAuth(c);
+      const values = c.req.valid("json");
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const transactionsToDelete = db.$with("transactions_to_delete").as(
+        db
+          .select({ id: transaction.id })
+          .from(transaction)
+          .innerJoin(account, eq(transaction.accountId, account.id))
+          .where(
+            and(
+              eq(account.userId, auth.userId),
+              inArray(transaction.id, values.ids),
+            ),
+          ),
+      );
+
+      const data = await db
+        .with(transactionsToDelete)
+        .delete(transaction)
+        .where(
+          inArray(
+            transaction.id,
+            sql`(SELECT id FROM ${transactionsToDelete})`,
+          ),
+        )
+        .returning({
+          id: account.id,
+        });
+
+      return c.json({ data });
+    },
   );

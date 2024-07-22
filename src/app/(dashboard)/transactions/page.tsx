@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { transaction as transactionSchema } from "@/db/schema";
 import { useSelectAccount } from "@/features/accounts/hooks/use-select-account";
 import { useBulkCreateTransactions } from "@/features/transactions/api/use-bulk-create-transactions";
+import { useBulkDeleteTransactions } from "@/features/transactions/api/use-bulk-delete-transactions";
 import { useGetTransactions } from "@/features/transactions/api/use-get-transactions";
 import { useNewTransaction } from "@/features/transactions/hooks/use-new-transaction";
 
@@ -50,6 +51,7 @@ export default function TransactionsPage() {
   const { onOpen } = useNewTransaction();
 
   const createTransactionsMutation = useBulkCreateTransactions();
+  const deleteTransactionsMutation = useBulkDeleteTransactions();
   const transactionsQuery = useGetTransactions();
   const transactions = transactionsQuery.data ?? [];
 
@@ -72,6 +74,12 @@ export default function TransactionsPage() {
       onSuccess: () => {
         handleCancelImport();
       },
+    });
+  };
+
+  const handleDeleteSelectedRows = (rows: typeof transactions) => {
+    deleteTransactionsMutation.mutate({
+      ids: rows.map((row) => row.id),
     });
   };
 
@@ -121,8 +129,12 @@ export default function TransactionsPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={transactions} />
+        <CardContent className="space-y-4">
+          <DataTable
+            columns={columns}
+            data={transactions}
+            onSelectedRowsDelete={handleDeleteSelectedRows}
+          />
         </CardContent>
       </Card>
     </div>
