@@ -78,18 +78,22 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "category",
     header: "カテゴリー",
+    filterFn: "fuzzy",
   },
   {
     accessorKey: "counterparty",
     header: "取引先",
+    filterFn: "fuzzy",
   },
   {
     accessorKey: "account",
     header: "口座",
+    filterFn: "fuzzy",
   },
   {
     accessorKey: "memo",
     header: "メモ",
+    filterFn: "fuzzy",
   },
   {
     id: "actions",
