@@ -2,12 +2,19 @@
 
 import { format } from "date-fns";
 import { Plus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { DataTable } from "@/components/data-table";
+import { PaginationDataTable } from "@/components/pagenation-data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { transaction as transactionSchema } from "@/db/schema";
 import { useSelectAccount } from "@/features/accounts/hooks/use-select-account";
@@ -15,6 +22,7 @@ import { useBulkCreateTransactions } from "@/features/transactions/api/use-bulk-
 import { useBulkDeleteTransactions } from "@/features/transactions/api/use-bulk-delete-transactions";
 import { useGetTransactions } from "@/features/transactions/api/use-get-transactions";
 import { useNewTransaction } from "@/features/transactions/hooks/use-new-transaction";
+import { range } from "@/lib/array";
 
 import { columns } from "./columns";
 import { ImportCard } from "./import-card";
@@ -34,6 +42,11 @@ const INITIAL_IMPORT_RESULTS = {
 };
 
 export default function TransactionsPage() {
+  const params = useSearchParams();
+  const accountId = params.get("accountId") ?? "";
+  const page = params.get("page") ?? "1";
+  const currentPageIndex = Number(page);
+
   const [AccountDialog, confirm] = useSelectAccount();
   const [variant, setVariant] = useState<Variant>(VARIANTS.LIST);
   const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);
@@ -52,8 +65,13 @@ export default function TransactionsPage() {
 
   const createTransactionsMutation = useBulkCreateTransactions();
   const deleteTransactionsMutation = useBulkDeleteTransactions();
-  const transactionsQuery = useGetTransactions();
-  const transactions = transactionsQuery.data ?? [];
+  const transactionsQuery = useGetTransactions({
+    accountId,
+    page,
+  });
+  const transactions = transactionsQuery.data?.data ?? [];
+  const pageCount = transactionsQuery.data?.meta.pageCount ?? 0;
+  const totalCount = transactionsQuery.data?.meta.totalCount ?? 0;
 
   const handleSubmitImport = async (
     values: (typeof transactionSchema.$inferInsert)[],
@@ -130,11 +148,31 @@ export default function TransactionsPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <DataTable
+          <PaginationDataTable
             columns={columns}
             data={transactions}
+            totalCount={totalCount}
             onSelectedRowsDelete={handleDeleteSelectedRows}
           />
+          <Pagination className="text-base font-medium">
+            <PaginationContent>
+              {range(
+                Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6),
+                Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6) + 7,
+              )
+                .filter((pageIndex) => pageIndex >= 1 && pageIndex <= pageCount)
+                .map((pageIndex) => (
+                  <PaginationItem key={pageIndex}>
+                    <PaginationLink
+                      href={`?page=${pageIndex}`}
+                      isActive={currentPageIndex === pageIndex}
+                    >
+                      {pageIndex}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+            </PaginationContent>
+          </Pagination>
         </CardContent>
       </Card>
     </div>

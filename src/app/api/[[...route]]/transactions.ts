@@ -1,8 +1,7 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
-import { endOfDay, endOfToday, parse, startOfDay, subDays } from "date-fns";
-import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -18,28 +17,27 @@ export const transactions = new Hono()
     zValidator(
       "query",
       z.object({
-        from: z.string().optional(),
-        to: z.string().optional(),
         accountId: z.string().optional(),
+        page: z.string().optional(),
       }),
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { from, to, accountId } = c.req.valid("query");
+      const { accountId, page } = c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const defaultTo = endOfToday();
-      const defaultFrom = startOfDay(subDays(defaultTo, 30));
+      if (!page) {
+        return c.json({ error: "Missing page" }, 400);
+      }
 
-      const startDate = from
-        ? parse(from, "yyyy-MM-dd", new Date())
-        : defaultFrom;
-      const endDate = to
-        ? endOfDay(parse(to, "yyyy-MM-dd", new Date()))
-        : defaultTo;
+      if (/^\d+%/.test(page)) {
+        return c.json({ error: "Invalid page" }, 400);
+      }
+
+      const pageSize = 30;
 
       const data = await db
         .select({
@@ -60,13 +58,27 @@ export const transactions = new Hono()
           and(
             eq(account.userId, auth.userId),
             accountId ? eq(transaction.accountId, accountId) : undefined,
-            gte(transaction.date, startDate),
-            lte(transaction.date, endDate),
           ),
         )
-        .orderBy(desc(transaction.date));
+        .orderBy(desc(transaction.date))
+        .offset((Number(page) - 1) * pageSize)
+        .limit(pageSize);
 
-      return c.json({ data });
+      const [{ totalCount }] = await db
+        .select({ totalCount: count() })
+        .from(transaction)
+        .innerJoin(account, eq(transaction.accountId, account.id))
+        .leftJoin(category, eq(transaction.categoryId, category.id))
+        .where(
+          and(
+            eq(account.userId, auth.userId),
+            accountId ? eq(transaction.accountId, accountId) : undefined,
+          ),
+        );
+
+      const pageCount = Math.ceil(totalCount / pageSize);
+
+      return c.json({ data, meta: { totalCount, pageCount } });
     },
   )
   .get(
