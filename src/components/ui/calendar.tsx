@@ -1,5 +1,7 @@
 "use client";
 
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
@@ -56,6 +58,14 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeft className="size-4" />,
         IconRight: () => <ChevronRight className="size-4" />,
+      }}
+      formatters={{
+        formatCaption: (date) => (
+          <span className="tabular-nums tracking-tighter">
+            {format(date, "yyyy 年 MM 月")}
+          </span>
+        ),
+        formatWeekdayName: (date) => format(date, "E", { locale: ja }),
       }}
       {...props}
     />
