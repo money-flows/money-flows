@@ -27,12 +27,12 @@ export function TopCategoriesGrid({ data, isLoading }: TopCategoriesGridProps) {
   return (
     <div className="mb-8 grid grid-cols-1 gap-8 pb-2 lg:grid-cols-2">
       <TopCategoriesCard
-        title="収入のカテゴリー"
+        title="収入の内訳"
         categories={data?.incomeCategories}
         variant="success"
       />
       <TopCategoriesCard
-        title="支出のカテゴリー"
+        title="支出の内訳"
         categories={data?.expenseCategories}
         variant="danger"
       />
