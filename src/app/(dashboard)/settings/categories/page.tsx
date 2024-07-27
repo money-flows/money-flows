@@ -36,7 +36,7 @@ export default function CategoriesPage() {
     <Card>
       <CardHeader>
         <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-          <CardTitle className="line-clamp-1 text-xl">カテゴリー一覧</CardTitle>
+          <CardTitle>カテゴリー</CardTitle>
           <Button size="sm" onClick={onOpen}>
             <Plus className="mr-2 size-4" />
             カテゴリーを追加
