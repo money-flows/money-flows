@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { PaginationDataTable } from "@/components/pagenation-data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -26,6 +25,7 @@ import { range } from "@/lib/array";
 
 import { columns } from "./columns";
 import { ImportCard } from "./import-card";
+import { TransactionDataTable } from "./transaction-data-table";
 import { UploadButton } from "./upload-button";
 
 const VARIANTS = {
@@ -145,7 +145,7 @@ export default function TransactionsPage() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <PaginationDataTable
+        <TransactionDataTable
           columns={columns}
           data={transactions}
           totalCount={totalCount}

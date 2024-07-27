@@ -11,6 +11,8 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -19,9 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 
 declare module "@tanstack/react-table" {
   interface FilterFns {
@@ -43,19 +42,19 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-interface PaginationDataTableProps<TData, TValue> {
+interface TransactionDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   totalCount: number;
   onSelectedRowsDelete?: (rows: TData[]) => void;
 }
 
-export function PaginationDataTable<TData, TValue>({
+export function TransactionDataTable<TData, TValue>({
   columns,
   data,
   totalCount,
   onSelectedRowsDelete,
-}: PaginationDataTableProps<TData, TValue>) {
+}: TransactionDataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
