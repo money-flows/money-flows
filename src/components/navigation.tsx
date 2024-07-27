@@ -20,18 +20,17 @@ const routes = [
     label: "取引",
   },
   {
-    href: "/accounts",
-    label: "口座",
-  },
-  {
-    href: "/categories",
-    label: "カテゴリー",
-  },
-  {
-    href: "/settings",
+    href: "/settings/accounts",
     label: "設定",
   },
 ];
+
+function isActive(href: string, pathname: string) {
+  if (pathname.includes("/settings")) {
+    return href === "/settings/accounts";
+  }
+  return href === pathname;
+}
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,7 +61,7 @@ export function Navigation() {
             {routes.map((route) => (
               <Button
                 key={route.href}
-                variant={route.href === pathname ? "secondary" : "ghost"}
+                variant={isActive(route.href, pathname) ? "secondary" : "ghost"}
                 onClick={() => handleClick(route.href)}
                 className="w-full justify-start"
               >
@@ -82,7 +81,7 @@ export function Navigation() {
           key={route.href}
           href={route.href}
           label={route.label}
-          isActive={pathname === route.href}
+          isActive={isActive(route.href, pathname)}
         />
       ))}
     </nav>
