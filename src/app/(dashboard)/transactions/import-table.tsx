@@ -2,6 +2,7 @@ import {
   TransactionType,
   TransactionTypeToggle,
 } from "@/components/transaction-type-toggle";
+import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -21,6 +22,8 @@ interface ImportTableProps {
     columnIndex: number,
     value: string | undefined,
   ) => void;
+  selectedRows: CheckedState[];
+  setSelectedRows: React.Dispatch<React.SetStateAction<CheckedState[]>>;
   transactionTypes: TransactionType[];
   setTransactionTypes: React.Dispatch<React.SetStateAction<TransactionType[]>>;
 }
@@ -30,9 +33,29 @@ export function ImportTable({
   body,
   selectedColumns,
   onTableHeadSelectChange,
+  selectedRows,
+  setSelectedRows,
   transactionTypes,
   setTransactionTypes,
 }: ImportTableProps) {
+  const isAllSelected = selectedRows.every((selected) => selected);
+  const isSomeSelected = selectedRows.some((selected) => selected);
+
+  const toggleAllSelectedRows = (value: CheckedState) => {
+    if (value === "indeterminate") return;
+    setSelectedRows(
+      value ? selectedRows.map(() => true) : selectedRows.map(() => false),
+    );
+  };
+
+  const toggleSelectedRow = (value: CheckedState, index: number) => {
+    setSelectedRows((prev) => {
+      const newSelectedRows = [...prev];
+      newSelectedRows[index] = value;
+      return newSelectedRows;
+    });
+  };
+
   const isAllIncome = transactionTypes.every((type) => type === "income");
   const isAllExpense = transactionTypes.every((type) => type === "expense");
   const headTransactionType = isAllIncome
@@ -69,6 +92,24 @@ export function ImportTable({
       <Table>
         <TableHeader className="bg-muted">
           <TableRow>
+            <TableHead>
+              <div className="flex flex-col gap-2">
+                <div className="h-4" />
+                <div className="flex h-10 items-center">
+                  <Checkbox
+                    checked={
+                      isAllSelected
+                        ? true
+                        : isSomeSelected
+                          ? "indeterminate"
+                          : false
+                    }
+                    onCheckedChange={toggleAllSelectedRows}
+                    aria-label="Select all"
+                  />
+                </div>
+              </div>
+            </TableHead>
             {headers.map((header, index) => (
               <TableHead key={index}>
                 <div className="flex flex-col gap-2">
@@ -97,6 +138,15 @@ export function ImportTable({
         <TableBody>
           {body.map((row, index) => (
             <TableRow key={index}>
+              <TableCell>
+                <div className="flex items-center">
+                  <Checkbox
+                    checked={selectedRows[index]}
+                    onCheckedChange={(value) => toggleSelectedRow(value, index)}
+                    aria-label="Select all"
+                  />
+                </div>
+              </TableCell>
               {row.map((cell, index) => (
                 <TableCell key={index}>{cell}</TableCell>
               ))}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TransactionType } from "@/components/transaction-type-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckedState } from "@/components/ui/checkbox";
 
 import { ImportTable } from "./import-table";
 
@@ -25,6 +26,10 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
 
   const headers = data[0];
   const body = data.slice(1);
+
+  const [selectedRows, setSelectedRows] = useState<CheckedState[]>(
+    Array.from({ length: body.length }, () => true),
+  );
 
   const [transactionTypes, setTransactionTypes] = useState<TransactionType[]>(
     Array.from({ length: body.length }, () => "income"),
@@ -65,6 +70,7 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
         return selectedColumns[`column_${columnIndex}`] ?? null;
       }),
       body: body
+        .filter((_, index) => selectedRows[index])
         .map((row) => {
           const transformedRow = row.map((cell, index) => {
             const columnIndex = getColumnIndex(`column_${index}`);
@@ -135,6 +141,8 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
           body={body}
           selectedColumns={selectedColumns}
           onTableHeadSelectChange={handleTableHeadSelectChange}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
           transactionTypes={transactionTypes}
           setTransactionTypes={setTransactionTypes}
         />
