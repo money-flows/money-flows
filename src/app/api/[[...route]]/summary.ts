@@ -66,7 +66,7 @@ export const summary = new Hono().get(
           ).mapWith(Number),
           expenses: coalesce(
             sum(
-              sql`CASE WHEN ${transaction.amount} < 0 THEN ${transaction.amount} ELSE 0 END`,
+              sql`CASE WHEN ${transaction.amount} < 0 THEN ABS(${transaction.amount}) ELSE 0 END`,
             ),
             0,
           ).mapWith(Number),
@@ -180,10 +180,7 @@ export const summary = new Hono().get(
 
     const finalExpensesCategories = topExpenseCategories.map((category) => ({
       ...category,
-      percentage: calculatePercentage(
-        category.value,
-        currentPeriod.expenses * -1,
-      ),
+      percentage: calculatePercentage(category.value, currentPeriod.expenses),
     }));
     if (otherExpenseCategories.length > 0) {
       finalExpensesCategories.push({
@@ -191,7 +188,7 @@ export const summary = new Hono().get(
         value: otherExpenseCategoriesTotal,
         percentage: calculatePercentage(
           otherExpenseCategoriesTotal,
-          currentPeriod.expenses * -1,
+          currentPeriod.expenses,
         ),
       });
     }
