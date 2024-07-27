@@ -43,9 +43,7 @@ export function ImportTable({
 
   const toggleAllSelectedRows = (value: CheckedState) => {
     if (value === "indeterminate") return;
-    setSelectedRows(
-      value ? selectedRows.map(() => true) : selectedRows.map(() => false),
-    );
+    setSelectedRows((prev) => prev.map(() => value));
   };
 
   const toggleSelectedRow = (value: CheckedState, index: number) => {
@@ -64,14 +62,9 @@ export function ImportTable({
       ? "expense"
       : undefined;
 
-  const toggleAllTransactionTypes = () => {
-    if (isAllIncome) {
-      setTransactionTypes((prev) => prev.map(() => "expense"));
-    } else if (isAllExpense) {
-      setTransactionTypes((prev) => prev.map(() => "income"));
-    } else {
-      setTransactionTypes((prev) => prev.map(() => "income"));
-    }
+  const toggleAllTransactionTypes = (value: TransactionType | undefined) => {
+    if (!value) return;
+    setTransactionTypes((prev) => prev.map(() => value));
   };
 
   const toggleTransactionType = (
