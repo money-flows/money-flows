@@ -134,7 +134,7 @@ export default function TransactionsPage() {
     <Card>
       <CardHeader>
         <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-          <CardTitle className="line-clamp-1 text-xl">履歴</CardTitle>
+          <CardTitle>履歴</CardTitle>
           <div className="flex flex-col items-center gap-2 lg:flex-row">
             <Button size="sm" onClick={onOpen} className="w-full lg:w-auto">
               <Plus className="mr-2 size-4" />
