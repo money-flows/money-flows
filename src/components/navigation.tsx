@@ -17,7 +17,7 @@ const routes = [
   },
   {
     href: "/transactions",
-    label: "取引",
+    label: "履歴",
   },
   {
     href: "/settings/accounts",

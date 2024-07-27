@@ -103,19 +103,17 @@ export default function TransactionsPage() {
 
   if (transactionsQuery.isLoading) {
     return (
-      <div className="mx-auto -mt-24 w-full max-w-screen-2xl pb-10">
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-              <Skeleton className="h-9 w-20" />
-              <Skeleton className="h-9 w-full lg:w-[7.5rem]" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-48 w-full" />
-          </CardContent>
-        </Card>
-      </div>
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+            <Skeleton className="h-9 w-20" />
+            <Skeleton className="h-9 w-full lg:w-[7.5rem]" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-48 w-full" />
+        </CardContent>
+      </Card>
     );
   }
 
@@ -133,48 +131,46 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="mx-auto -mt-24 w-full max-w-screen-2xl pb-10">
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-            <CardTitle className="line-clamp-1 text-xl">取引履歴</CardTitle>
-            <div className="flex flex-col items-center gap-2 lg:flex-row">
-              <Button size="sm" onClick={onOpen} className="w-full lg:w-auto">
-                <Plus className="mr-2 size-4" />
-                取引を追加
-              </Button>
-              <UploadButton onUpload={handleUpload} />
-            </div>
+    <Card>
+      <CardHeader>
+        <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+          <CardTitle className="line-clamp-1 text-xl">履歴</CardTitle>
+          <div className="flex flex-col items-center gap-2 lg:flex-row">
+            <Button size="sm" onClick={onOpen} className="w-full lg:w-auto">
+              <Plus className="mr-2 size-4" />
+              取引を追加
+            </Button>
+            <UploadButton onUpload={handleUpload} />
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <PaginationDataTable
-            columns={columns}
-            data={transactions}
-            totalCount={totalCount}
-            onSelectedRowsDelete={handleDeleteSelectedRows}
-          />
-          <Pagination className="text-base font-medium">
-            <PaginationContent>
-              {range(
-                Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6),
-                Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6) + 7,
-              )
-                .filter((pageIndex) => pageIndex >= 1 && pageIndex <= pageCount)
-                .map((pageIndex) => (
-                  <PaginationItem key={pageIndex}>
-                    <PaginationLink
-                      href={`?page=${pageIndex}`}
-                      isActive={currentPageIndex === pageIndex}
-                    >
-                      {pageIndex}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-            </PaginationContent>
-          </Pagination>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <PaginationDataTable
+          columns={columns}
+          data={transactions}
+          totalCount={totalCount}
+          onSelectedRowsDelete={handleDeleteSelectedRows}
+        />
+        <Pagination className="text-base font-medium">
+          <PaginationContent>
+            {range(
+              Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6),
+              Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6) + 7,
+            )
+              .filter((pageIndex) => pageIndex >= 1 && pageIndex <= pageCount)
+              .map((pageIndex) => (
+                <PaginationItem key={pageIndex}>
+                  <PaginationLink
+                    href={`?page=${pageIndex}`}
+                    isActive={currentPageIndex === pageIndex}
+                  >
+                    {pageIndex}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+          </PaginationContent>
+        </Pagination>
+      </CardContent>
+    </Card>
   );
 }
