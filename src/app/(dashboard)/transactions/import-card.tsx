@@ -105,42 +105,40 @@ export function ImportCard({ data, onCancel, onSubmit }: ImportCardProps) {
   };
 
   return (
-    <div className="mx-auto -mt-24 w-full max-w-screen-2xl pb-10">
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-            <CardTitle className="line-clamp-1 text-xl">CSV取り込み</CardTitle>
-            <div className="flex flex-col items-center gap-2 lg:flex-row">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={onCancel}
-                className="w-full lg:w-auto"
-              >
-                やめる
-              </Button>
-              <Button
-                size="sm"
-                disabled={progress < requiredOptions.length}
-                onClick={handleContinue}
-                className="w-full lg:w-auto"
-              >
-                口座の選択に進む ({progress} / {requiredOptions.length})
-              </Button>
-            </div>
+    <Card>
+      <CardHeader>
+        <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+          <CardTitle className="line-clamp-1 text-xl">CSV取り込み</CardTitle>
+          <div className="flex flex-col items-center gap-2 lg:flex-row">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onCancel}
+              className="w-full lg:w-auto"
+            >
+              やめる
+            </Button>
+            <Button
+              size="sm"
+              disabled={progress < requiredOptions.length}
+              onClick={handleContinue}
+              className="w-full lg:w-auto"
+            >
+              口座の選択に進む ({progress} / {requiredOptions.length})
+            </Button>
           </div>
-        </CardHeader>
-        <CardContent>
-          <ImportTable
-            headers={headers}
-            body={body}
-            selectedColumns={selectedColumns}
-            onTableHeadSelectChange={handleTableHeadSelectChange}
-            transactionTypes={transactionTypes}
-            setTransactionTypes={setTransactionTypes}
-          />
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <ImportTable
+          headers={headers}
+          body={body}
+          selectedColumns={selectedColumns}
+          onTableHeadSelectChange={handleTableHeadSelectChange}
+          transactionTypes={transactionTypes}
+          setTransactionTypes={setTransactionTypes}
+        />
+      </CardContent>
+    </Card>
   );
 }
