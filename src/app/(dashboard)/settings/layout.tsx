@@ -23,8 +23,8 @@ export default function SettingsLayout({
   const pathname = usePathname();
 
   return (
-    <div className="flex gap-x-6">
-      <div className="flex w-48 flex-col">
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="flex w-full flex-col lg:w-56">
         {routes.map((route) => (
           <nav key={route.href}>
             <a
