@@ -17,7 +17,6 @@ export default function DashboardPage() {
   const searchParams = useSearchParams();
   const from = searchParams.get("from") ?? startOfMonth(new Date());
   const to = searchParams.get("to") ?? new Date();
-  console.log(from, to);
 
   const handleDateRangeChange = ({ from, to }: DateRange) => {
     if (!from || !to) {
