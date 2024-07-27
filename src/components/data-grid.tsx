@@ -1,22 +1,23 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { InferResponseType } from "hono";
 import { FaPiggyBank } from "react-icons/fa";
 import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6";
 
-import { useGetSummary } from "@/features/summary/api/use-get-summary";
 import { formatDateRange } from "@/lib/date";
+import { client } from "@/lib/hono";
 
 import { DataCard, DataCardLoading } from "./data-card";
+import { DateRange } from "./ui/date-range-picker";
 
-export function DataGrid() {
-  const { data, isLoading } = useGetSummary();
+interface DataGridProps {
+  data?: InferResponseType<typeof client.api.summary.$get, 200>["data"];
+  isLoading: boolean;
+  dateRange: DateRange;
+}
 
-  const params = useSearchParams();
-  const from = params.get("from") ?? undefined;
-  const to = params.get("to") ?? undefined;
-
-  const dateRangeLabel = formatDateRange({ from, to });
+export function DataGrid({ data, isLoading, dateRange }: DataGridProps) {
+  const dateRangeLabel = formatDateRange(dateRange);
 
   if (isLoading) {
     return (

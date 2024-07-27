@@ -1,6 +1,6 @@
 "use client";
 
-import { differenceInDays, format, startOfMonth } from "date-fns";
+import { differenceInDays, endOfMonth, format, startOfMonth } from "date-fns";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -8,15 +8,22 @@ import { DataCharts } from "@/components/data-charts";
 import { DataGrid } from "@/components/data-grid";
 import { TopCategoriesGrid } from "@/components/top-categories-grid";
 import { DateRange, DateRangePicker } from "@/components/ui/date-range-picker";
+import { useGetSummary } from "@/features/summary/api/use-get-summary";
 
 const MAX_DATE_RANGE_DAYS = 365;
 
 export default function DashboardPage() {
   const router = useRouter();
   const pathname = usePathname();
+
   const searchParams = useSearchParams();
-  const from = searchParams.get("from") ?? startOfMonth(new Date());
-  const to = searchParams.get("to") ?? new Date();
+  const from = new Date(searchParams.get("from") ?? startOfMonth(new Date()));
+  const to = new Date(searchParams.get("to") ?? endOfMonth(new Date()));
+
+  const { data, isLoading } = useGetSummary({
+    from: format(from, "yyyy-MM-dd"),
+    to: format(to, "yyyy-MM-dd"),
+  });
 
   const handleDateRangeChange = ({ from, to }: DateRange) => {
     if (!from || !to) {
@@ -39,15 +46,11 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto w-full max-w-screen-2xl">
       <div className="mb-8">
-        <DateRangePicker
-          initialDateFrom={from}
-          initialDateTo={to}
-          onUpdate={handleDateRangeChange}
-        />
+        <DateRangePicker from={from} to={to} onUpdate={handleDateRangeChange} />
       </div>
-      <DataGrid />
-      <TopCategoriesGrid />
-      <DataCharts />
+      <DataGrid data={data} isLoading={isLoading} dateRange={{ from, to }} />
+      <TopCategoriesGrid data={data} isLoading={isLoading} />
+      <DataCharts data={data} isLoading={isLoading} />
     </div>
   );
 }

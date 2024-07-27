@@ -1,12 +1,17 @@
 "use client";
 
-import { useGetSummary } from "@/features/summary/api/use-get-summary";
+import { InferResponseType } from "hono";
+
+import { client } from "@/lib/hono";
 
 import { Chart, ChartLoading } from "./chart";
 
-export function DataCharts() {
-  const { data, isLoading } = useGetSummary();
+interface DataChartsProps {
+  data?: InferResponseType<typeof client.api.summary.$get, 200>["data"];
+  isLoading: boolean;
+}
 
+export function DataCharts({ data, isLoading }: DataChartsProps) {
   if (isLoading) {
     return <ChartLoading />;
   }

@@ -1,15 +1,20 @@
 "use client";
 
-import { useGetSummary } from "@/features/summary/api/use-get-summary";
+import { InferResponseType } from "hono";
+
+import { client } from "@/lib/hono";
 
 import {
   TopCategoriesCard,
   TopCategoriesCardLoading,
 } from "./top-categories-card";
 
-export function TopCategoriesGrid() {
-  const { data, isLoading } = useGetSummary();
+interface TopCategoriesGridProps {
+  data?: InferResponseType<typeof client.api.summary.$get, 200>["data"];
+  isLoading: boolean;
+}
 
+export function TopCategoriesGrid({ data, isLoading }: TopCategoriesGridProps) {
   if (isLoading) {
     return (
       <div className="mb-8 grid grid-cols-1 gap-8 pb-2 lg:grid-cols-2">

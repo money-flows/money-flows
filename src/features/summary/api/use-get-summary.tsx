@@ -1,24 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { InferRequestType } from "hono";
 
 import { client } from "@/lib/hono";
 
-export function useGetSummary() {
-  const params = useSearchParams();
-  const from = params.get("from") ?? "";
-  const to = params.get("to") ?? "";
-  const accountId = params.get("accountId") ?? "";
+type RequestQuery = InferRequestType<typeof client.api.summary.$get>["query"];
 
-  const query = useQuery({
+export function useGetSummary(query: RequestQuery) {
+  return useQuery({
     // TODO: Check if params are needed in the query key
-    queryKey: ["summary", { from, to, accountId }],
+    queryKey: ["summary", query],
     queryFn: async () => {
       const response = await client.api.summary.$get({
-        query: {
-          from,
-          to,
-          accountId,
-        },
+        query: query,
       });
 
       if (!response.ok) {
@@ -29,6 +22,4 @@ export function useGetSummary() {
       return data;
     },
   });
-
-  return query;
 }

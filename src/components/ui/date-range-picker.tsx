@@ -20,8 +20,8 @@ import { Separator } from "./separator";
 
 export interface DateRangePickerProps {
   onUpdate?: (range: DateRange) => void;
-  initialDateFrom?: Date | string;
-  initialDateTo?: Date | string;
+  from?: Date;
+  to?: Date;
   locale?: string;
 }
 
@@ -65,17 +65,15 @@ const PRESETS: Preset[] = [
 
 /** The DateRangePicker component allows a user to select a range of dates */
 export const DateRangePicker = ({
-  initialDateFrom = new Date(new Date().setHours(0, 0, 0, 0)),
-  initialDateTo,
+  from = new Date(new Date().setHours(0, 0, 0, 0)),
+  to,
   onUpdate,
 }: DateRangePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [range, setRange] = useState<DateRange>({
-    from: getDateAdjustedForTimezone(initialDateFrom),
-    to: initialDateTo
-      ? getDateAdjustedForTimezone(initialDateTo)
-      : getDateAdjustedForTimezone(initialDateFrom),
+    from: getDateAdjustedForTimezone(from),
+    to: to ? getDateAdjustedForTimezone(to) : getDateAdjustedForTimezone(from),
   });
   const openedRangeRef = useRef<DateRange | undefined>();
 
@@ -122,6 +120,8 @@ export const DateRangePicker = ({
       case "thisMonth":
         from.setDate(1);
         from.setHours(0, 0, 0, 0);
+        to.setMonth(to.getMonth() + 1);
+        to.setDate(0);
         to.setHours(23, 59, 59, 999);
         break;
       case "lastMonth":
@@ -181,17 +181,14 @@ export const DateRangePicker = ({
 
   const resetValues = (): void => {
     setRange({
-      from:
-        typeof initialDateFrom === "string"
-          ? getDateAdjustedForTimezone(initialDateFrom)
-          : initialDateFrom,
-      to: initialDateTo
-        ? typeof initialDateTo === "string"
-          ? getDateAdjustedForTimezone(initialDateTo)
-          : initialDateTo
-        : typeof initialDateFrom === "string"
-          ? getDateAdjustedForTimezone(initialDateFrom)
-          : initialDateFrom,
+      from: typeof from === "string" ? getDateAdjustedForTimezone(from) : from,
+      to: to
+        ? typeof to === "string"
+          ? getDateAdjustedForTimezone(to)
+          : to
+        : typeof from === "string"
+          ? getDateAdjustedForTimezone(from)
+          : from,
     });
   };
 
@@ -262,8 +259,8 @@ export const DateRangePicker = ({
           className="w-full border-0 bg-white/10 font-normal text-white outline-none transition hover:bg-white/20 hover:text-white focus:bg-white/30 focus:ring-transparent focus:ring-offset-0 lg:w-auto"
         >
           <CalendarIcon className="mr-2 size-4" />
-          <span className="tabular-nums tracking-tighter">{`${formatDate(range.from)}${
-            range.to != null ? " - " + formatDate(range.to) : ""
+          <span className="tabular-nums tracking-tighter">{`${formatDate(from)}${
+            to != null ? " - " + formatDate(to) : ""
           }`}</span>
         </Button>
       </PopoverTrigger>
