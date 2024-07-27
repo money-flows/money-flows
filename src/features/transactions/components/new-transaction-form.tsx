@@ -67,7 +67,7 @@ export const NewTransactionForm = ({
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>取引日</FormLabel>
+              <FormLabel>日付</FormLabel>
               <FormControl>
                 <DatePicker
                   value={field.value}
