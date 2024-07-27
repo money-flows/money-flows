@@ -36,7 +36,7 @@ export default function AccountsPage() {
     <Card>
       <CardHeader>
         <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-          <CardTitle className="line-clamp-1 text-xl">口座一覧</CardTitle>
+          <CardTitle>口座</CardTitle>
           <Button size="sm" onClick={onOpen}>
             <Plus className="mr-2 size-4" />
             口座を追加
