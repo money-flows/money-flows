@@ -1,7 +1,8 @@
 "use client";
 
 import { format } from "date-fns";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -141,6 +142,12 @@ export default function TransactionsPage() {
               取引を追加
             </Button>
             <UploadButton onUpload={handleUpload} />
+            <Button asChild size="sm" className="w-full lg:w-auto">
+              <Link href="/transactions/import-csv">
+                <Upload className="mr-2 size-4" />
+                CSV取り込み（別ページ）
+              </Link>
+            </Button>
           </div>
         </div>
       </CardHeader>
