@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { FileUploader } from "@/components/ui/file-uploader";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,8 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useStepper } from "@/components/ui/stepper";
 
-import { useImportConfig } from "./use-import-config";
+import { useImportCsvStore } from "./use-import-csv-store";
 
 type CharacterEncoding = "utf-8" | "shift_jis";
 
@@ -24,7 +26,9 @@ const CHARACTER_ENCODINGS: { value: CharacterEncoding; label: string }[] = [
 const DEFAULT_CHARACTER_ENCODING: CharacterEncoding = "utf-8";
 
 export function UploadStep() {
-  const { content, setContent } = useImportConfig();
+  const { nextStep } = useStepper();
+
+  const { content, setContent } = useImportCsvStore();
 
   const [uploadedFile, setUploadedFile] = useState<File>();
   const [characterEncoding, setCharacterEncoding] = useState<CharacterEncoding>(
@@ -66,37 +70,44 @@ export function UploadStep() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <FileUploader
-        accept={{ "text/csv": [".csv"] }}
-        onValueChange={handleUpload}
-      />
-      <div className="w-48">
-        <Label htmlFor="characterEncoding">文字コード</Label>
-        <Select
-          defaultValue={DEFAULT_CHARACTER_ENCODING}
-          onValueChange={handleCharacterEncodingChange}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {CHARACTER_ENCODINGS.map(({ value, label }) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <FileUploader
+          accept={{ "text/csv": [".csv"] }}
+          onValueChange={handleUpload}
+        />
+        <div className="w-48">
+          <Label htmlFor="characterEncoding">文字コード</Label>
+          <Select
+            defaultValue={DEFAULT_CHARACTER_ENCODING}
+            onValueChange={handleCharacterEncodingChange}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {CHARACTER_ENCODINGS.map(({ value, label }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="preview">プレビュー</Label>
+          <pre
+            id="preview"
+            className="h-56 w-full overflow-scroll rounded-md border border-input bg-muted/50 px-3 py-2 text-sm text-slate-800"
+          >
+            <code>{content}</code>
+          </pre>
+        </div>
       </div>
-      <div>
-        <Label htmlFor="preview">プレビュー</Label>
-        <pre
-          id="preview"
-          className="h-56 w-full overflow-scroll rounded-md border border-input bg-muted/50 px-3 py-2 text-sm text-slate-800"
-        >
-          <code>{content}</code>
-        </pre>
+      <div className="flex items-center justify-end">
+        <Button disabled={!content} onClick={nextStep}>
+          次へ
+        </Button>
       </div>
     </div>
   );
