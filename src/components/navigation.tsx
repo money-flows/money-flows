@@ -26,10 +26,15 @@ const routes = [
 ];
 
 function isActive(href: string, pathname: string) {
+  if (href === "/") {
+    return pathname === "/";
+  }
+
   if (pathname.includes("/settings")) {
     return href === "/settings/accounts";
   }
-  return href === pathname;
+
+  return pathname.includes(href);
 }
 
 export function Navigation() {
