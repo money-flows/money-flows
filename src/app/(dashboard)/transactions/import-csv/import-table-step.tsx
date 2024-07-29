@@ -1,9 +1,13 @@
 import { format, parse } from "date-fns";
+import { InferResponseType } from "hono";
+import { useRouter } from "next/navigation";
 import Papa from "papaparse";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { TransactionType } from "@/components/transaction-type-toggle";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -12,6 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useStepper } from "@/components/ui/stepper";
+import { useBulkCreateTransactions } from "@/features/transactions/api/use-bulk-create-transactions";
+import { client } from "@/lib/hono";
 
 import { ImportTable, TableData } from "./import-table";
 import { useImportCsvStore } from "./use-import-csv-store";
@@ -54,11 +60,22 @@ function parseAmountString(
   return parsedAmount * (isIncome ? 1 : -1);
 }
 
-export function ImportTableStep() {
-  const { nextStep, prevStep } = useStepper();
+interface ImportTableStepProps {
+  accounts: InferResponseType<typeof client.api.accounts.$get, 200>["data"];
+}
 
-  const { content, isAutoDetectAmountBySign, setImportedTransactions } =
-    useImportCsvStore();
+export function ImportTableStep({ accounts }: ImportTableStepProps) {
+  const router = useRouter();
+
+  const { prevStep } = useStepper();
+
+  const { content, isAutoDetectAmountBySign } = useImportCsvStore();
+
+  const createTransactionsMutation = useBulkCreateTransactions();
+
+  const [selectedAccountId, setSelectedAccountId] = useState<string>(
+    accounts[0].id,
+  );
 
   const [tableData, setTableData] = useState<TableData>(() => {
     if (!content) {
@@ -117,22 +134,46 @@ export function ImportTableStep() {
         ),
         amount: parsedAmount,
         date: formattedDate,
+        accountId: selectedAccountId,
       };
     });
 
-    setImportedTransactions(importedTransactions);
-
-    nextStep();
+    createTransactionsMutation.mutate(importedTransactions, {
+      onSuccess: () => {
+        router.push("/transactions");
+      },
+      onError: () => {
+        toast.error("取り込みに失敗しました");
+      },
+    });
   };
 
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <div className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-          <div className="grid gap-1.5 leading-none">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              日付のフォーマット
-            </label>
+        <div className="flex flex-col gap-4 rounded-md border p-4">
+          <div className="w-80">
+            <Label>取り込み先の口座</Label>
+            <Select
+              value={selectedAccountId}
+              defaultValue={accounts[0].id}
+              onValueChange={setSelectedAccountId}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {accounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    {account.name}
+                  </SelectItem>
+                ))}
+                <SelectItem value="new">新しい口座を作成</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-80">
+            <Label>日付のフォーマット</Label>
             <Select
               value={dateFormat}
               defaultValue={DEFAULT_DATE_FORMAT}
@@ -167,7 +208,7 @@ export function ImportTableStep() {
           戻る
         </Button>
         <Button disabled={isNextStepDisabled} onClick={handleClickNextStep}>
-          次へ
+          取り込む
         </Button>
       </div>
     </div>

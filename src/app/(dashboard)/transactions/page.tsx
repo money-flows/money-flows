@@ -141,11 +141,13 @@ export default function TransactionsPage() {
               <Plus className="mr-2 size-4" />
               取引を追加
             </Button>
-            <UploadButton onUpload={handleUpload} />
+            <div className="hidden">
+              <UploadButton onUpload={handleUpload} />
+            </div>
             <Button asChild size="sm" className="w-full lg:w-auto">
               <Link href="/transactions/import-csv">
                 <Upload className="mr-2 size-4" />
-                CSV取り込み（別ページ）
+                CSV取り込み
               </Link>
             </Button>
           </div>
