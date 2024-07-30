@@ -30,8 +30,8 @@ export default function SettingsLayout({
             <a
               href={route.href}
               className={cn(
-                "block rounded-md px-3 py-2 text-sm font-medium hover:bg-muted",
-                route.href === pathname && "bg-muted font-bold",
+                "block rounded-md px-3 py-2 text-sm font-normal hover:bg-muted",
+                route.href === pathname && "bg-muted font-semibold opacity-100",
               )}
             >
               {route.label}
