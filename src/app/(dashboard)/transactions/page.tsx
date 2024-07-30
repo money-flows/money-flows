@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { H1 } from "@/components/ui/h1";
 import {
   Pagination,
   PaginationContent,
@@ -46,66 +46,58 @@ export default function TransactionsPage() {
 
   if (transactionsQuery.isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-            <Skeleton className="h-9 w-20" />
-            <Skeleton className="h-9 w-full lg:w-[7.5rem]" />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-48 w-full" />
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+          <Skeleton className="h-9 w-16" />
+          <Skeleton className="h-9 w-full lg:w-[7.5rem]" />
+        </div>
+        <Skeleton className="h-48 w-full" />
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-          <CardTitle>履歴</CardTitle>
-          <div className="flex flex-col items-center gap-2 lg:flex-row">
-            <Button size="sm" onClick={onOpen} className="w-full lg:w-auto">
-              <Plus className="mr-2 size-4" />
-              取引を追加
-            </Button>
-            <Button asChild size="sm" className="w-full lg:w-auto">
-              <Link href="/transactions/import-csv">
-                <Upload className="mr-2 size-4" />
-                CSV取り込み
-              </Link>
-            </Button>
-          </div>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+        <H1>履歴</H1>
+        <div className="flex flex-col items-center gap-2 lg:flex-row">
+          <Button size="sm" onClick={onOpen} className="w-full lg:w-auto">
+            <Plus className="mr-2 size-4" />
+            取引を追加
+          </Button>
+          <Button asChild size="sm" className="w-full lg:w-auto">
+            <Link href="/transactions/import-csv">
+              <Upload className="mr-2 size-4" />
+              CSV取り込み
+            </Link>
+          </Button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <TransactionDataTable
-          columns={columns}
-          data={transactions}
-          totalCount={totalCount}
-          onSelectedRowsDelete={handleDeleteSelectedRows}
-        />
-        <Pagination className="text-base font-medium">
-          <PaginationContent>
-            {range(
-              Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6),
-              Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6) + 7,
-            )
-              .filter((pageIndex) => pageIndex >= 1 && pageIndex <= pageCount)
-              .map((pageIndex) => (
-                <PaginationItem key={pageIndex}>
-                  <PaginationLink
-                    href={`?page=${pageIndex}`}
-                    isActive={currentPageIndex === pageIndex}
-                  >
-                    {pageIndex}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-          </PaginationContent>
-        </Pagination>
-      </CardContent>
-    </Card>
+      </div>
+      <TransactionDataTable
+        columns={columns}
+        data={transactions}
+        totalCount={totalCount}
+        onSelectedRowsDelete={handleDeleteSelectedRows}
+      />
+      <Pagination className="text-base font-medium">
+        <PaginationContent>
+          {range(
+            Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6),
+            Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6) + 7,
+          )
+            .filter((pageIndex) => pageIndex >= 1 && pageIndex <= pageCount)
+            .map((pageIndex) => (
+              <PaginationItem key={pageIndex}>
+                <PaginationLink
+                  href={`?page=${pageIndex}`}
+                  isActive={currentPageIndex === pageIndex}
+                >
+                  {pageIndex}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 }
