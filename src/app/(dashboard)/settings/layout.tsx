@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
@@ -27,7 +28,7 @@ export default function SettingsLayout({
       <div className="flex w-full flex-col gap-y-1 lg:w-56">
         {routes.map((route) => (
           <nav key={route.href}>
-            <a
+            <Link
               href={route.href}
               className={cn(
                 "block rounded-md px-3 py-2 text-sm font-normal hover:bg-muted",
@@ -35,7 +36,7 @@ export default function SettingsLayout({
               )}
             >
               {route.label}
-            </a>
+            </Link>
           </nav>
         ))}
       </div>
