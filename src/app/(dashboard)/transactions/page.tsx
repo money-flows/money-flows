@@ -1,11 +1,8 @@
 "use client";
 
-import { format } from "date-fns";
 import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,31 +13,13 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
-import { transaction as transactionSchema } from "@/db/schema";
-import { useSelectAccount } from "@/features/accounts/hooks/use-select-account";
-import { useBulkCreateTransactions } from "@/features/transactions/api/use-bulk-create-transactions";
 import { useBulkDeleteTransactions } from "@/features/transactions/api/use-bulk-delete-transactions";
 import { useGetTransactions } from "@/features/transactions/api/use-get-transactions";
 import { useNewTransaction } from "@/features/transactions/hooks/use-new-transaction";
 import { range } from "@/lib/array";
 
 import { columns } from "./columns";
-import { ImportCard } from "./import-card";
 import { TransactionDataTable } from "./transaction-data-table";
-import { UploadButton } from "./upload-button";
-
-const VARIANTS = {
-  LIST: "LIST",
-  IMPORT: "IMPORT",
-} as const;
-
-type Variant = (typeof VARIANTS)[keyof typeof VARIANTS];
-
-const INITIAL_IMPORT_RESULTS = {
-  data: [],
-  errors: [],
-  meta: {},
-};
 
 export default function TransactionsPage() {
   const params = useSearchParams();
@@ -48,23 +27,8 @@ export default function TransactionsPage() {
   const page = params.get("page") ?? "1";
   const currentPageIndex = Number(page);
 
-  const [AccountDialog, confirm] = useSelectAccount();
-  const [variant, setVariant] = useState<Variant>(VARIANTS.LIST);
-  const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);
-
-  const handleUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
-    setImportResults(results);
-    setVariant(VARIANTS.IMPORT);
-  };
-
-  const handleCancelImport = () => {
-    setImportResults(INITIAL_IMPORT_RESULTS);
-    setVariant(VARIANTS.LIST);
-  };
-
   const { onOpen } = useNewTransaction();
 
-  const createTransactionsMutation = useBulkCreateTransactions();
   const deleteTransactionsMutation = useBulkDeleteTransactions();
   const transactionsQuery = useGetTransactions({
     accountId,
@@ -73,28 +37,6 @@ export default function TransactionsPage() {
   const transactions = transactionsQuery.data?.data ?? [];
   const pageCount = transactionsQuery.data?.meta.pageCount ?? 0;
   const totalCount = transactionsQuery.data?.meta.totalCount ?? 0;
-
-  const handleSubmitImport = async (
-    values: (typeof transactionSchema.$inferInsert)[],
-  ) => {
-    const accountId = await confirm();
-
-    if (!accountId) {
-      return toast.error("口座を選択してください");
-    }
-
-    const data = values.map((value) => ({
-      ...value,
-      accountId,
-      date: format(new Date(value.date), "yyyy-MM-dd"),
-    }));
-
-    createTransactionsMutation.mutate(data, {
-      onSuccess: () => {
-        handleCancelImport();
-      },
-    });
-  };
 
   const handleDeleteSelectedRows = (rows: typeof transactions) => {
     deleteTransactionsMutation.mutate({
@@ -118,19 +60,6 @@ export default function TransactionsPage() {
     );
   }
 
-  if (variant === VARIANTS.IMPORT) {
-    return (
-      <>
-        <AccountDialog />
-        <ImportCard
-          data={importResults.data}
-          onCancel={handleCancelImport}
-          onSubmit={handleSubmitImport}
-        />
-      </>
-    );
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -141,9 +70,6 @@ export default function TransactionsPage() {
               <Plus className="mr-2 size-4" />
               取引を追加
             </Button>
-            <div className="hidden">
-              <UploadButton onUpload={handleUpload} />
-            </div>
             <Button asChild size="sm" className="w-full lg:w-auto">
               <Link href="/transactions/import-csv">
                 <Upload className="mr-2 size-4" />
