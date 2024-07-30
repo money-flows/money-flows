@@ -207,15 +207,15 @@ export const DateRangePicker = ({
     isSelected: boolean;
   }): JSX.Element => (
     <Button
-      className={cn(
-        "w-full font-medium justify-start pl-1 pr-6",
-        isSelected && "pointer-events-none",
-      )}
       size="sm"
       variant="ghost"
       onClick={() => {
         setPreset(preset);
       }}
+      className={cn(
+        "w-full font-normal justify-start pl-1 pr-8",
+        isSelected && "pointer-events-none",
+      )}
     >
       <>
         <span className={cn("pr-2 opacity-0", isSelected && "opacity-70")}>
