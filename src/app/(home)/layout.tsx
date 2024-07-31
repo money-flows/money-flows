@@ -12,10 +12,10 @@ interface HomeLayoutProps {
 export default function HomeLayout({ children }: HomeLayoutProps) {
   return (
     <>
-      <header className="bg-gradient-to-b from-blue-700 to-blue-500 pb-48">
-        <div className="mx-auto max-w-screen-2xl p-4 pb-0 lg:px-6">
-          <div className="mb-12 flex w-full items-center justify-between">
-            <div className="flex items-center lg:gap-x-8">
+      <header className="h-[22rem] bg-gradient-to-b from-blue-700 to-blue-500 sm:h-96">
+        <div className="mx-auto max-w-screen-xl px-4 sm:px-10">
+          <div className="mb-6 flex h-16 items-center justify-between sm:mb-12">
+            <div className="flex items-center sm:gap-x-8">
               <HeaderLogo />
               <Navigation />
             </div>
@@ -29,8 +29,8 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
           <WelcomeMessage />
         </div>
       </header>
-      <main className="mx-auto w-full max-w-screen-2xl p-3 lg:p-6">
-        <div className="-mt-48">{children}</div>
+      <main className="mx-auto -mt-52 w-full max-w-screen-xl p-4 sm:-mt-56 sm:p-8">
+        {children}
       </main>
     </>
   );
