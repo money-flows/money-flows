@@ -47,25 +47,34 @@ export default function TransactionsPage() {
   if (transactionsQuery.isLoading) {
     return (
       <div className="space-y-4">
-        <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Skeleton className="h-9 w-16" />
-          <Skeleton className="h-9 w-full lg:w-[7.5rem]" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-9 w-full sm:w-[7.5rem]" />
+            <Skeleton className="h-9 w-full sm:w-32" />
+          </div>
         </div>
-        <Skeleton className="h-48 w-full" />
+        <div className="space-y-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <Skeleton className="h-10 w-full sm:max-w-sm" />
+            <Skeleton className="ml-auto h-10 w-40" />
+          </div>
+          <Skeleton className="h-48 w-full" />
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <H1>履歴</H1>
-        <div className="flex flex-col items-center gap-2 lg:flex-row">
-          <Button size="sm" onClick={onOpen} className="w-full lg:w-auto">
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={onOpen} className="w-full sm:w-auto">
             <Plus className="mr-2 size-4" />
             取引を追加
           </Button>
-          <Button asChild size="sm" className="w-full lg:w-auto">
+          <Button asChild size="sm" className="w-full sm:w-auto">
             <Link href="/transactions/import-csv">
               <Upload className="mr-2 size-4" />
               CSV取り込み

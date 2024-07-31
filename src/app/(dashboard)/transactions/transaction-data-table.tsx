@@ -92,12 +92,12 @@ export function TransactionDataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <Input
           placeholder="検索"
           value={globalFilter ?? ""}
           onChange={(event) => setGlobalFilter(String(event.target.value))}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
         <Button
           variant="outline"
@@ -121,7 +121,10 @@ export function TransactionDataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      style={{ width: columns[header.index].size }}
+                      style={{
+                        width: columns[header.index].size,
+                        minWidth: columns[header.index].minSize,
+                      }}
                     >
                       {header.isPlaceholder
                         ? null

@@ -67,13 +67,13 @@ export const columns: ColumnDef<Transaction>[] = [
       const isIncome = row.original.amount > 0;
       if (isIncome) {
         return (
-          <span className="line-clamp-1 inline rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-600">
+          <span className="line-clamp-1 inline whitespace-nowrap rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-600">
             収入
           </span>
         );
       }
       return (
-        <span className="line-clamp-1 inline rounded-md bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600">
+        <span className="line-clamp-1 inline whitespace-nowrap rounded-md bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600">
           支出
         </span>
       );
@@ -87,21 +87,24 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "counterparty",
     header: "取引先",
+    minSize: 96,
     filterFn: "fuzzy",
   },
   {
     accessorKey: "account",
     header: "口座",
+    minSize: 96,
     filterFn: "fuzzy",
   },
   {
     accessorKey: "memo",
     header: "メモ",
+    minSize: 96,
     filterFn: "fuzzy",
   },
   {
     id: "actions",
     cell: ({ row }) => <Actions id={row.original.id} />,
-    size: 32,
+    size: 64,
   },
 ];
