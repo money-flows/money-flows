@@ -66,7 +66,7 @@ export function DataCard({
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-2">
-          <CardTitle className="line-clamp-1 text-2xl">{title}</CardTitle>
+          <CardTitle>{title}</CardTitle>
           <CardDescription className="line-clamp-1 tabular-nums tracking-tighter">
             {dateRange}
           </CardDescription>
@@ -76,15 +76,15 @@ export function DataCard({
         </div>
       </CardHeader>
       <CardContent>
-        <h1 className="mb-2 line-clamp-1 break-all text-2xl font-bold">
+        <div className="mb-2 break-all text-2xl font-bold">
           <CountUp
             preserveValue
             start={0}
             end={value}
             formattingFn={formatCurrency}
           />
-        </h1>
-        <p className="line-clamp-1 text-sm text-muted-foreground">
+        </div>
+        <p className="text-sm text-muted-foreground">
           {percentageChange === 0 ? (
             "前の期間からの変化はありません。"
           ) : (
@@ -113,7 +113,7 @@ export function DataCardLoading() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-2">
-          <Skeleton className="h-8 w-12" />
+          <Skeleton className="h-6 w-12" />
           <Skeleton className="h-5 w-40" />
         </div>
         <Skeleton className="size-12" />

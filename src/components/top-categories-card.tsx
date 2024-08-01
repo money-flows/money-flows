@@ -69,7 +69,7 @@ export function TopCategoriesCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="line-clamp-1 text-xl">{title}</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {categories.length > 0 ? (
@@ -97,9 +97,9 @@ export function TopCategoriesCard({
             ))}
           </>
         ) : (
-          <div className="flex h-32 items-center justify-center rounded-md bg-muted/50 text-muted-foreground">
+          <p className="flex h-24 items-center justify-center pb-4 text-sm text-muted-foreground">
             カテゴリーがありません。カテゴリーを追加してみましょう。
-          </div>
+          </p>
         )}
       </CardContent>
     </Card>
@@ -110,7 +110,7 @@ export function TopCategoriesCardLoading() {
   return (
     <Card>
       <CardHeader>
-        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-6 w-28" />
       </CardHeader>
       <CardContent className="space-y-4">
         {Array.from({ length: 4 }).map((_, index) => (

@@ -16,11 +16,12 @@ interface BarVariantProps {
     income: number;
     expenses: number;
   }[];
+  height: number;
 }
 
-export function BarVariant({ data }: BarVariantProps) {
+export function BarVariant({ data, height }: BarVariantProps) {
   return (
-    <ResponsiveContainer width="100%" height={350}>
+    <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis

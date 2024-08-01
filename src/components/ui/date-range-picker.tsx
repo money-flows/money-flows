@@ -82,12 +82,12 @@ export const DateRangePicker = ({
   );
 
   const [isSmallScreen, setIsSmallScreen] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 960 : false,
+    typeof window !== "undefined" ? window.innerWidth < 768 : false,
   );
 
   useEffect(() => {
     const handleResize = (): void => {
-      setIsSmallScreen(window.innerWidth < 960);
+      setIsSmallScreen(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
@@ -207,13 +207,12 @@ export const DateRangePicker = ({
     isSelected: boolean;
   }): JSX.Element => (
     <Button
-      size="sm"
       variant="ghost"
       onClick={() => {
         setPreset(preset);
       }}
       className={cn(
-        "w-full font-normal justify-start pl-1 pr-8",
+        "w-full font-normal justify-start pl-1 pr-8 h-auto py-1.5",
         isSelected && "pointer-events-none",
       )}
     >
@@ -256,7 +255,7 @@ export const DateRangePicker = ({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full border-0 bg-white/10 font-normal text-white outline-none transition hover:bg-white/20 hover:text-white focus:bg-white/30 focus:ring-transparent focus:ring-offset-0 lg:w-auto"
+          className="w-full border-0 bg-white/10 font-normal text-white outline-none transition hover:bg-white/20 hover:text-white focus:bg-white/30 focus:ring-transparent focus:ring-offset-0 sm:w-auto"
         >
           <CalendarIcon className="mr-2 size-4" />
           <span className="tabular-nums tracking-tighter">{`${formatDate(from)}${
@@ -328,7 +327,7 @@ export const DateRangePicker = ({
             </>
           )}
         </div>
-        <div className="flex justify-end gap-2 p-3 pt-0 lg:pt-1">
+        <div className="flex justify-end gap-2 p-3 pt-0 sm:pt-1">
           <Button
             onClick={() => {
               setIsOpen(false);

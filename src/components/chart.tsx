@@ -16,18 +16,18 @@ export function Chart({ data = [] }: ChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="line-clamp-1 text-xl">収入と支出の推移</CardTitle>
+        <CardTitle>収入と支出の推移</CardTitle>
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (
-          <div className="flex h-[350px] w-full flex-col items-center justify-center gap-y-4">
+          <div className="flex h-96 w-full flex-col items-center justify-center gap-y-4 pb-8">
             <FileSearch className="size-6 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
               この期間にはデータがありません
             </p>
           </div>
         ) : (
-          <BarVariant data={data} />
+          <BarVariant data={data} height={384} />
         )}
       </CardContent>
     </Card>
@@ -38,10 +38,10 @@ export function ChartLoading() {
   return (
     <Card>
       <CardHeader>
-        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-6 w-48" />
       </CardHeader>
       <CardContent>
-        <Skeleton className="h-[350px] w-full" />
+        <Skeleton className="h-96 w-full" />
       </CardContent>
     </Card>
   );
