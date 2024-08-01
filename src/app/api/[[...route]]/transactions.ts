@@ -18,7 +18,10 @@ export const transactions = new Hono()
       "query",
       z.object({
         accountId: z.string().optional(),
-        page: z.string().optional(),
+        page: z
+          .string()
+          .optional()
+          .transform((value) => (value ? parseInt(value) : 1)),
       }),
     ),
     async (c) => {
@@ -27,10 +30,6 @@ export const transactions = new Hono()
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
-      }
-
-      if (page && /^\d+%/.test(page)) {
-        return c.json({ error: "Invalid page" }, 400);
       }
 
       const pageSize = 30;
@@ -57,7 +56,7 @@ export const transactions = new Hono()
           ),
         )
         .orderBy(desc(transaction.date))
-        .offset((Number(page ?? 1) - 1) * pageSize)
+        .offset((page - 1) * pageSize)
         .limit(pageSize);
 
       const [{ totalCount }] = await db
