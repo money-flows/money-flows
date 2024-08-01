@@ -19,7 +19,7 @@ export default function AccountsPage() {
   if (accountsQuery.isLoading) {
     return (
       <div className="space-y-4">
-        <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Skeleton className="h-9 w-16" />
           <Skeleton className="h-9 w-full lg:w-[7.5rem]" />
         </div>
@@ -30,7 +30,7 @@ export default function AccountsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <H1>口座</H1>
         <Button size="sm" onClick={onOpen}>
           <Plus className="mr-2 size-4" />
