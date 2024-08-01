@@ -1,7 +1,7 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
-import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, count, desc, eq, gt, inArray, lt, or, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -22,11 +22,16 @@ export const transactions = new Hono()
           .string()
           .optional()
           .transform((value) => (value ? parseInt(value) : 1)),
+        types: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(","))
+          .pipe(z.array(z.enum(["income", "expense"])).optional()),
       }),
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { accountId, page } = c.req.valid("query");
+      const { accountId, page, types } = c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
@@ -53,6 +58,12 @@ export const transactions = new Hono()
           and(
             eq(account.userId, auth.userId),
             accountId ? eq(transaction.accountId, accountId) : undefined,
+            or(
+              types?.includes("income") ? gt(transaction.amount, 0) : undefined,
+              types?.includes("expense")
+                ? lt(transaction.amount, 0)
+                : undefined,
+            ),
           ),
         )
         .orderBy(desc(transaction.date))
@@ -68,6 +79,12 @@ export const transactions = new Hono()
           and(
             eq(account.userId, auth.userId),
             accountId ? eq(transaction.accountId, accountId) : undefined,
+            or(
+              types?.includes("income") ? gt(transaction.amount, 0) : undefined,
+              types?.includes("expense")
+                ? lt(transaction.amount, 0)
+                : undefined,
+            ),
           ),
         );
 
