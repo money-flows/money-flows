@@ -29,11 +29,7 @@ export const transactions = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      if (!page) {
-        return c.json({ error: "Missing page" }, 400);
-      }
-
-      if (/^\d+%/.test(page)) {
+      if (page && /^\d+%/.test(page)) {
         return c.json({ error: "Invalid page" }, 400);
       }
 
@@ -61,7 +57,7 @@ export const transactions = new Hono()
           ),
         )
         .orderBy(desc(transaction.date))
-        .offset((Number(page) - 1) * pageSize)
+        .offset((Number(page ?? 1) - 1) * pageSize)
         .limit(pageSize);
 
       const [{ totalCount }] = await db
