@@ -20,6 +20,6 @@ export const columns: ColumnDef<Category>[] = [
   {
     id: "actions",
     cell: ({ row }) => <Actions id={row.original.id} />,
-    size: 32,
+    size: 64,
   },
 ];
