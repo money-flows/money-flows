@@ -9,8 +9,8 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,6 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import { useSearchTransactionsParams } from "./_hooks/use-query-params";
 
 declare module "@tanstack/react-table" {
   interface FilterFns {
@@ -58,30 +60,9 @@ export function TransactionDataTable<TData, TValue>({
   onSelectedRowsDelete,
 }: TransactionDataTableProps<TData, TValue>) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const typesStr = searchParams.get("types");
 
-  let paramTypes: string[] = [];
-  if (typesStr) {
-    paramTypes = typesStr.split(",");
-  }
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (value === "") {
-        params.delete(name);
-      } else {
-        params.set(name, value);
-      }
-
-      params.delete("page");
-
-      return params.toString();
-    },
-    [searchParams],
-  );
+  const { params, createQueryString, includesIncome, includesExpense } =
+    useSearchTransactionsParams();
 
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -112,6 +93,28 @@ export function TransactionDataTable<TData, TValue>({
       onSelectedRowsDelete?.(originalRows);
       setRowSelection({});
     }
+  };
+
+  const handleIncomeCheckedChange = (value: boolean) => {
+    const newTypes: ("income" | "expense")[] = !!value
+      ? [...params.types, "income"]
+      : params.types.filter((type) => type !== "income");
+
+    router.push(
+      "/transactions?" +
+        createQueryString({ ...params, page: 1, types: newTypes }),
+    );
+  };
+
+  const handleExpenseCheckedChange = (value: boolean) => {
+    const newTypes: ("income" | "expense")[] = !!value
+      ? [...params.types, "expense"]
+      : params.types.filter((type) => type !== "expense");
+
+    router.push(
+      "/transactions?" +
+        createQueryString({ ...params, page: 1, types: newTypes }),
+    );
   };
 
   useEffect(() => {
@@ -145,25 +148,8 @@ export function TransactionDataTable<TData, TValue>({
           <div className="flex items-center gap-2">
             <Checkbox
               id="income"
-              checked={paramTypes.includes("income")}
-              onCheckedChange={(value) => {
-                const newParamTypes = [...paramTypes];
-                if (!!value) {
-                  newParamTypes.push("income");
-                } else {
-                  const index = newParamTypes.indexOf("income");
-                  if (index !== -1) {
-                    newParamTypes.splice(index, 1);
-                  }
-                }
-
-                const newSearchParams = createQueryString(
-                  "types",
-                  newParamTypes.length === 0 ? "" : newParamTypes.join(","),
-                );
-
-                router.push("/transactions?" + newSearchParams);
-              }}
+              checked={includesIncome()}
+              onCheckedChange={handleIncomeCheckedChange}
             />
             <div className="grid gap-1.5 leading-none">
               <label
@@ -177,25 +163,8 @@ export function TransactionDataTable<TData, TValue>({
           <div className="flex items-center gap-2">
             <Checkbox
               id="expense"
-              checked={paramTypes.includes("expense")}
-              onCheckedChange={(value) => {
-                const newParamTypes = [...paramTypes];
-                if (!!value) {
-                  newParamTypes.push("expense");
-                } else {
-                  const index = newParamTypes.indexOf("expense");
-                  if (index !== -1) {
-                    newParamTypes.splice(index, 1);
-                  }
-                }
-
-                const newSearchParams = createQueryString(
-                  "types",
-                  newParamTypes.length === 0 ? "" : newParamTypes.join(","),
-                );
-
-                router.push("/transactions?" + newSearchParams);
-              }}
+              checked={includesExpense()}
+              onCheckedChange={handleExpenseCheckedChange}
             />
             <div className="grid gap-1.5 leading-none">
               <label

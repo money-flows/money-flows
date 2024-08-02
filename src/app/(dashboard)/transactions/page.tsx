@@ -2,8 +2,6 @@
 
 import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
@@ -19,39 +17,19 @@ import { useGetTransactions } from "@/features/transactions/api/use-get-transact
 import { useNewTransaction } from "@/features/transactions/hooks/use-new-transaction";
 import { range } from "@/lib/array";
 
+import { useSearchTransactionsParams } from "./_hooks/use-query-params";
 import { columns } from "./columns";
 import { TransactionDataTable } from "./transaction-data-table";
 
 export default function TransactionsPage() {
-  const searchParams = useSearchParams();
-  const accountId = searchParams.get("accountId") ?? "";
-  const page = searchParams.get("page") ?? "1";
-  const types = searchParams.get("types") ?? undefined;
+  const { params, createQueryString } = useSearchTransactionsParams();
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value === "") {
-        params.delete(name);
-      } else {
-        params.set(name, value);
-      }
-
-      return params.toString();
-    },
-    [searchParams],
-  );
-
-  const currentPageIndex = Number(page);
+  const currentPageIndex = params.page ?? 1;
 
   const { onOpen } = useNewTransaction();
 
   const deleteTransactionsMutation = useBulkDeleteTransactions();
-  const transactionsQuery = useGetTransactions({
-    accountId,
-    page,
-    types,
-  });
+  const transactionsQuery = useGetTransactions(params);
   const transactions = transactionsQuery.data?.data ?? [];
   const pageCount = transactionsQuery.data?.meta.pageCount ?? 0;
   const totalCount = transactionsQuery.data?.meta.totalCount ?? 0;
@@ -116,10 +94,12 @@ export default function TransactionsPage() {
             .map((pageIndex) => (
               <PaginationItem key={pageIndex}>
                 <PaginationLink
-                  // href={`?page=${pageIndex}`}
                   href={
                     "/transactions?" +
-                    createQueryString("page", pageIndex.toString())
+                    createQueryString({
+                      ...params,
+                      page: pageIndex,
+                    })
                   }
                   isActive={currentPageIndex === pageIndex}
                 >

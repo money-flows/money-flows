@@ -3,23 +3,22 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 
 export function useGetTransactions({
-  accountId,
   page,
+  accountId,
   types,
 }: {
-  accountId: string;
-  page: string;
-  types?: string;
+  page?: number;
+  accountId?: string;
+  types: ("income" | "expense")[];
 }) {
-  console.log("types:", types);
   const query = useQuery({
-    queryKey: ["transactions", { accountId, page, types }],
+    queryKey: ["transactions", { page, accountId, types }],
     queryFn: async () => {
       const response = await client.api.transactions.$get({
         query: {
+          page: page?.toString(),
           accountId,
-          page: page.toString(),
-          types,
+          types: types.length > 0 ? types.join(",") : undefined,
         },
       });
 
