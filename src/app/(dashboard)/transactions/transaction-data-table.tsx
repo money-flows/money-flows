@@ -9,9 +9,11 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -55,6 +57,32 @@ export function TransactionDataTable<TData, TValue>({
   totalCount,
   onSelectedRowsDelete,
 }: TransactionDataTableProps<TData, TValue>) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const typesStr = searchParams.get("types");
+
+  let paramTypes: string[] = [];
+  if (typesStr) {
+    paramTypes = typesStr.split(",");
+  }
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (value === "") {
+        params.delete(name);
+      } else {
+        params.set(name, value);
+      }
+
+      params.delete("page");
+
+      return params.toString();
+    },
+    [searchParams],
+  );
+
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
@@ -112,6 +140,75 @@ export function TransactionDataTable<TData, TValue>({
           行を削除
         </Button>
       </div>
+      <div className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="income"
+              checked={paramTypes.includes("income")}
+              onCheckedChange={(value) => {
+                const newParamTypes = [...paramTypes];
+                if (!!value) {
+                  newParamTypes.push("income");
+                } else {
+                  const index = newParamTypes.indexOf("income");
+                  if (index !== -1) {
+                    newParamTypes.splice(index, 1);
+                  }
+                }
+
+                const newSearchParams = createQueryString(
+                  "types",
+                  newParamTypes.length === 0 ? "" : newParamTypes.join(","),
+                );
+
+                router.push("/transactions?" + newSearchParams);
+              }}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="income"
+                className="line-clamp-1 inline whitespace-nowrap rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-600"
+              >
+                収入
+              </label>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="expense"
+              checked={paramTypes.includes("expense")}
+              onCheckedChange={(value) => {
+                const newParamTypes = [...paramTypes];
+                if (!!value) {
+                  newParamTypes.push("expense");
+                } else {
+                  const index = newParamTypes.indexOf("expense");
+                  if (index !== -1) {
+                    newParamTypes.splice(index, 1);
+                  }
+                }
+
+                const newSearchParams = createQueryString(
+                  "types",
+                  newParamTypes.length === 0 ? "" : newParamTypes.join(","),
+                );
+
+                router.push("/transactions?" + newSearchParams);
+              }}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="expense"
+                className="line-clamp-1 inline whitespace-nowrap rounded-md bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600"
+              >
+                支出
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>

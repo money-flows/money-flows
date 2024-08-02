@@ -3,6 +3,7 @@
 import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
@@ -22,9 +23,25 @@ import { columns } from "./columns";
 import { TransactionDataTable } from "./transaction-data-table";
 
 export default function TransactionsPage() {
-  const params = useSearchParams();
-  const accountId = params.get("accountId") ?? "";
-  const page = params.get("page") ?? "1";
+  const searchParams = useSearchParams();
+  const accountId = searchParams.get("accountId") ?? "";
+  const page = searchParams.get("page") ?? "1";
+  const types = searchParams.get("types") ?? undefined;
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value === "") {
+        params.delete(name);
+      } else {
+        params.set(name, value);
+      }
+
+      return params.toString();
+    },
+    [searchParams],
+  );
+
   const currentPageIndex = Number(page);
 
   const { onOpen } = useNewTransaction();
@@ -33,6 +50,7 @@ export default function TransactionsPage() {
   const transactionsQuery = useGetTransactions({
     accountId,
     page,
+    types,
   });
   const transactions = transactionsQuery.data?.data ?? [];
   const pageCount = transactionsQuery.data?.meta.pageCount ?? 0;
@@ -98,7 +116,11 @@ export default function TransactionsPage() {
             .map((pageIndex) => (
               <PaginationItem key={pageIndex}>
                 <PaginationLink
-                  href={`?page=${pageIndex}`}
+                  // href={`?page=${pageIndex}`}
+                  href={
+                    "/transactions?" +
+                    createQueryString("page", pageIndex.toString())
+                  }
                   isActive={currentPageIndex === pageIndex}
                 >
                   {pageIndex}
