@@ -116,10 +116,10 @@ export function TopCategoriesCardLoading() {
         {Array.from({ length: 4 }).map((_, index) => (
           <div key={index} className="space-y-1">
             <div className="flex items-center justify-between text-base">
-              <Skeleton key={index} className="h-6 w-16" />
-              <Skeleton key={index} className="h-6 w-28" />
+              <Skeleton className="h-6 w-16" />
+              <Skeleton className="h-6 w-28" />
             </div>
-            <Skeleton key={index} className="h-3 w-full" />
+            <Skeleton className="h-3 w-full" />
           </div>
         ))}
       </CardContent>
