@@ -12,7 +12,14 @@ export function useGetTransactions({
   types: ("income" | "expense")[];
 }) {
   const query = useQuery({
-    queryKey: ["transactions", { page, accountId, types }],
+    queryKey: [
+      "transactions",
+      {
+        page: page === 1 ? undefined : page,
+        accountId,
+        types: types.length === 0 ? ["income", "expense"] : types,
+      },
+    ],
     queryFn: async () => {
       const response = await client.api.transactions.$get({
         query: {
