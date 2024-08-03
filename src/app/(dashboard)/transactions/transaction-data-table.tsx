@@ -16,6 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -46,10 +53,13 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
+const SELECTED_ALL_ACCOUNTS_ID = "all";
+
 interface TransactionDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   totalCount: number;
+  accountOptions: { label: string; value: string }[];
   onSelectedRowsDelete?: (rows: TData[]) => void;
 }
 
@@ -57,6 +67,7 @@ export function TransactionDataTable<TData, TValue>({
   columns,
   data,
   totalCount,
+  accountOptions,
   onSelectedRowsDelete,
 }: TransactionDataTableProps<TData, TValue>) {
   const router = useRouter();
@@ -93,6 +104,18 @@ export function TransactionDataTable<TData, TValue>({
       onSelectedRowsDelete?.(originalRows);
       setRowSelection({});
     }
+  };
+
+  const handleAccountChange = (value: string) => {
+    const newParams = { ...params, page: 1 };
+
+    if (value === SELECTED_ALL_ACCOUNTS_ID) {
+      delete newParams.accountId;
+    } else {
+      newParams.accountId = value;
+    }
+
+    router.push("/transactions?" + createQueryString(newParams));
   };
 
   const handleIncomeCheckedChange = (value: boolean) => {
@@ -143,36 +166,60 @@ export function TransactionDataTable<TData, TValue>({
           行を削除
         </Button>
       </div>
-      <div className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="income"
-              checked={includesIncome()}
-              onCheckedChange={handleIncomeCheckedChange}
-            />
-            <div className="grid gap-1.5 leading-none">
-              <label
-                htmlFor="income"
-                className="line-clamp-1 inline whitespace-nowrap rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-600"
-              >
-                収入
-              </label>
-            </div>
+      <div className="space-y-6 rounded-md border p-4">
+        <div>
+          <div className="mb-1 text-sm font-medium">口座</div>
+          <div className="w-64">
+            <Select
+              defaultValue={params.accountId ?? SELECTED_ALL_ACCOUNTS_ID}
+              onValueChange={handleAccountChange}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={SELECTED_ALL_ACCOUNTS_ID}>すべて</SelectItem>
+                {accountOptions.map(({ value, label }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="expense"
-              checked={includesExpense()}
-              onCheckedChange={handleExpenseCheckedChange}
-            />
-            <div className="grid gap-1.5 leading-none">
-              <label
-                htmlFor="expense"
-                className="line-clamp-1 inline whitespace-nowrap rounded-md bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600"
-              >
-                支出
-              </label>
+        </div>
+        <div>
+          <div className="mb-1 text-sm font-medium">種別</div>
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="income"
+                checked={includesIncome()}
+                onCheckedChange={handleIncomeCheckedChange}
+              />
+              <div className="grid gap-1.5 leading-none">
+                <label
+                  htmlFor="income"
+                  className="line-clamp-1 inline whitespace-nowrap rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-600"
+                >
+                  収入
+                </label>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="expense"
+                checked={includesExpense()}
+                onCheckedChange={handleExpenseCheckedChange}
+              />
+              <div className="grid gap-1.5 leading-none">
+                <label
+                  htmlFor="expense"
+                  className="line-clamp-1 inline whitespace-nowrap rounded-md bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600"
+                >
+                  支出
+                </label>
+              </div>
             </div>
           </div>
         </div>

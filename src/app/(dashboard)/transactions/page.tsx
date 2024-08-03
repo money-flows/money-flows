@@ -12,6 +12,7 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { useBulkDeleteTransactions } from "@/features/transactions/api/use-bulk-delete-transactions";
 import { useGetTransactions } from "@/features/transactions/api/use-get-transactions";
 import { useNewTransaction } from "@/features/transactions/hooks/use-new-transaction";
@@ -34,13 +35,19 @@ export default function TransactionsPage() {
   const pageCount = transactionsQuery.data?.meta.pageCount ?? 0;
   const totalCount = transactionsQuery.data?.meta.totalCount ?? 0;
 
+  const accountsQuery = useGetAccounts();
+  const accountOptions = (accountsQuery.data ?? []).map((account) => ({
+    label: account.name,
+    value: account.id,
+  }));
+
   const handleDeleteSelectedRows = (rows: typeof transactions) => {
     deleteTransactionsMutation.mutate({
       ids: rows.map((row) => row.id),
     });
   };
 
-  if (transactionsQuery.isLoading) {
+  if (transactionsQuery.isLoading || accountsQuery.isLoading) {
     return (
       <div className="space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -82,6 +89,7 @@ export default function TransactionsPage() {
         columns={columns}
         data={transactions}
         totalCount={totalCount}
+        accountOptions={accountOptions}
         onSelectedRowsDelete={handleDeleteSelectedRows}
       />
       <Pagination className="text-base font-medium">
