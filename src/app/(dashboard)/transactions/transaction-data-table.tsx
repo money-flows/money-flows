@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -166,9 +167,9 @@ export function TransactionDataTable<TData, TValue>({
           行を削除
         </Button>
       </div>
-      <div className="space-y-6 rounded-md border p-4">
+      <div className="space-y-4 rounded-md border p-4">
         <div>
-          <div className="mb-1 text-sm font-medium">口座</div>
+          <Label>口座</Label>
           <div className="w-64">
             <Select
               defaultValue={params.accountId ?? SELECTED_ALL_ACCOUNTS_ID}
@@ -189,7 +190,7 @@ export function TransactionDataTable<TData, TValue>({
           </div>
         </div>
         <div>
-          <div className="mb-1 text-sm font-medium">種別</div>
+          <Label>種別</Label>
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
               <Checkbox
