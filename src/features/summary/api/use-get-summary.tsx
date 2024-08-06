@@ -1,17 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { InferRequestType } from "hono";
+import { format } from "date-fns";
 
 import { client } from "@/lib/hono";
 
-type RequestQuery = InferRequestType<typeof client.api.summary.$get>["query"];
+export function useGetSummary(from: Date, to: Date) {
+  const formattedFrom = format(from, "yyyy-MM-dd");
+  const formattedTo = format(to, "yyyy-MM-dd");
 
-export function useGetSummary(query: RequestQuery) {
   return useQuery({
     // TODO: Check if params are needed in the query key
-    queryKey: ["summary", query],
+    queryKey: ["summary", { from: formattedFrom, to: formattedTo }],
     queryFn: async () => {
       const response = await client.api.summary.$get({
-        query: query,
+        query: {
+          from: formattedFrom,
+          to: formattedTo,
+        },
       });
 
       if (!response.ok) {
