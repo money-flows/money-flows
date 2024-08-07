@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { toast } from "sonner";
 
+import { WelcomeMessage } from "@/app/(home)/_components/welcome-message";
 import { DateRange, DateRangePicker } from "@/components/ui/date-range-picker";
 import { SignedInSuspense } from "@/features/auth/components/signed-in-suspense";
 
@@ -40,6 +41,9 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto w-full max-w-screen-2xl">
+      <div className="mb-6">
+        <WelcomeMessage />
+      </div>
       <div className="mb-8">
         <DateRangePicker from={from} to={to} onUpdate={handleDateRangeChange} />
       </div>

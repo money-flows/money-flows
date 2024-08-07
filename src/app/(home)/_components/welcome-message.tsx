@@ -2,8 +2,8 @@
 
 import { useUser } from "@clerk/nextjs";
 
-import { H1 } from "./ui/h1";
-import { Skeleton } from "./ui/skeleton";
+import { H1 } from "@/components/ui/h1";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function WelcomeMessage() {
   const { user, isLoaded } = useUser();
