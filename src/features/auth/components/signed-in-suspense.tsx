@@ -1,18 +1,12 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { useUserSuspense } from "../hooks/use-user-suspense";
 
-export function SignedInSuspense({ children }: { children: React.ReactNode }) {
-  const user = useUser();
+interface SignedInSuspenseProps {
+  children: React.ReactNode;
+}
 
-  if (!user.isLoaded) {
-    throw new Promise<void>((resolve, reject) => {
-      if (user.isLoaded) {
-        resolve();
-      }
-      reject();
-    });
-  }
-
+export function SignedInSuspense({ children }: SignedInSuspenseProps) {
+  const _ = useUserSuspense();
   return <>{children}</>;
 }

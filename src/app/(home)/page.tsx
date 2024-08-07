@@ -11,6 +11,7 @@ import { SignedInSuspense } from "@/features/auth/components/signed-in-suspense"
 
 import { DataCardGrid } from "./_components/data-card-grid";
 import { DataCardGridLoading } from "./_components/data-card-grid-loading";
+import { WelcomeMessageLoading } from "./_components/welcome-message-loading";
 import { useGetSummaryParams } from "./_hooks/use-get-summary-params";
 
 const MAX_DATE_RANGE_DAYS = 365;
@@ -42,7 +43,9 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto w-full max-w-screen-2xl">
       <div className="mb-6">
-        <WelcomeMessage />
+        <Suspense fallback={<WelcomeMessageLoading />}>
+          <WelcomeMessage />
+        </Suspense>
       </div>
       <div className="mb-8">
         <DateRangePicker from={from} to={to} onUpdate={handleDateRangeChange} />
