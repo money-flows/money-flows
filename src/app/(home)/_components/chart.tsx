@@ -1,8 +1,7 @@
 import { FileSearch } from "lucide-react";
 
-import { BarVariant } from "./bar-variant";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Skeleton } from "./ui/skeleton";
+import { BarVariant } from "@/components/bar-variant";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ChartProps {
   data?: {
@@ -29,19 +28,6 @@ export function Chart({ data = [] }: ChartProps) {
         ) : (
           <BarVariant data={data} height={384} />
         )}
-      </CardContent>
-    </Card>
-  );
-}
-
-export function ChartLoading() {
-  return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-48" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-96 w-full" />
       </CardContent>
     </Card>
   );

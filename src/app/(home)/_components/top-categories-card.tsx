@@ -1,11 +1,9 @@
 import { cva, VariantProps } from "class-variance-authority";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from "@/lib/amount";
 import { formatPercentage } from "@/lib/number";
-
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Progress } from "./ui/progress";
-import { Skeleton } from "./ui/skeleton";
 
 const boxVariant = cva("shrink-0 rounded-md p-3", {
   variants: {
@@ -101,27 +99,6 @@ export function TopCategoriesCard({
             カテゴリーがありません。カテゴリーを追加してみましょう。
           </p>
         )}
-      </CardContent>
-    </Card>
-  );
-}
-
-export function TopCategoriesCardLoading() {
-  return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-28" />
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex items-center justify-between text-base">
-              <Skeleton className="h-6 w-16" />
-              <Skeleton className="h-6 w-28" />
-            </div>
-            <Skeleton className="h-3 w-full" />
-          </div>
-        ))}
       </CardContent>
     </Card>
   );

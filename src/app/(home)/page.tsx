@@ -1,44 +1,20 @@
-"use client";
-
-import { differenceInDays } from "date-fns";
-import { usePathname, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { toast } from "sonner";
 
 import { WelcomeMessage } from "@/app/(home)/_components/welcome-message";
-import { DateRange, DateRangePicker } from "@/components/ui/date-range-picker";
 import { SignedInSuspense } from "@/features/auth/components/signed-in-suspense";
 
 import { DataCardGrid } from "./_components/data-card-grid";
 import { DataCardGridLoading } from "./_components/data-card-grid-loading";
+import { SummaryDateRangePicker } from "./_components/summary-date-range-selector";
 import { WelcomeMessageLoading } from "./_components/welcome-message-loading";
-import { useGetSummaryParams } from "./_hooks/use-get-summary-params";
+import { parseSearchParams, SummarySearchParams } from "./_utils/search-params";
 
-const MAX_DATE_RANGE_DAYS = 365;
-
-export default function DashboardPage() {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const {
-    params: { from, to },
-    createQueryString,
-  } = useGetSummaryParams();
-
-  const handleDateRangeChange = ({ from, to }: DateRange) => {
-    if (!from || !to) {
-      return;
-    }
-
-    if (differenceInDays(to, from) > MAX_DATE_RANGE_DAYS) {
-      toast.error(
-        `日付の範囲は${MAX_DATE_RANGE_DAYS}日以内で入力してください。`,
-      );
-      return;
-    }
-
-    router.push(pathname + "?" + createQueryString({ from, to }));
-  };
+export default function DashboardPage({
+  searchParams,
+}: {
+  searchParams: SummarySearchParams;
+}) {
+  const { from, to } = parseSearchParams(searchParams);
 
   return (
     <div className="mx-auto w-full max-w-screen-2xl">
@@ -48,7 +24,7 @@ export default function DashboardPage() {
         </Suspense>
       </div>
       <div className="mb-8">
-        <DateRangePicker from={from} to={to} onUpdate={handleDateRangeChange} />
+        <SummaryDateRangePicker from={from} to={to} />
       </div>
       <Suspense fallback={<DataCardGridLoading />}>
         <SignedInSuspense>

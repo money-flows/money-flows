@@ -2,11 +2,12 @@
 
 import { FaArrowTrendDown, FaArrowTrendUp, FaPiggyBank } from "react-icons/fa6";
 
-import { Chart } from "@/components/chart";
-import { DataCard } from "@/components/data-card";
-import { TopCategoriesCard } from "@/components/top-categories-card";
 import { useGetSummary } from "@/features/summary/api/use-get-summary";
 import { formatDateRange } from "@/lib/date";
+
+import { Chart } from "./chart";
+import { DataCard } from "./data-card";
+import { TopCategoriesCard } from "./top-categories-card";
 
 interface DataCardGridProps {
   from: Date;

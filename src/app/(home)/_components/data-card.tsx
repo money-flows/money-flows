@@ -1,19 +1,17 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { IconType } from "react-icons";
 
-import { formatCurrency } from "@/lib/amount";
-import { formatPercentage } from "@/lib/number";
-import { cn } from "@/lib/utils";
-
-import { CountUp } from "./count-up";
+import { CountUp } from "@/components/count-up";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Skeleton } from "./ui/skeleton";
+} from "@/components/ui/card";
+import { formatCurrency } from "@/lib/amount";
+import { formatPercentage } from "@/lib/number";
+import { cn } from "@/lib/utils";
 
 const boxVariant = cva("shrink-0 rounded-md p-3", {
   variants: {
@@ -103,24 +101,6 @@ export function DataCard({
             </>
           )}
         </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-export function DataCardLoading() {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="space-y-2">
-          <Skeleton className="h-6 w-12" />
-          <Skeleton className="h-5 w-40" />
-        </div>
-        <Skeleton className="size-12" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="mb-2 h-8 w-28 shrink-0" />
-        <Skeleton className="h-5 w-52 shrink-0" />
       </CardContent>
     </Card>
   );

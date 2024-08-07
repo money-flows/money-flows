@@ -1,6 +1,6 @@
-import { ChartLoading } from "@/components/chart";
-import { DataCardLoading } from "@/components/data-card";
-import { TopCategoriesCardLoading } from "@/components/top-categories-card";
+import { ChartLoading } from "./chart-loading";
+import { DataCardLoading } from "./data-card-loading";
+import { TopCategoriesCardLoading } from "./top-categories-card-loading";
 
 export function DataCardGridLoading() {
   return (
