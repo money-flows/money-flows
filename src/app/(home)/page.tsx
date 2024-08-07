@@ -2,14 +2,14 @@
 
 import { differenceInDays } from "date-fns";
 import { usePathname, useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { toast } from "sonner";
 
-import { DataCharts } from "@/components/data-charts";
-import { DataGrid } from "@/components/data-grid";
-import { TopCategoriesGrid } from "@/components/top-categories-grid";
 import { DateRange, DateRangePicker } from "@/components/ui/date-range-picker";
-import { useGetSummary } from "@/features/summary/api/use-get-summary";
+import { SignedInSuspense } from "@/features/auth/components/signed-in-suspense";
 
+import { DataCardGrid } from "./_components/data-card-grid";
+import { DataCardGridLoading } from "./_components/data-card-grid-loading";
 import { useGetSummaryParams } from "./_hooks/use-get-summary-params";
 
 const MAX_DATE_RANGE_DAYS = 365;
@@ -22,8 +22,6 @@ export default function DashboardPage() {
     params: { from, to },
     createQueryString,
   } = useGetSummaryParams();
-
-  const { data, isLoading } = useGetSummary(from, to);
 
   const handleDateRangeChange = ({ from, to }: DateRange) => {
     if (!from || !to) {
@@ -45,9 +43,11 @@ export default function DashboardPage() {
       <div className="mb-8">
         <DateRangePicker from={from} to={to} onUpdate={handleDateRangeChange} />
       </div>
-      <DataGrid data={data} isLoading={isLoading} dateRange={{ from, to }} />
-      <TopCategoriesGrid data={data} isLoading={isLoading} />
-      <DataCharts data={data} isLoading={isLoading} />
+      <Suspense fallback={<DataCardGridLoading />}>
+        <SignedInSuspense>
+          <DataCardGrid from={from} to={to} />
+        </SignedInSuspense>
+      </Suspense>
     </div>
   );
 }

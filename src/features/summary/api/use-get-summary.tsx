@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 
 import { client } from "@/lib/hono";
@@ -7,7 +7,7 @@ export function useGetSummary(from: Date, to: Date) {
   const formattedFrom = format(from, "yyyy-MM-dd");
   const formattedTo = format(to, "yyyy-MM-dd");
 
-  return useQuery({
+  return useSuspenseQuery({
     // TODO: Check if params are needed in the query key
     queryKey: ["summary", { from: formattedFrom, to: formattedTo }],
     queryFn: async () => {
