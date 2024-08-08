@@ -1,7 +1,7 @@
-import { SignedIn } from "@clerk/nextjs";
 import { Suspense } from "react";
 
 import { WelcomeMessage } from "@/app/(home)/_components/welcome-message";
+import { SignedInSuspense } from "@/features/auth/components/signed-in-suspense";
 
 import { DataCardGrid } from "./_components/data-card-grid";
 import { DataCardGridLoading } from "./_components/data-card-grid-loading";
@@ -27,9 +27,9 @@ export default function DashboardPage({
         <SummaryDateRangePicker from={from} to={to} />
       </div>
       <Suspense fallback={<DataCardGridLoading />}>
-        <SignedIn>
+        <SignedInSuspense>
           <DataCardGrid from={from} to={to} />
-        </SignedIn>
+        </SignedInSuspense>
       </Suspense>
     </div>
   );
