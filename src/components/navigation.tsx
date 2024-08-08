@@ -18,7 +18,7 @@ const routes = [
     label: "履歴",
   },
   {
-    href: "/settings/accounts",
+    href: "/settings",
     label: "設定",
   },
 ];
