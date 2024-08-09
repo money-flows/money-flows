@@ -18,6 +18,10 @@ const routes = [
     label: "履歴",
   },
   {
+    href: "/analytics",
+    label: "分析",
+  },
+  {
     href: "/settings",
     label: "設定",
   },
