@@ -18,36 +18,21 @@ import { useGetTransactions } from "@/features/transactions/api/use-get-transact
 import { useNewTransaction } from "@/features/transactions/hooks/use-new-transaction";
 import { range } from "@/lib/array";
 
-import { useSearchTransactionsParams } from "./_hooks/use-query-params";
 import { columns } from "./columns";
+import { toQueryString, useTransactionsSearchParams } from "./search-params";
 import { TransactionDataTable } from "./transaction-data-table";
 
 export default function TransactionsPage() {
-  const { params, createQueryString } = useSearchTransactionsParams();
-
-  const currentPageIndex = params.page ?? 1;
+  const { searchParams } = useTransactionsSearchParams();
+  const { page } = searchParams;
 
   const { onOpen } = useNewTransaction();
 
-  const deleteTransactionsMutation = useBulkDeleteTransactions();
-  const transactionsQuery = useGetTransactions(params);
-  const transactions = transactionsQuery.data?.data ?? [];
-  const pageCount = transactionsQuery.data?.meta.pageCount ?? 0;
-  const totalCount = transactionsQuery.data?.meta.totalCount ?? 0;
-
+  const transactionsQuery = useGetTransactions(searchParams);
   const accountsQuery = useGetAccounts();
-  const accountOptions = (accountsQuery.data ?? []).map((account) => ({
-    label: account.name,
-    value: account.id,
-  }));
+  const deleteTransactionsMutation = useBulkDeleteTransactions();
 
-  const handleDeleteSelectedRows = (rows: typeof transactions) => {
-    deleteTransactionsMutation.mutate({
-      ids: rows.map((row) => row.id),
-    });
-  };
-
-  if (transactionsQuery.isLoading || accountsQuery.isLoading) {
+  if (transactionsQuery.isPending || accountsQuery.isPending) {
     return (
       <div className="space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -67,6 +52,25 @@ export default function TransactionsPage() {
       </div>
     );
   }
+
+  if (transactionsQuery.isError || accountsQuery.isError) {
+    return <p>エラーが発生しました。</p>;
+  }
+
+  const transactions = transactionsQuery.data.data;
+  const pageCount = transactionsQuery.data.meta.pageCount;
+  const totalCount = transactionsQuery.data.meta.totalCount;
+
+  const accountOptions = accountsQuery.data.map((account) => ({
+    label: account.name,
+    value: account.id,
+  }));
+
+  const handleDeleteSelectedRows = (rows: typeof transactions) => {
+    deleteTransactionsMutation.mutate({
+      ids: rows.map((row) => row.id),
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -95,8 +99,8 @@ export default function TransactionsPage() {
       <Pagination className="text-base font-medium">
         <PaginationContent>
           {range(
-            Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6),
-            Math.min(Math.max(currentPageIndex - 3, 1), pageCount - 6) + 7,
+            Math.min(Math.max(page - 3, 1), pageCount - 6),
+            Math.min(Math.max(page - 3, 1), pageCount - 6) + 7,
           )
             .filter((pageIndex) => pageIndex >= 1 && pageIndex <= pageCount)
             .map((pageIndex) => (
@@ -104,12 +108,12 @@ export default function TransactionsPage() {
                 <PaginationLink
                   href={
                     "/transactions?" +
-                    createQueryString({
-                      ...params,
+                    toQueryString({
+                      ...searchParams,
                       page: pageIndex,
                     })
                   }
-                  isActive={currentPageIndex === pageIndex}
+                  isActive={page === pageIndex}
                 >
                   {pageIndex}
                 </PaginationLink>

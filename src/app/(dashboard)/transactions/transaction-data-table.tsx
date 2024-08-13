@@ -32,7 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { useSearchTransactionsParams } from "./_hooks/use-query-params";
+import { toQueryString, useTransactionsSearchParams } from "./search-params";
 
 declare module "@tanstack/react-table" {
   interface FilterFns {
@@ -73,8 +73,8 @@ export function TransactionDataTable<TData, TValue>({
 }: TransactionDataTableProps<TData, TValue>) {
   const router = useRouter();
 
-  const { params, createQueryString, includesIncome, includesExpense } =
-    useSearchTransactionsParams();
+  const { searchParams, includesIncome, includesExpense } =
+    useTransactionsSearchParams();
 
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -108,36 +108,44 @@ export function TransactionDataTable<TData, TValue>({
   };
 
   const handleAccountChange = (value: string) => {
-    const newParams = { ...params, page: 1 };
+    const newSearchParams = { ...searchParams, page: 1 };
 
     if (value === SELECTED_ALL_ACCOUNTS_ID) {
-      delete newParams.accountId;
+      delete newSearchParams.accountId;
     } else {
-      newParams.accountId = value;
+      newSearchParams.accountId = value;
     }
 
-    router.push("/transactions?" + createQueryString(newParams));
+    router.push("/transactions?" + toQueryString(newSearchParams));
   };
 
   const handleIncomeCheckedChange = (value: boolean) => {
     const newTypes: ("income" | "expense")[] = !!value
-      ? [...params.types, "income"]
-      : params.types.filter((type) => type !== "income");
+      ? [...searchParams.types, "income"]
+      : searchParams.types.filter((type) => type !== "income");
 
     router.push(
       "/transactions?" +
-        createQueryString({ ...params, page: 1, types: newTypes }),
+        toQueryString({
+          ...searchParams,
+          page: 1,
+          types: newTypes,
+        }),
     );
   };
 
   const handleExpenseCheckedChange = (value: boolean) => {
     const newTypes: ("income" | "expense")[] = !!value
-      ? [...params.types, "expense"]
-      : params.types.filter((type) => type !== "expense");
+      ? [...searchParams.types, "expense"]
+      : searchParams.types.filter((type) => type !== "expense");
 
     router.push(
       "/transactions?" +
-        createQueryString({ ...params, page: 1, types: newTypes }),
+        toQueryString({
+          ...searchParams,
+          page: 1,
+          types: newTypes,
+        }),
     );
   };
 
@@ -172,7 +180,7 @@ export function TransactionDataTable<TData, TValue>({
           <Label>口座</Label>
           <div className="w-64">
             <Select
-              defaultValue={params.accountId ?? SELECTED_ALL_ACCOUNTS_ID}
+              defaultValue={searchParams.accountId ?? SELECTED_ALL_ACCOUNTS_ID}
               onValueChange={handleAccountChange}
             >
               <SelectTrigger>
@@ -225,7 +233,6 @@ export function TransactionDataTable<TData, TValue>({
           </div>
         </div>
       </div>
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>

@@ -7,7 +7,7 @@ export function useGetTransactions({
   accountId,
   types,
 }: {
-  page?: number;
+  page: number;
   accountId?: string;
   types: ("income" | "expense")[];
 }) {
@@ -15,7 +15,7 @@ export function useGetTransactions({
     queryKey: [
       "transactions",
       {
-        page: page === 1 ? undefined : page,
+        page,
         accountId,
         types: types.length === 0 ? ["income", "expense"] : types,
       },
@@ -23,7 +23,7 @@ export function useGetTransactions({
     queryFn: async () => {
       const response = await client.api.transactions.$get({
         query: {
-          page: page?.toString(),
+          page: page.toString(),
           accountId,
           types: types.length > 0 ? types.join(",") : undefined,
         },
