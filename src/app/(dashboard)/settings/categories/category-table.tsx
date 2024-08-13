@@ -19,14 +19,3 @@ export function CategoryTable() {
 
   return <DataTable columns={columns} data={categoriesQuery.data} />;
 }
-
-/* export const CategoryTable = withClientSideAuthGuard(
-  function CategoryTable() {
-    return (
-      <Suspense fallback={<CategoryTableLoading />}>
-        <CategoryTableInner />
-      </Suspense>
-    );
-  },
-  <CategoryTableLoading />,
-); */
