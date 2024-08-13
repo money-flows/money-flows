@@ -6,17 +6,16 @@ import { toast } from "sonner";
 
 import { DateRange, DateRangePicker } from "@/components/ui/date-range-picker";
 
-import {
-  summarySearchParamsToQueryString,
-  useSummarySearchParams,
-} from "./search-params";
+import { toQueryString, useSummarySearchParams } from "./search-params";
 
 const MAX_DATE_RANGE_DAYS = 365;
 
 export function SummaryDateRangePicker() {
   const router = useRouter();
   const pathname = usePathname();
-  const { from, to } = useSummarySearchParams();
+  const {
+    searchParams: { from, to },
+  } = useSummarySearchParams();
 
   const handleDateRangeChange = ({ from, to }: DateRange) => {
     if (!from || !to) {
@@ -30,9 +29,7 @@ export function SummaryDateRangePicker() {
       return;
     }
 
-    router.push(
-      pathname + "?" + summarySearchParamsToQueryString({ from, to }),
-    );
+    router.push(pathname + "?" + toQueryString({ from, to }));
   };
 
   return (

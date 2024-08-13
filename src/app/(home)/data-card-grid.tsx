@@ -17,7 +17,9 @@ import { TopCategoriesCardLoading } from "./top-categories-card-loading";
 export function DataCardGrid() {
   const user = useUser();
 
-  const { from, to } = useSummarySearchParams();
+  const {
+    searchParams: { from, to },
+  } = useSummarySearchParams();
   const summaryQuery = useGetSummary(from, to);
   const dateRangeLabel = formatDateRange({ from, to });
 
