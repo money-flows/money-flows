@@ -1,5 +1,3 @@
-"use client";
-
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { InferResponseType } from "hono";
