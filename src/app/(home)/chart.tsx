@@ -4,14 +4,14 @@ import { BarVariant } from "@/components/bar-variant";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ChartProps {
-  data?: {
+  data: {
     date: string;
     income: number;
     expenses: number;
   }[];
 }
 
-export function Chart({ data = [] }: ChartProps) {
+export function Chart({ data }: ChartProps) {
   return (
     <Card>
       <CardHeader>

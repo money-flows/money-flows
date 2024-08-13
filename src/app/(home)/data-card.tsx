@@ -47,17 +47,17 @@ type IconVariants = VariantProps<typeof iconVariant>;
 interface DataCardProps extends BoxVariants, IconVariants {
   icon: IconType;
   title: string;
-  value?: number;
+  value: number;
   dateRange: string;
-  percentageChange?: number;
+  percentageChange: number;
 }
 
 export function DataCard({
   icon: Icon,
   title,
-  value = 0,
+  value,
   dateRange,
-  percentageChange = 0,
+  percentageChange,
   variant,
 }: DataCardProps) {
   return (

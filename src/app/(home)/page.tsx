@@ -1,25 +1,20 @@
-import { WelcomeMessage } from "@/app/(home)/_components/welcome-message";
+"use client";
 
-import { DataCardGridContainer } from "./_components/data-card-grid-container";
-import { SummaryDateRangePicker } from "./_components/summary-date-range-selector";
-import { parseSearchParams, SummarySearchParams } from "./_utils/search-params";
+import { WelcomeMessage } from "@/app/(home)/welcome-message";
 
-export default function DashboardPage({
-  searchParams,
-}: {
-  searchParams: SummarySearchParams;
-}) {
-  const { from, to } = parseSearchParams(searchParams);
+import { DataCardGrid } from "./data-card-grid";
+import { SummaryDateRangePicker } from "./summary-date-range-selector";
 
+export default function DashboardPage() {
   return (
     <div className="mx-auto w-full max-w-screen-2xl">
       <div className="mb-6">
         <WelcomeMessage />
       </div>
       <div className="mb-8">
-        <SummaryDateRangePicker from={from} to={to} />
+        <SummaryDateRangePicker />
       </div>
-      <DataCardGridContainer from={from} to={to} />
+      <DataCardGrid />
     </div>
   );
 }

@@ -56,12 +56,12 @@ interface TopCategoriesCardProps
     IconVariants,
     IndicatorVariants {
   title: string;
-  categories?: { name: string; value: number; percentage: number }[];
+  categories: { name: string; value: number; percentage: number }[];
 }
 
 export function TopCategoriesCard({
   title,
-  categories = [],
+  categories,
   variant,
 }: TopCategoriesCardProps) {
   return (
