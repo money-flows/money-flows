@@ -1,3 +1,4 @@
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
@@ -11,7 +12,10 @@ export function useGetTransactions({
   accountId?: string;
   types: ("income" | "expense")[];
 }) {
-  const query = useQuery({
+  const user = useUser();
+
+  return useQuery({
+    enabled: user.isLoaded,
     queryKey: [
       "transactions",
       {
@@ -36,6 +40,4 @@ export function useGetTransactions({
       return await response.json();
     },
   });
-
-  return query;
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { FaArrowTrendDown, FaArrowTrendUp, FaPiggyBank } from "react-icons/fa6";
 
 import { useGetSummary } from "@/features/summary/api/use-get-summary";
@@ -15,15 +14,13 @@ import { TopCategoriesCard } from "./top-categories-card";
 import { TopCategoriesCardLoading } from "./top-categories-card-loading";
 
 export function DataCardGrid() {
-  const user = useUser();
-
   const {
     searchParams: { from, to },
   } = useSummarySearchParams();
   const summaryQuery = useGetSummary(from, to);
   const dateRangeLabel = formatDateRange({ from, to });
 
-  if (!user.isLoaded || summaryQuery.isPending) {
+  if (summaryQuery.isPending) {
     return (
       <>
         <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-3">

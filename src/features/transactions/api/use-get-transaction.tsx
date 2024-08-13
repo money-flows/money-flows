@@ -1,10 +1,13 @@
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
 
 export function useGetTransaction(id?: string) {
+  const user = useUser();
+
   return useQuery({
-    enabled: !!id,
+    enabled: user.isLoaded && !!id,
     queryKey: ["transaction", { id }],
     queryFn: async () => {
       const response = await client.api.transactions[":id"].$get({

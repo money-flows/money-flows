@@ -1,9 +1,13 @@
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
 
 export function useGetCategories() {
-  const query = useQuery({
+  const user = useUser();
+
+  return useQuery({
+    enabled: user.isLoaded,
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await client.api.categories.$get();
@@ -16,6 +20,4 @@ export function useGetCategories() {
       return data;
     },
   });
-
-  return query;
 }
