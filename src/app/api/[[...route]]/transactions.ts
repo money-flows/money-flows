@@ -27,11 +27,19 @@ export const transactions = new Hono()
           .optional()
           .transform((value) => value?.split(","))
           .pipe(z.array(z.enum(["income", "expense"])).optional()),
+        from: z
+          .string()
+          .optional()
+          .transform((value) => (value ? new Date(value) : undefined)),
+        to: z
+          .string()
+          .optional()
+          .transform((value) => (value ? new Date(value) : undefined)),
       }),
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { accountId, page, types } = c.req.valid("query");
+      const { accountId, page, types, from, to } = c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
@@ -64,6 +72,8 @@ export const transactions = new Hono()
                 ? lt(transaction.amount, 0)
                 : undefined,
             ),
+            from ? gt(transaction.date, from) : undefined,
+            to ? lt(transaction.date, to) : undefined,
           ),
         )
         .orderBy(desc(transaction.date))
@@ -85,6 +95,8 @@ export const transactions = new Hono()
                 ? lt(transaction.amount, 0)
                 : undefined,
             ),
+            from ? gt(transaction.date, from) : undefined,
+            to ? lt(transaction.date, to) : undefined,
           ),
         );
 
