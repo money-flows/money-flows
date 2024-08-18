@@ -3,6 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
 import { and, count, desc, eq, gt, inArray, lt, or, sql } from "drizzle-orm";
 import { Hono } from "hono";
+import groupBy from "lodash/groupBy";
 import { z } from "zod";
 
 import { db } from "@/db/drizzle";
@@ -103,6 +104,60 @@ export const transactions = new Hono()
       const pageCount = Math.ceil(totalCount / pageSize);
 
       return c.json({ data, meta: { totalCount, pageCount } });
+    },
+  )
+  .get(
+    "/monthly",
+    clerkMiddleware(),
+    zValidator(
+      "query",
+      z.object({
+        groupBy: z.enum(["year"]).optional(),
+      }),
+    ),
+    async (c) => {
+      const auth = getAuth(c);
+      const { groupBy: groupByParam } = c.req.valid("query");
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const data = await db
+        .select({
+          year: sql`EXTRACT(YEAR FROM ${transaction.date})`.mapWith(Number),
+          month: sql`EXTRACT(MONTH FROM ${transaction.date})`.mapWith(Number),
+          totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
+        })
+        .from(transaction)
+        .groupBy(
+          sql`EXTRACT(YEAR FROM ${transaction.date})`,
+          sql`EXTRACT(MONTH FROM ${transaction.date})`,
+        )
+        .orderBy(
+          desc(sql`EXTRACT(YEAR FROM ${transaction.date})`),
+          desc(sql`EXTRACT(MONTH FROM ${transaction.date})`),
+        );
+
+      if (groupByParam === "year") {
+        const groupedData = Object.entries(groupBy(data, (item) => item.year))
+          .filter(([_, items]) => items && items.length > 0)
+          .map(([year, items]) => {
+            const months = items.map(({ month, totalAmount }) => ({
+              month,
+              totalAmount,
+            }));
+
+            return {
+              year: parseInt(year),
+              months,
+            };
+          });
+
+        return c.json({ data: groupedData });
+      }
+
+      return c.json({ data });
     },
   )
   .get(
