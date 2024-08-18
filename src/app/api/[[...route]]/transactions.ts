@@ -113,11 +113,15 @@ export const transactions = new Hono()
       "query",
       z.object({
         groupBy: z.enum(["year"]).optional(),
+        years: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(",").map(Number)),
       }),
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { groupBy: groupByParam } = c.req.valid("query");
+      const { groupBy: groupByParam, years } = c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
@@ -130,6 +134,13 @@ export const transactions = new Hono()
           totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
         })
         .from(transaction)
+        .where(
+          and(
+            years
+              ? inArray(sql`EXTRACT(YEAR FROM ${transaction.date})`, years)
+              : undefined,
+          ),
+        )
         .groupBy(
           sql`EXTRACT(YEAR FROM ${transaction.date})`,
           sql`EXTRACT(MONTH FROM ${transaction.date})`,
