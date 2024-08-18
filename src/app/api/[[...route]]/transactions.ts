@@ -134,8 +134,10 @@ export const transactions = new Hono()
           totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
         })
         .from(transaction)
+        .innerJoin(account, eq(transaction.accountId, account.id))
         .where(
           and(
+            eq(account.userId, auth.userId),
             years
               ? inArray(sql`EXTRACT(YEAR FROM ${transaction.date})`, years)
               : undefined,
