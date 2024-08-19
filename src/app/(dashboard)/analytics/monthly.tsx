@@ -150,7 +150,7 @@ export function Monthly({ title, type }: MonthlyProps) {
               <Area
                 key={year}
                 dataKey={year}
-                type="natural"
+                type="linear"
                 fill={`url(#fill${year})`}
                 stroke={`var(--color-${year})`}
                 stackId="a"
