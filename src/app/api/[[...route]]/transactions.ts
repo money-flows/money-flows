@@ -3,7 +3,6 @@ import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
 import { and, count, desc, eq, gt, inArray, lt, or, sql } from "drizzle-orm";
 import { Hono } from "hono";
-import groupBy from "lodash/groupBy";
 import { z } from "zod";
 
 import { db } from "@/db/drizzle";
@@ -112,7 +111,6 @@ export const transactions = new Hono()
     zValidator(
       "query",
       z.object({
-        groupBy: z.enum(["year"]).optional(),
         years: z
           .string()
           .optional()
@@ -121,7 +119,7 @@ export const transactions = new Hono()
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { groupBy: groupByParam, years } = c.req.valid("query");
+      const { years } = c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
@@ -151,24 +149,6 @@ export const transactions = new Hono()
           desc(sql`EXTRACT(YEAR FROM ${transaction.date})`),
           desc(sql`EXTRACT(MONTH FROM ${transaction.date})`),
         );
-
-      if (groupByParam === "year") {
-        const groupedData = Object.entries(groupBy(data, (item) => item.year))
-          .filter(([_, items]) => items && items.length > 0)
-          .map(([year, items]) => {
-            const months = items.map(({ month, totalAmount }) => ({
-              month,
-              totalAmount,
-            }));
-
-            return {
-              year: parseInt(year),
-              months,
-            };
-          });
-
-        return c.json({ data: groupedData });
-      }
 
       return c.json({ data });
     },
