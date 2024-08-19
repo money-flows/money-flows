@@ -3,6 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
 import { and, count, desc, eq, gt, inArray, lt, or, sql } from "drizzle-orm";
 import { Hono } from "hono";
+import groupBy from "lodash/groupBy";
 import { z } from "zod";
 
 import { db } from "@/db/drizzle";
@@ -162,6 +163,120 @@ export const transactions = new Hono()
         );
 
       return c.json({ data });
+    },
+  )
+  .get(
+    "/monthly/by-year",
+    clerkMiddleware(),
+    zValidator(
+      "query",
+      z.object({
+        types: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(","))
+          .pipe(z.array(z.enum(["income", "expense"])).optional()),
+        years: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(",").map(Number)),
+        cumulative: z
+          .string()
+          .optional()
+          .transform((value) => value === "true"),
+      }),
+    ),
+    async (c) => {
+      const auth = getAuth(c);
+      const { types, years, cumulative } = c.req.valid("query");
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      if (years && years.length > 5) {
+        return c.json({ error: "Too many years" }, 400);
+      }
+
+      const data = await db
+        .select({
+          year: sql`EXTRACT(YEAR FROM ${transaction.date})`.mapWith(Number),
+          month: sql`EXTRACT(MONTH FROM ${transaction.date})`.mapWith(Number),
+          totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
+        })
+        .from(transaction)
+        .innerJoin(account, eq(transaction.accountId, account.id))
+        .where(
+          and(
+            eq(account.userId, auth.userId),
+            or(
+              types?.includes("income") ? gt(transaction.amount, 0) : undefined,
+              types?.includes("expense")
+                ? lt(transaction.amount, 0)
+                : undefined,
+            ),
+            years
+              ? inArray(sql`EXTRACT(YEAR FROM ${transaction.date})`, years)
+              : undefined,
+          ),
+        )
+        .groupBy(
+          sql`EXTRACT(YEAR FROM ${transaction.date})`,
+          sql`EXTRACT(MONTH FROM ${transaction.date})`,
+        )
+        .orderBy(
+          sql`EXTRACT(YEAR FROM ${transaction.date})`,
+          sql`EXTRACT(MONTH FROM ${transaction.date})`,
+        )
+        .limit(12 * 5);
+
+      const groupedByYear = Object.entries(groupBy(data, "year")).map(
+        ([year, data]) => {
+          return {
+            year: Number(year),
+            months: data.map(({ month, totalAmount }) => ({
+              month,
+              totalAmount,
+            })),
+          };
+        },
+      );
+
+      const fillMissingMonths = groupedByYear.map(({ year, months }) => {
+        const filledMonths = Array.from({ length: 12 }, (_, i) => {
+          const monthData = months.find((m) => m.month === i + 1);
+          return {
+            month: i + 1,
+            totalAmount: monthData ? monthData.totalAmount : 0,
+          };
+        });
+
+        return {
+          year,
+          months: filledMonths,
+        };
+      });
+
+      if (!cumulative) {
+        return c.json({ data: fillMissingMonths });
+      }
+
+      const cumulativeData = fillMissingMonths.map(({ year, months }) => {
+        let cumulativeAmount = 0;
+
+        return {
+          year,
+          months: months.map(({ month, totalAmount }) => {
+            cumulativeAmount += totalAmount;
+            return {
+              month,
+              totalAmount: cumulativeAmount,
+            };
+          }),
+        };
+      });
+
+      return c.json({ data: cumulativeData });
     },
   )
   .get(
