@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -13,7 +13,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetTransactionsMonthly } from "@/features/transactions/api/use-get-transactions-monthly";
+import { useGetTransactionsMonthlyByYear } from "@/features/transactions/api/use-get-transactions-monthly-by-year";
 
 interface MonthlyProps {
   title: React.ReactNode;
@@ -26,7 +26,7 @@ export function Monthly({ title, type }: MonthlyProps) {
     new Date().getFullYear() - 1,
     new Date().getFullYear() - 2,
   ]);
-  const { data, isPending, isError } = useGetTransactionsMonthly({
+  const { data, isPending, isError } = useGetTransactionsMonthlyByYear({
     types: type === "remaining" ? undefined : [type],
     years,
   });
@@ -46,31 +46,39 @@ export function Monthly({ title, type }: MonthlyProps) {
       return [];
     }
 
-    const groupByMonthData = data.data.reduce(
-      (acc, { year, month, totalAmount }) => {
-        return {
-          ...acc,
-          [month]: {
-            ...acc[month],
-            [year]: totalAmount * (type === "expense" ? -1 : 1),
-          },
-        };
-      },
-      {
-        1: { month: 1 },
-        2: { month: 2 },
-        3: { month: 3 },
-        4: { month: 4 },
-        5: { month: 5 },
-        6: { month: 6 },
-        7: { month: 7 },
-        8: { month: 8 },
-        9: { month: 9 },
-        10: { month: 10 },
-        11: { month: 11 },
-        12: { month: 12 },
-      } as Record<number, Record<number, number>>,
-    );
+    const groupByMonthData = data.data
+      .flatMap(({ year, months }) =>
+        months.map(({ month, totalAmount }) => ({
+          year,
+          month,
+          totalAmount,
+        })),
+      )
+      .reduce(
+        (acc, { year, month, totalAmount }) => {
+          return {
+            ...acc,
+            [month]: {
+              ...acc[month],
+              [year]: totalAmount * (type === "expense" ? -1 : 1),
+            },
+          };
+        },
+        {
+          1: { month: 1 },
+          2: { month: 2 },
+          3: { month: 3 },
+          4: { month: 4 },
+          5: { month: 5 },
+          6: { month: 6 },
+          7: { month: 7 },
+          8: { month: 8 },
+          9: { month: 9 },
+          10: { month: 10 },
+          11: { month: 11 },
+          12: { month: 12 },
+        } as Record<number, Record<number, number>>,
+      );
 
     return Object.values(groupByMonthData);
   }, [type, data, isPending, isError]);
@@ -102,30 +110,11 @@ export function Monthly({ title, type }: MonthlyProps) {
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
-          <AreaChart data={chartData}>
-            <defs>
-              {years.map((year) => (
-                <linearGradient
-                  key={year}
-                  id={`fill${year}`}
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="5%"
-                    stopColor={`var(--color-${year})`}
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={`var(--color-${year})`}
-                    stopOpacity={0.1}
-                  />
-                </linearGradient>
-              ))}
-            </defs>
+          <LineChart
+            accessibilityLayer
+            data={chartData}
+            margin={{ left: 12, right: 12, top: 12, bottom: 12 }}
+          >
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"
@@ -134,6 +123,14 @@ export function Monthly({ title, type }: MonthlyProps) {
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => `${value}月`}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={(value) => {
+                return `${value.toLocaleString()}円`;
+              }}
             />
             <ChartTooltip
               cursor={false}
@@ -147,17 +144,16 @@ export function Monthly({ title, type }: MonthlyProps) {
               }
             />
             {years.map((year) => (
-              <Area
+              <Line
                 key={year}
                 dataKey={year}
-                type="linear"
-                fill={`url(#fill${year})`}
+                type="monotone"
                 stroke={`var(--color-${year})`}
-                stackId="a"
+                strokeWidth={2}
               />
             ))}
             <ChartLegend content={<ChartLegendContent />} />
-          </AreaChart>
+          </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>
