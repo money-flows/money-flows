@@ -12,6 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGetTransactionsMonthly } from "@/features/transactions/api/use-get-transactions-monthly";
 
 interface MonthlyProps {
@@ -25,7 +26,7 @@ export function Monthly({ title, type }: MonthlyProps) {
     new Date().getFullYear() - 1,
     new Date().getFullYear() - 2,
   ]);
-  const { data } = useGetTransactionsMonthly({
+  const { data, isPending, isError } = useGetTransactionsMonthly({
     types: type === "remaining" ? undefined : [type],
     years,
   });
@@ -41,7 +42,7 @@ export function Monthly({ title, type }: MonthlyProps) {
   }, {}) satisfies ChartConfig;
 
   const chartData = useMemo(() => {
-    if (!data) {
+    if (isPending || isError) {
       return [];
     }
 
@@ -72,7 +73,24 @@ export function Monthly({ title, type }: MonthlyProps) {
     );
 
     return Object.values(groupByMonthData);
-  }, [type, data]);
+  }, [type, data, isPending, isError]);
+
+  if (isPending) {
+    return (
+      <Card>
+        <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+          <Skeleton className="h-[250px] w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return <p>エラーが発生しました</p>;
+  }
 
   return (
     <Card>
