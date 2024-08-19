@@ -111,6 +111,11 @@ export const transactions = new Hono()
     zValidator(
       "query",
       z.object({
+        types: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(","))
+          .pipe(z.array(z.enum(["income", "expense"])).optional()),
         years: z
           .string()
           .optional()
@@ -119,7 +124,7 @@ export const transactions = new Hono()
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { years } = c.req.valid("query");
+      const { types, years } = c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
@@ -136,6 +141,12 @@ export const transactions = new Hono()
         .where(
           and(
             eq(account.userId, auth.userId),
+            or(
+              types?.includes("income") ? gt(transaction.amount, 0) : undefined,
+              types?.includes("expense")
+                ? lt(transaction.amount, 0)
+                : undefined,
+            ),
             years
               ? inArray(sql`EXTRACT(YEAR FROM ${transaction.date})`, years)
               : undefined,

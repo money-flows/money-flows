@@ -14,13 +14,21 @@ import {
 } from "@/components/ui/chart";
 import { useGetTransactionsMonthly } from "@/features/transactions/api/use-get-transactions-monthly";
 
-export function Monthly() {
+interface MonthlyProps {
+  title: React.ReactNode;
+  type: "income" | "expense" | "remaining";
+}
+
+export function Monthly({ title, type }: MonthlyProps) {
   const [years] = useState([
     new Date().getFullYear(),
     new Date().getFullYear() - 1,
     new Date().getFullYear() - 2,
   ]);
-  const { data } = useGetTransactionsMonthly({ years });
+  const { data } = useGetTransactionsMonthly({
+    types: type === "remaining" ? undefined : [type],
+    years,
+  });
 
   const chartConfig = years.reduce((acc, year, index) => {
     return {
@@ -43,7 +51,7 @@ export function Monthly() {
           ...acc,
           [month]: {
             ...acc[month],
-            [year]: totalAmount,
+            [year]: totalAmount * (type === "expense" ? -1 : 1),
           },
         };
       },
@@ -64,12 +72,12 @@ export function Monthly() {
     );
 
     return Object.values(groupByMonthData);
-  }, [data]);
+  }, [type, data]);
 
   return (
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
-        <CardTitle>残高の推移（年間）</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer

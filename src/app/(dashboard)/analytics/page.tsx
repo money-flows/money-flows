@@ -8,9 +8,9 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-4">
       <H1>分析</H1>
-      <div>
-        <Monthly />
-      </div>
+      <Monthly title="残高の推移（年間）" type="remaining" />
+      <Monthly title="収入の推移（年間）" type="income" />
+      <Monthly title="支出の推移（年間）" type="expense" />
     </div>
   );
 }

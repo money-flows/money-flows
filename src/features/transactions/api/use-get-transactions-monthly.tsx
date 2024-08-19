@@ -3,7 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
 
-export function useGetTransactionsMonthly({ years }: { years?: number[] }) {
+export function useGetTransactionsMonthly({
+  types,
+  years,
+}: {
+  types?: ("income" | "expense")[];
+  years?: number[];
+}) {
   const user = useUser();
 
   return useQuery({
@@ -12,12 +18,14 @@ export function useGetTransactionsMonthly({ years }: { years?: number[] }) {
       "transactions",
       "monthly",
       {
+        types,
         years,
       },
     ],
     queryFn: async () => {
       const response = await client.api.transactions.monthly.$get({
         query: {
+          types: types ? types.join(",") : undefined,
           years: years ? years.join(",") : undefined,
         },
       });
