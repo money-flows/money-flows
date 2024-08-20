@@ -108,65 +108,6 @@ export const transactions = new Hono()
     },
   )
   .get(
-    "/monthly",
-    clerkMiddleware(),
-    zValidator(
-      "query",
-      z.object({
-        types: z
-          .string()
-          .optional()
-          .transform((value) => value?.split(","))
-          .pipe(z.array(z.enum(["income", "expense"])).optional()),
-        years: z
-          .string()
-          .optional()
-          .transform((value) => value?.split(",").map(Number)),
-      }),
-    ),
-    async (c) => {
-      const auth = getAuth(c);
-      const { types, years } = c.req.valid("query");
-
-      if (!auth?.userId) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
-
-      const data = await db
-        .select({
-          year: sql`EXTRACT(YEAR FROM ${transaction.date})`.mapWith(Number),
-          month: sql`EXTRACT(MONTH FROM ${transaction.date})`.mapWith(Number),
-          totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
-        })
-        .from(transaction)
-        .innerJoin(account, eq(transaction.accountId, account.id))
-        .where(
-          and(
-            eq(account.userId, auth.userId),
-            or(
-              types?.includes("income") ? gt(transaction.amount, 0) : undefined,
-              types?.includes("expense")
-                ? lt(transaction.amount, 0)
-                : undefined,
-            ),
-            years
-              ? inArray(sql`EXTRACT(YEAR FROM ${transaction.date})`, years)
-              : undefined,
-          ),
-        )
-        .groupBy(
-          sql`EXTRACT(YEAR FROM ${transaction.date})`,
-          sql`EXTRACT(MONTH FROM ${transaction.date})`,
-        )
-        .orderBy(
-          desc(sql`EXTRACT(YEAR FROM ${transaction.date})`),
-          desc(sql`EXTRACT(MONTH FROM ${transaction.date})`),
-        );
-
-      return c.json({ data });
-    },
-  )
-  .get(
     "/monthly/by-year",
     clerkMiddleware(),
     zValidator(
