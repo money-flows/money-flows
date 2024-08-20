@@ -18,9 +18,14 @@ import { useGetTransactionsMonthlyByYear } from "@/features/transactions/api/use
 interface MonthlyBarChartProps {
   title: React.ReactNode;
   type: "income" | "expense" | "remaining";
+  cumulative?: boolean;
 }
 
-export function MonthlyBarChart({ title, type }: MonthlyBarChartProps) {
+export function MonthlyBarChart({
+  title,
+  type,
+  cumulative = false,
+}: MonthlyBarChartProps) {
   const [years] = useState([
     new Date().getFullYear(),
     new Date().getFullYear() - 1,
@@ -29,6 +34,7 @@ export function MonthlyBarChart({ title, type }: MonthlyBarChartProps) {
   const { data, isPending, isError } = useGetTransactionsMonthlyByYear({
     types: type === "remaining" ? undefined : [type],
     years,
+    cumulative,
   });
 
   const chartConfig = years.reduce((acc, year, index) => {

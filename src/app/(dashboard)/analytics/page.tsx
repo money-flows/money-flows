@@ -10,11 +10,41 @@ export default function AnalyticsPage() {
     <div className="space-y-4">
       <H1>分析</H1>
       <MonthlyLineChart title="残高の推移（年間）" type="remaining" />
+      <MonthlyLineChart
+        title="残高の推移（年間の累計）"
+        type="remaining"
+        cumulative
+      />
       <MonthlyBarChart title="残高の推移（年間）" type="remaining" />
+      <MonthlyBarChart
+        title="残高の推移（年間の累計）"
+        type="remaining"
+        cumulative
+      />
       <MonthlyLineChart title="収入の推移（年間）" type="income" />
+      <MonthlyLineChart
+        title="収入の推移（年間の累計）"
+        type="income"
+        cumulative
+      />
       <MonthlyBarChart title="収入の推移（年間）" type="income" />
+      <MonthlyBarChart
+        title="収入の推移（年間の累計）"
+        type="income"
+        cumulative
+      />
       <MonthlyLineChart title="支出の推移（年間）" type="expense" />
+      <MonthlyLineChart
+        title="支出の推移（年間の累計）"
+        type="expense"
+        cumulative
+      />
       <MonthlyBarChart title="支出の推移（年間）" type="expense" />
+      <MonthlyBarChart
+        title="支出の推移（年間の累計）"
+        type="expense"
+        cumulative
+      />
     </div>
   );
 }
