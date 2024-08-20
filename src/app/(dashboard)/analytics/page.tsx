@@ -2,6 +2,8 @@
 
 import { H1 } from "@/components/ui/h1";
 
+import { DailyBarChart } from "./daily-bar-chart";
+import { DailyLineChart } from "./daily-line-chart";
 import { MonthlyBarChart } from "./monthly-bar-chart";
 import { MonthlyLineChart } from "./monthly-line-chart";
 
@@ -42,6 +44,42 @@ export default function AnalyticsPage() {
       <MonthlyBarChart title="支出の推移（年間）" type="expense" />
       <MonthlyBarChart
         title="支出の推移（年間の累計）"
+        type="expense"
+        cumulative
+      />
+      <DailyLineChart title="残高の推移（月間）" type="remaining" />
+      <DailyLineChart
+        title="残高の推移（月間の累計）"
+        type="remaining"
+        cumulative
+      />
+      <DailyBarChart title="残高の推移（月間）" type="remaining" />
+      <DailyBarChart
+        title="残高の推移（月間の累計）"
+        type="remaining"
+        cumulative
+      />
+      <DailyLineChart title="収入の推移（月間）" type="income" />
+      <DailyLineChart
+        title="収入の推移（月間の累計）"
+        type="income"
+        cumulative
+      />
+      <DailyBarChart title="収入の推移（月間）" type="income" />
+      <DailyBarChart
+        title="収入の推移（月間の累計）"
+        type="income"
+        cumulative
+      />
+      <DailyLineChart title="支出の推移（月間）" type="expense" />
+      <DailyLineChart
+        title="支出の推移（月間の累計）"
+        type="expense"
+        cumulative
+      />
+      <DailyBarChart title="支出の推移（月間）" type="expense" />
+      <DailyBarChart
+        title="支出の推移（月間の累計）"
         type="expense"
         cumulative
       />

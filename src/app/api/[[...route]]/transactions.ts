@@ -1,6 +1,7 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
+import { endOfMonth } from "date-fns";
 import { and, count, desc, eq, gt, inArray, lt, or, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import groupBy from "lodash/groupBy";
@@ -276,6 +277,141 @@ export const transactions = new Hono()
             cumulativeAmount += totalAmount;
             return {
               month,
+              totalAmount: cumulativeAmount,
+            };
+          }),
+        };
+      });
+
+      return c.json({ data: cumulativeData });
+    },
+  )
+  .get(
+    "/daily/by-month",
+    clerkMiddleware(),
+    zValidator(
+      "query",
+      z.object({
+        types: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(","))
+          .pipe(z.array(z.enum(["income", "expense"])).optional()),
+        months: z
+          .string()
+          .optional()
+          .transform((value) =>
+            value?.split(",").map((v) => {
+              const [year, month] = v.split("-");
+              return { year: Number(year), month: Number(month) };
+            }),
+          ),
+        cumulative: z
+          .string()
+          .optional()
+          .transform((value) => value === "true"),
+      }),
+    ),
+    async (c) => {
+      const auth = getAuth(c);
+      const { types, months, cumulative } = c.req.valid("query");
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const data = await db
+        .select({
+          year: sql`EXTRACT(YEAR FROM ${transaction.date})`.mapWith(Number),
+          month: sql`EXTRACT(MONTH FROM ${transaction.date})`.mapWith(Number),
+          date: sql`EXTRACT(DAY FROM ${transaction.date})`.mapWith(Number),
+          totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
+        })
+        .from(transaction)
+        .innerJoin(account, eq(transaction.accountId, account.id))
+        .where(
+          and(
+            eq(account.userId, auth.userId),
+            or(
+              types?.includes("income") ? gt(transaction.amount, 0) : undefined,
+              types?.includes("expense")
+                ? lt(transaction.amount, 0)
+                : undefined,
+            ),
+            months
+              ? or(
+                  ...months.map(({ year, month }) =>
+                    and(
+                      eq(sql`EXTRACT(YEAR FROM ${transaction.date})`, year),
+                      eq(sql`EXTRACT(MONTH FROM ${transaction.date})`, month),
+                    ),
+                  ),
+                )
+              : undefined,
+          ),
+        )
+        .groupBy(
+          sql`EXTRACT(YEAR FROM ${transaction.date})`,
+          sql`EXTRACT(MONTH FROM ${transaction.date})`,
+          sql`EXTRACT(DAY FROM ${transaction.date})`,
+        )
+        .orderBy(
+          sql`EXTRACT(YEAR FROM ${transaction.date})`,
+          sql`EXTRACT(MONTH FROM ${transaction.date})`,
+          sql`EXTRACT(DAY FROM ${transaction.date})`,
+        );
+
+      const groupedByMonth = Object.entries(
+        groupBy(
+          data.map((item) => ({
+            yearAndMonth: `${item.year}-${item.month}`,
+            ...item,
+          })),
+          "yearAndMonth",
+        ),
+      ).map(([_, data]) => {
+        return {
+          year: data[0].year,
+          month: data[0].month,
+          dates: data.map(({ date, totalAmount }) => ({
+            date,
+            totalAmount,
+          })),
+        };
+      });
+
+      const fillMissingDates = groupedByMonth.map(({ year, month, dates }) => {
+        const filledLastDate = endOfMonth(new Date(year, month - 1)).getDate();
+
+        const filledDates = Array.from({ length: filledLastDate }, (_, i) => {
+          const dateData = dates.find((d) => d.date === i + 1);
+          return {
+            date: i + 1,
+            totalAmount: dateData ? dateData.totalAmount : 0,
+          };
+        });
+
+        return {
+          year,
+          month,
+          dates: filledDates,
+        };
+      });
+
+      if (!cumulative) {
+        return c.json({ data: fillMissingDates });
+      }
+
+      const cumulativeData = fillMissingDates.map(({ year, month, dates }) => {
+        let cumulativeAmount = 0;
+
+        return {
+          year,
+          month,
+          dates: dates.map(({ date, totalAmount }) => {
+            cumulativeAmount += totalAmount;
+            return {
+              date,
               totalAmount: cumulativeAmount,
             };
           }),
