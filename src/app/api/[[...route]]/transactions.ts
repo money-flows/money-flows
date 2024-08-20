@@ -243,7 +243,13 @@ export const transactions = new Hono()
       );
 
       const fillMissingMonths = groupedByYear.map(({ year, months }) => {
-        const filledMonths = Array.from({ length: 12 }, (_, i) => {
+        const thisYear = new Date().getFullYear();
+        const thisMonth = new Date().getMonth() + 1;
+
+        const filledLastMonth =
+          year > thisYear ? 0 : year === thisYear ? thisMonth : 12;
+
+        const filledMonths = Array.from({ length: filledLastMonth }, (_, i) => {
           const monthData = months.find((m) => m.month === i + 1);
           return {
             month: i + 1,
