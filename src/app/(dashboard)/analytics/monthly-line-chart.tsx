@@ -15,12 +15,12 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetTransactionsMonthlyByYear } from "@/features/transactions/api/use-get-transactions-monthly-by-year";
 
-interface MonthlyProps {
+interface MonthlyLineChartProps {
   title: React.ReactNode;
   type: "income" | "expense" | "remaining";
 }
 
-export function Monthly({ title, type }: MonthlyProps) {
+export function MonthlyLineChart({ title, type }: MonthlyLineChartProps) {
   const [years] = useState([
     new Date().getFullYear(),
     new Date().getFullYear() - 1,

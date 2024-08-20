@@ -2,15 +2,19 @@
 
 import { H1 } from "@/components/ui/h1";
 
-import { Monthly } from "./monthly";
+import { MonthlyBarChart } from "./monthly-bar-chart";
+import { MonthlyLineChart } from "./monthly-line-chart";
 
 export default function AnalyticsPage() {
   return (
     <div className="space-y-4">
       <H1>分析</H1>
-      <Monthly title="残高の推移（年間）" type="remaining" />
-      <Monthly title="収入の推移（年間）" type="income" />
-      <Monthly title="支出の推移（年間）" type="expense" />
+      <MonthlyLineChart title="残高の推移（年間）" type="remaining" />
+      <MonthlyBarChart title="残高の推移（年間）" type="remaining" />
+      <MonthlyLineChart title="収入の推移（年間）" type="income" />
+      <MonthlyBarChart title="収入の推移（年間）" type="income" />
+      <MonthlyLineChart title="支出の推移（年間）" type="expense" />
+      <MonthlyBarChart title="支出の推移（年間）" type="expense" />
     </div>
   );
 }
