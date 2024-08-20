@@ -143,9 +143,9 @@ export function DailyLineChart({
               <Line
                 key={`${year}-${month}`}
                 dataKey={`${year}-${month}`}
-                type="monotone"
                 stroke={`var(--color-${year}-${month})`}
                 strokeWidth={2}
+                dot={false}
               />
             ))}
             <ChartLegend content={<ChartLegendContent />} />

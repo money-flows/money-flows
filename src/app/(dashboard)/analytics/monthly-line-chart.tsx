@@ -153,9 +153,9 @@ export function MonthlyLineChart({
               <Line
                 key={year}
                 dataKey={year}
-                type="monotone"
                 stroke={`var(--color-${year})`}
                 strokeWidth={2}
+                dot={false}
               />
             ))}
             <ChartLegend content={<ChartLegendContent />} />
