@@ -13,7 +13,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetTransactionsDailyByMonth } from "@/features/transactions/api/use-get-transactions-daily-by-month";
+import { useGetTransactionsDaily } from "@/features/transactions/api/use-get-transactions-daily";
 
 interface DailyBarChartProps {
   title: React.ReactNode;
@@ -31,10 +31,10 @@ export function DailyBarChart({
     { year: new Date().getFullYear(), month: new Date().getMonth() },
     { year: new Date().getFullYear(), month: new Date().getMonth() - 1 },
   ]);
-  const { data, isPending, isError } = useGetTransactionsDailyByMonth({
+  const { data, isPending, isError } = useGetTransactionsDaily({
     types: type === "remaining" ? undefined : [type],
     months,
-    cumulative,
+    monthlyCumulative: cumulative,
   });
 
   const chartConfig = months.reduce((acc, { year, month }, index) => {
@@ -52,29 +52,20 @@ export function DailyBarChart({
       return [];
     }
 
-    const groupByMonthData = data.data
-      .flatMap(({ year, month, dates }) =>
-        dates.map(({ date, totalAmount }) => ({
-          year,
-          month,
-          date,
-          totalAmount,
-        })),
-      )
-      .reduce(
-        (acc, { year, month, date, totalAmount }) => {
-          return {
-            ...acc,
-            [date]: {
-              ...acc[date],
-              [`${year}-${month}`]: totalAmount * (type === "expense" ? -1 : 1),
-            },
-          };
-        },
-        Object.fromEntries(
-          Array.from({ length: 31 }, (_, i) => [i + 1, { date: i + 1 }]),
-        ) as Record<number, Record<number, number>>,
-      );
+    const groupByMonthData = data.data.reduce(
+      (acc, { year, month, date, totalAmount }) => {
+        return {
+          ...acc,
+          [date]: {
+            ...acc[date],
+            [`${year}-${month}`]: totalAmount * (type === "expense" ? -1 : 1),
+          },
+        };
+      },
+      Object.fromEntries(
+        Array.from({ length: 31 }, (_, i) => [i + 1, { date: i + 1 }]),
+      ) as Record<number, Record<number, number>>,
+    );
 
     return Object.values(groupByMonthData);
   }, [type, data, isPending, isError]);

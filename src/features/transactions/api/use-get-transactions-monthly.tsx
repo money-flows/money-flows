@@ -3,14 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
 
-export function useGetTransactionsDailyByMonth({
+export function useGetTransactionsMonthly({
   types,
-  months,
-  cumulative,
+  years,
+  yearlyCumulative,
 }: {
   types?: ("income" | "expense")[];
-  months?: { year: number; month: number }[];
-  cumulative?: boolean;
+  years?: number[];
+  yearlyCumulative?: boolean;
 }) {
   const user = useUser();
 
@@ -18,27 +18,24 @@ export function useGetTransactionsDailyByMonth({
     enabled: user.isLoaded,
     queryKey: [
       "transactions",
-      "daily",
-      "by-month",
+      "monthly",
       {
         types,
-        months,
-        cumulative,
+        years,
+        yearlyCumulative,
       },
     ],
     queryFn: async () => {
-      const response = await client.api.transactions.daily["by-month"].$get({
+      const response = await client.api.transactions.aggregations.monthly.$get({
         query: {
           types: types ? types.join(",") : undefined,
-          months: months
-            ? months.map(({ year, month }) => `${year}-${month}`).join(",")
-            : undefined,
-          cumulative: cumulative ? "true" : "false",
+          years: years ? years.join(",") : undefined,
+          yearly_cumulative: yearlyCumulative ? "true" : "false",
         },
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch transactions daily");
+        throw new Error("Failed to fetch transactions monthly");
       }
 
       return await response.json();

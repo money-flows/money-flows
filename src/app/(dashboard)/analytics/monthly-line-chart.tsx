@@ -13,7 +13,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetTransactionsMonthlyByYear } from "@/features/transactions/api/use-get-transactions-monthly-by-year";
+import { useGetTransactionsMonthly } from "@/features/transactions/api/use-get-transactions-monthly";
 
 interface MonthlyLineChartProps {
   title: React.ReactNode;
@@ -31,10 +31,10 @@ export function MonthlyLineChart({
     new Date().getFullYear() - 1,
     new Date().getFullYear() - 2,
   ]);
-  const { data, isPending, isError } = useGetTransactionsMonthlyByYear({
+  const { data, isPending, isError } = useGetTransactionsMonthly({
     types: type === "remaining" ? undefined : [type],
     years,
-    cumulative,
+    yearlyCumulative: cumulative,
   });
 
   const chartConfig = years.reduce((acc, year, index) => {
@@ -52,39 +52,31 @@ export function MonthlyLineChart({
       return [];
     }
 
-    const groupByMonthData = data.data
-      .flatMap(({ year, months }) =>
-        months.map(({ month, totalAmount }) => ({
-          year,
-          month,
-          totalAmount,
-        })),
-      )
-      .reduce(
-        (acc, { year, month, totalAmount }) => {
-          return {
-            ...acc,
-            [month]: {
-              ...acc[month],
-              [year]: totalAmount * (type === "expense" ? -1 : 1),
-            },
-          };
-        },
-        {
-          1: { month: 1 },
-          2: { month: 2 },
-          3: { month: 3 },
-          4: { month: 4 },
-          5: { month: 5 },
-          6: { month: 6 },
-          7: { month: 7 },
-          8: { month: 8 },
-          9: { month: 9 },
-          10: { month: 10 },
-          11: { month: 11 },
-          12: { month: 12 },
-        } as Record<number, Record<number, number>>,
-      );
+    const groupByMonthData = data.data.reduce(
+      (acc, { year, month, totalAmount }) => {
+        return {
+          ...acc,
+          [month]: {
+            ...acc[month],
+            [year]: totalAmount * (type === "expense" ? -1 : 1),
+          },
+        };
+      },
+      {
+        1: { month: 1 },
+        2: { month: 2 },
+        3: { month: 3 },
+        4: { month: 4 },
+        5: { month: 5 },
+        6: { month: 6 },
+        7: { month: 7 },
+        8: { month: 8 },
+        9: { month: 9 },
+        10: { month: 10 },
+        11: { month: 11 },
+        12: { month: 12 },
+      } as Record<number, Record<number, number>>,
+    );
 
     return Object.values(groupByMonthData);
   }, [type, data, isPending, isError]);
