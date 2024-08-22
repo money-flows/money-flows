@@ -340,6 +340,7 @@ const aggregations = new Hono()
 
       const data = await db
         .select({
+          categoryId: category.id,
           category: category.name,
           totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
         })
