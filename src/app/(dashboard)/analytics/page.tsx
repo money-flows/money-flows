@@ -2,6 +2,7 @@
 
 import { H1 } from "@/components/ui/h1";
 
+import { ByCategoryBarChart } from "./by-category-bar-chart";
 import { DailyBarChart } from "./daily-bar-chart";
 import { DailyLineChart } from "./daily-line-chart";
 import { MonthlyBarChart } from "./monthly-bar-chart";
@@ -83,6 +84,8 @@ export default function AnalyticsPage() {
         type="expense"
         cumulative
       />
+      <ByCategoryBarChart title="カテゴリ別の収入" type="income" />
+      <ByCategoryBarChart title="カテゴリ別の支出" type="expense" />
     </div>
   );
 }
