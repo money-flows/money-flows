@@ -308,6 +308,62 @@ const aggregations = new Hono()
 
       return c.json({ data: cumulativeData });
     },
+  )
+  .get(
+    "/by-category",
+    clerkMiddleware(),
+    zValidator(
+      "query",
+      z.object({
+        types: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(","))
+          .pipe(z.array(z.enum(["income", "expense"])).optional()),
+        from: z
+          .string()
+          .optional()
+          .transform((value) => (value ? new Date(value) : undefined)),
+        to: z
+          .string()
+          .optional()
+          .transform((value) => (value ? new Date(value) : undefined)),
+      }),
+    ),
+    async (c) => {
+      const auth = getAuth(c);
+      const { types, from, to } = c.req.valid("query");
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const data = await db
+        .select({
+          category: category.name,
+          totalAmount: sql`SUM(${transaction.amount})`.mapWith(Number),
+        })
+        .from(transaction)
+        .innerJoin(account, eq(transaction.accountId, account.id))
+        .leftJoin(category, eq(transaction.categoryId, category.id))
+        .where(
+          and(
+            eq(account.userId, auth.userId),
+            or(
+              types?.includes("income") ? gt(transaction.amount, 0) : undefined,
+              types?.includes("expense")
+                ? lt(transaction.amount, 0)
+                : undefined,
+            ),
+            from ? gt(transaction.date, from) : undefined,
+            to ? lt(transaction.date, to) : undefined,
+          ),
+        )
+        .groupBy(category.id)
+        .orderBy(desc(sql`SUM(${transaction.amount})`));
+
+      return c.json({ data });
+    },
   );
 
 export const transactions = new Hono()
