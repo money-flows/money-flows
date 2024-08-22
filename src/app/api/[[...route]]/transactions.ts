@@ -361,7 +361,7 @@ const aggregations = new Hono()
           ),
         )
         .groupBy(category.id)
-        .orderBy(desc(sql`SUM(${transaction.amount})`));
+        .orderBy(desc(sql`ABS(SUM(${transaction.amount}))`));
 
       return c.json({ data });
     },
