@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -87,6 +87,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
             layout="vertical"
             margin={{
               left: 0,
+              right: 64,
             }}
           >
             <YAxis
@@ -99,12 +100,26 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
                 chartConfig[value as keyof typeof chartConfig]?.label
               }
             />
-            <XAxis dataKey="totalAmount" type="number" hide />
+            <XAxis
+              dataKey="totalAmount"
+              type="number"
+              domain={[0, chartData[0].totalAmount]}
+              hide
+            />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="totalAmount" layout="vertical" radius={5} />
+            <Bar dataKey="totalAmount" layout="vertical" radius={5}>
+              <LabelList
+                dataKey="totalAmount"
+                position="right"
+                offset={8}
+                className="fill-foreground"
+                fontSize={12}
+                formatter={(value: number) => value.toLocaleString()}
+              />
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>
