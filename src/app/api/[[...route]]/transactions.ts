@@ -408,6 +408,7 @@ export const transactions = new Hono()
         .select({
           id: transaction.id,
           amount: transaction.amount,
+          description: transaction.description,
           counterparty: transaction.counterparty,
           date: transaction.date,
           memo: transaction.memo,

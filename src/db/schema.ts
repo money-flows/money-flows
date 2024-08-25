@@ -29,6 +29,7 @@ export const insertCategorySchema = createInsertSchema(category);
 export const transaction = pgTable("transaction", {
   id: text("id").primaryKey(),
   amount: integer("amount").notNull(),
+  description: text("description"),
   counterparty: text("counterparty"),
   date: timestamp("date", { mode: "date" }).notNull(),
   accountId: text("account_id")

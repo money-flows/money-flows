@@ -50,6 +50,12 @@ export const columns: ColumnDef<Transaction>[] = [
     ),
   },
   {
+    accessorKey: "description",
+    header: "内容",
+    minSize: 96,
+    filterFn: "fuzzy",
+  },
+  {
     accessorKey: "amount",
     header: "金額",
     cell: ({ row }) => (
