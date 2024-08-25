@@ -15,6 +15,13 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetTransactionsMonthly } from "@/features/transactions/api/use-get-transactions-monthly";
 
+function yAxisTickFormatter(value: number) {
+  const formatter = new Intl.NumberFormat("ja-JP", {
+    notation: "compact",
+  });
+  return `${formatter.format(value)}円`;
+}
+
 interface MonthlyLineChartProps {
   title: React.ReactNode;
   type: "income" | "expense" | "remaining";
@@ -126,9 +133,7 @@ export function MonthlyLineChart({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => {
-                return `${value.toLocaleString()}円`;
-              }}
+              tickFormatter={yAxisTickFormatter}
             />
             <ChartTooltip
               cursor={false}
