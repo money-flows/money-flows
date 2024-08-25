@@ -13,6 +13,13 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetTransactionsByCategory } from "@/features/transactions/api/use-get-transactions-by-category";
 
+function labelListFormatter(value: number) {
+  const formatter = new Intl.NumberFormat("ja-JP", {
+    notation: "compact",
+  });
+  return formatter.format(value);
+}
+
 interface ByCategoryBarChartProps {
   title: React.ReactNode;
   type: "income" | "expense" | "remaining";
@@ -87,7 +94,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
             layout="vertical"
             margin={{
               left: 0,
-              right: 64,
+              right: 56,
             }}
           >
             <YAxis
@@ -117,7 +124,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
                 offset={8}
                 className="fill-foreground"
                 fontSize={12}
-                formatter={(value: number) => value.toLocaleString()}
+                formatter={labelListFormatter}
               />
             </Bar>
           </BarChart>
