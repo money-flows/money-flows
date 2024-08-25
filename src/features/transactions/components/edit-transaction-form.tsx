@@ -43,6 +43,7 @@ export const EditTransactionForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: initialValues.amount,
+      description: initialValues.description,
       counterparty: initialValues.counterparty,
       date: initialValues.date,
       memo: initialValues.memo,
@@ -57,6 +58,7 @@ export const EditTransactionForm = ({
     onSubmit({
       ...values,
       categoryId: values.categoryId === "" ? null : values.categoryId,
+      description: values.description === "" ? null : values.description,
       memo: values.memo === "" ? null : values.memo,
       amount: parseInt(values.amount),
       date: format(values.date, "yyyy-MM-dd"),
@@ -81,6 +83,18 @@ export const EditTransactionForm = ({
                   onChange={field.onChange}
                   disabled={disabled}
                 />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="description"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>内容</FormLabel>
+              <FormControl>
+                <Textarea disabled={disabled} {...field} />
               </FormControl>
             </FormItem>
           )}

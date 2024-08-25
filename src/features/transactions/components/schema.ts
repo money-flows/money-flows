@@ -4,6 +4,7 @@ import { insertTransactionSchema } from "@/app/api/[[...route]]/schema";
 
 export const formSchema = z.object({
   amount: z.string(),
+  description: z.string(),
   counterparty: z.string(),
   date: z.coerce.date(),
   memo: z.string(),

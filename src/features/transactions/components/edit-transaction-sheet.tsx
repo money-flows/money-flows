@@ -71,6 +71,7 @@ export function EditTransactionSheet() {
               categoryId: transactionQuery.data.categoryId ?? "",
               amount: transactionQuery.data.amount.toString(),
               date: new Date(transactionQuery.data.date),
+              description: transactionQuery.data.description ?? "",
               counterparty: transactionQuery.data.counterparty ?? "",
               memo: transactionQuery.data.memo ?? "",
             }}
