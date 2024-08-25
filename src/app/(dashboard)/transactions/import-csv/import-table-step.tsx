@@ -22,7 +22,7 @@ import { client } from "@/lib/hono";
 import { ImportTable, TableData } from "./import-table";
 import { useImportCsvStore } from "./use-import-csv-store";
 
-const REQUIRED_OPTIONS = ["amount", "date", "counterparty"];
+const REQUIRED_OPTIONS = ["amount", "date"];
 
 export const DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 
