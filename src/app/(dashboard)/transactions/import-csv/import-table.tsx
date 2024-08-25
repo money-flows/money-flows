@@ -45,6 +45,10 @@ interface ImportTableProps {
 
 const OPTIONS = [
   {
+    label: "内容",
+    value: "description",
+  },
+  {
     label: "金額",
     value: "amount",
   },
