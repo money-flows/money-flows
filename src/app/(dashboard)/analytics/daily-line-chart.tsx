@@ -30,6 +30,8 @@ export function DailyLineChart({
     { year: new Date().getFullYear(), month: new Date().getMonth() + 1 },
     { year: new Date().getFullYear(), month: new Date().getMonth() },
     { year: new Date().getFullYear(), month: new Date().getMonth() - 1 },
+    { year: new Date().getFullYear(), month: new Date().getMonth() - 2 },
+    { year: new Date().getFullYear(), month: new Date().getMonth() - 3 },
   ]);
   const { data, isPending, isError } = useGetTransactionsDaily({
     types: type === "remaining" ? undefined : [type],
