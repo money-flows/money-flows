@@ -53,7 +53,6 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: "description",
     header: "内容",
     minSize: 96,
-    filterFn: "fuzzy",
   },
   {
     accessorKey: "amount",
@@ -86,25 +85,21 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "category",
     header: "カテゴリー",
-    filterFn: "fuzzy",
   },
   {
     accessorKey: "counterparty",
     header: "取引先",
     minSize: 96,
-    filterFn: "fuzzy",
   },
   {
     accessorKey: "account",
     header: "口座",
     minSize: 96,
-    filterFn: "fuzzy",
   },
   {
     accessorKey: "memo",
     header: "メモ",
     minSize: 96,
-    filterFn: "fuzzy",
   },
   {
     id: "actions",

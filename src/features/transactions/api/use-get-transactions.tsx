@@ -5,10 +5,12 @@ import { client } from "@/lib/hono";
 
 export function useGetTransactions({
   page,
+  q,
   accountId,
   types,
 }: {
   page: number;
+  q?: string;
   accountId?: string;
   types: ("income" | "expense")[];
 }) {
@@ -20,6 +22,7 @@ export function useGetTransactions({
       "transactions",
       {
         page,
+        q,
         accountId,
         types: types.length === 0 ? ["income", "expense"] : types,
       },
@@ -28,6 +31,7 @@ export function useGetTransactions({
       const response = await client.api.transactions.$get({
         query: {
           page: page.toString(),
+          q,
           accountId,
           types: types.length > 0 ? types.join(",") : undefined,
         },

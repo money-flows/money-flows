@@ -1,12 +1,9 @@
 "use client";
 
-import { RankingInfo, rankItem } from "@tanstack/match-sorter-utils";
 import {
   ColumnDef,
-  FilterFn,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
@@ -34,26 +31,6 @@ import {
 
 import { toQueryString, useTransactionsSearchParams } from "./search-params";
 
-declare module "@tanstack/react-table" {
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>;
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo;
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value);
-
-  addMeta({
-    itemRank,
-  });
-
-  return itemRank.passed;
-};
-
 const SELECTED_ALL_ACCOUNTS_ID = "all";
 
 interface TransactionDataTableProps<TData, TValue> {
@@ -76,7 +53,7 @@ export function TransactionDataTable<TData, TValue>({
   const { searchParams, includesIncome, includesExpense } =
     useTransactionsSearchParams();
 
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [searchValue, setSearchValue] = useState(searchParams.q ?? "");
   const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
@@ -86,18 +63,24 @@ export function TransactionDataTable<TData, TValue>({
     manualPagination: true,
     rowCount: totalCount,
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    getFilteredRowModel: getFilteredRowModel(),
     state: {
-      globalFilter,
       rowSelection,
-    },
-    filterFns: {
-      fuzzy: fuzzyFilter,
     },
   });
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
+
+  const handleSearch = () => {
+    const newSearchParams = { ...searchParams, page: 1 };
+
+    if (searchValue === "") {
+      delete newSearchParams.q;
+    } else {
+      newSearchParams.q = searchValue;
+    }
+
+    router.push("/transactions?" + toQueryString(newSearchParams));
+  };
 
   const handleSelectedRowsDelete = () => {
     if (onSelectedRowsDelete) {
@@ -156,12 +139,15 @@ export function TransactionDataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <Input
-          placeholder="検索"
-          value={globalFilter ?? ""}
-          onChange={(event) => setGlobalFilter(String(event.target.value))}
-          className="w-full sm:max-w-sm"
-        />
+        <div className="flex w-full items-center gap-2 sm:max-w-sm">
+          <Input
+            placeholder="検索"
+            value={searchValue}
+            onChange={(event) => setSearchValue(String(event.target.value))}
+            className="w-full"
+          />
+          <Button onClick={handleSearch}>検索</Button>
+        </div>
         <Button
           variant="outline"
           disabled={!selectedRows.length}

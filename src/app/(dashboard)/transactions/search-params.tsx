@@ -2,6 +2,7 @@ import { useSearchParams } from "next/navigation";
 
 interface TransactionsSearchParams {
   page: number;
+  q?: string;
   accountId?: string;
   types: ("income" | "expense")[];
 }
@@ -20,6 +21,7 @@ export function useTransactionsSearchParams(): UseTransactionsSearchParamsResult
     ? parseInt(pageQueryString)
     : 1;
 
+  const q = searchParams.get("q") ?? undefined;
   const accountId = searchParams.get("accountId") ?? undefined;
 
   const types =
@@ -32,7 +34,7 @@ export function useTransactionsSearchParams(): UseTransactionsSearchParamsResult
   const includesExpense = () => types.includes("expense");
 
   return {
-    searchParams: { page, accountId, types },
+    searchParams: { page, q, accountId, types },
     includesIncome,
     includesExpense,
   };
@@ -42,6 +44,10 @@ export function toQueryString(searchParams: TransactionsSearchParams) {
   const params = new URLSearchParams();
 
   params.set("page", searchParams.page.toString());
+
+  if (searchParams.q) {
+    params.set("q", searchParams.q);
+  }
 
   if (searchParams.accountId) {
     params.set("accountId", searchParams.accountId);
