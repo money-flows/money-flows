@@ -31,7 +31,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
     const chartData = data.data.map(({ categoryId, category, totalAmount }) => {
       return {
         categoryId: categoryId ?? "null",
-        category,
+        category: category ?? "未分類",
         totalAmount: totalAmount * (type === "expense" ? -1 : 1),
         fill: `var(--color-${categoryId ?? "null"})`,
       };
@@ -62,7 +62,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
       return {
         ...acc,
         [categoryId ?? "null"]: {
-          label: `${category}`,
+          label: `${category ?? "未分類"}`,
           color: `hsl(var(--chart-${index + 1}))`,
         },
       };
