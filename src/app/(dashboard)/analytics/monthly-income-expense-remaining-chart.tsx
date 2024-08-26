@@ -169,6 +169,7 @@ export function MonthlyIncomeExpenseRemainingChart({
             data={chartData}
             margin={{ left: 12, right: 12, top: 12, bottom: 12 }}
             barGap="-78.5%"
+            maxBarSize={48}
           >
             <CartesianGrid vertical={false} />
             <XAxis
