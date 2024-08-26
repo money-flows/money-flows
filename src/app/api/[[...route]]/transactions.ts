@@ -436,12 +436,14 @@ export const transactions = new Hono()
           and(
             eq(account.userId, auth.userId),
             accountId ? eq(transaction.accountId, accountId) : undefined,
-            or(
-              like(transaction.description, `%${q}%`),
-              like(transaction.counterparty, `%${q}%`),
-              like(transaction.memo, `%${q}%`),
-              like(category.name, `%${q}%`),
-            ),
+            q
+              ? or(
+                  like(transaction.description, `%${q}%`),
+                  like(transaction.counterparty, `%${q}%`),
+                  like(transaction.memo, `%${q}%`),
+                  like(category.name, `%${q}%`),
+                )
+              : undefined,
             or(
               types?.includes("income") ? gt(transaction.amount, 0) : undefined,
               types?.includes("expense")
@@ -465,12 +467,14 @@ export const transactions = new Hono()
           and(
             eq(account.userId, auth.userId),
             accountId ? eq(transaction.accountId, accountId) : undefined,
-            or(
-              like(transaction.description, `%${q}%`),
-              like(transaction.counterparty, `%${q}%`),
-              like(transaction.memo, `%${q}%`),
-              like(category.name, `%${q}%`),
-            ),
+            q
+              ? or(
+                  like(transaction.description, `%${q}%`),
+                  like(transaction.counterparty, `%${q}%`),
+                  like(transaction.memo, `%${q}%`),
+                  like(category.name, `%${q}%`),
+                )
+              : undefined,
             or(
               types?.includes("income") ? gt(transaction.amount, 0) : undefined,
               types?.includes("expense")
