@@ -1,10 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { Step, StepItem, Stepper } from "@/components/ui/stepper";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 
 import { ImportTableStep } from "./import-table-step";
 import { UploadStep } from "./upload-step";
+import { useImportCsvStore } from "./use-import-csv-store";
 
 const STEPS = [
   { label: "CSVのアップロード" },
@@ -13,6 +16,11 @@ const STEPS = [
 
 export default function ImportCsvPage() {
   const accountsQuery = useGetAccounts();
+  const { reset } = useImportCsvStore();
+
+  useEffect(() => {
+    return () => reset();
+  }, [reset]);
 
   if (accountsQuery.isLoading) {
     return null;

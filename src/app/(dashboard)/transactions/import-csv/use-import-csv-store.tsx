@@ -7,12 +7,18 @@ interface ImportCsvState {
   setContent: (content: string | undefined) => void;
   isAutoDetectAmountBySign: CheckedState;
   setIsAutoDetectAmountBySign: (value: CheckedState) => void;
+  reset: () => void;
 }
 
-export const useImportCsvStore = create<ImportCsvState>((set) => ({
+const defaultState = {
   content: undefined,
-  setContent: (content) => set({ content }),
   isAutoDetectAmountBySign: false,
+};
+
+export const useImportCsvStore = create<ImportCsvState>((set) => ({
+  ...defaultState,
+  setContent: (content) => set({ content }),
   setIsAutoDetectAmountBySign: (value) =>
     set({ isAutoDetectAmountBySign: value }),
+  reset: () => set(defaultState),
 }));
