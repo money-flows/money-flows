@@ -70,7 +70,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
         ...acc,
         [categoryId ?? "null"]: {
           label: `${category ?? "未分類"}`,
-          color: `hsl(var(--chart-${index + 1}))`,
+          color: `hsl(var(--chart-${(index % 5) + 1}))`,
         },
       };
     },
