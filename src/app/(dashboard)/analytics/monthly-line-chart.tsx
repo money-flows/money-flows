@@ -26,12 +26,14 @@ interface MonthlyLineChartProps {
   title: React.ReactNode;
   type: "income" | "expense" | "remaining";
   cumulative?: boolean;
+  categoryIds?: string[];
 }
 
 export function MonthlyLineChart({
   title,
   type,
   cumulative = false,
+  categoryIds,
 }: MonthlyLineChartProps) {
   const [years] = useState([
     new Date().getFullYear(),
@@ -42,6 +44,7 @@ export function MonthlyLineChart({
     types: type === "remaining" ? undefined : [type],
     years,
     yearlyCumulative: cumulative,
+    categoryIds,
   });
 
   const chartConfig = years.reduce((acc, year, index) => {

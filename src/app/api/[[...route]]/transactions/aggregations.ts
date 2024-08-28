@@ -30,16 +30,23 @@ export const aggregations = new Hono()
             .string()
             .optional()
             .transform((value) => value === "true"),
+          category_ids: z
+            .string()
+            .optional()
+            .transform((value) => value?.split(","))
+            .pipe(z.array(z.string()).optional()),
         })
         .transform((query) => ({
           types: query.types,
           years: query.years,
           yearlyCumulative: query.yearly_cumulative,
+          categoryIds: query.category_ids,
         })),
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { types, years, yearlyCumulative } = c.req.valid("query");
+      const { types, years, yearlyCumulative, categoryIds } =
+        c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
@@ -68,6 +75,9 @@ export const aggregations = new Hono()
             ),
             years
               ? inArray(sql`EXTRACT(YEAR FROM ${transaction.date})`, years)
+              : undefined,
+            categoryIds
+              ? inArray(transaction.categoryId, categoryIds)
               : undefined,
           ),
         )
