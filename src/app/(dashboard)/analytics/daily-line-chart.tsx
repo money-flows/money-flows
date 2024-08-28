@@ -26,12 +26,14 @@ interface DailyLineChartProps {
   title: React.ReactNode;
   type: "income" | "expense" | "remaining";
   cumulative?: boolean;
+  categoryIds?: string[];
 }
 
 export function DailyLineChart({
   title,
   type,
   cumulative = false,
+  categoryIds,
 }: DailyLineChartProps) {
   const [months] = useState([
     { year: new Date().getFullYear(), month: new Date().getMonth() + 1 },
@@ -44,6 +46,7 @@ export function DailyLineChart({
     types: type === "remaining" ? undefined : [type],
     months,
     monthlyCumulative: cumulative,
+    categoryIds,
   });
 
   const chartConfig = months.reduce((acc, { year, month }, index) => {

@@ -180,16 +180,23 @@ export const aggregations = new Hono()
             .string()
             .optional()
             .transform((value) => value === "true"),
+          category_ids: z
+            .string()
+            .optional()
+            .transform((value) => value?.split(","))
+            .pipe(z.array(z.string()).optional()),
         })
         .transform((query) => ({
           types: query.types,
           months: query.months,
           monthlyCumulative: query.monthly_cumulative,
+          categoryIds: query.category_ids,
         })),
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { types, months, monthlyCumulative } = c.req.valid("query");
+      const { types, months, monthlyCumulative, categoryIds } =
+        c.req.valid("query");
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
@@ -222,6 +229,9 @@ export const aggregations = new Hono()
                     ),
                   ),
                 )
+              : undefined,
+            categoryIds
+              ? inArray(transaction.categoryId, categoryIds)
               : undefined,
           ),
         )

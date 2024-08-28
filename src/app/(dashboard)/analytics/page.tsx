@@ -49,12 +49,19 @@ export default function AnalyticsPage() {
       <ByCategoryBarChart title="カテゴリ別の収入" type="income" />
       <ByCategoryBarChart title="カテゴリ別の支出" type="expense" />
       {categoriesQuery.data.map((category) => (
-        <MonthlyLineChart
-          key={category.id}
-          title={`${category.name}の推移（年間）`}
-          type="expense"
-          categoryIds={[category.id]}
-        />
+        <div key={category.id}>
+          <MonthlyLineChart
+            title={`${category.name}の推移（年間）`}
+            type="expense"
+            categoryIds={[category.id]}
+          />
+          <DailyLineChart
+            title={`${category.name}の推移（月間の累計）`}
+            type="expense"
+            cumulative
+            categoryIds={[category.id]}
+          />
+        </div>
       ))}
     </div>
   );
