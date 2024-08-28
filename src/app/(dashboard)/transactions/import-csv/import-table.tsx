@@ -61,6 +61,10 @@ const OPTIONS = [
     value: "counterparty",
   },
   {
+    label: "カテゴリー",
+    value: "category",
+  },
+  {
     label: "メモ",
     value: "memo",
   },

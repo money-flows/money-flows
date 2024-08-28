@@ -23,7 +23,13 @@ import { ImportTable, TableData } from "./import-table";
 import { useImportCsvStore } from "./use-import-csv-store";
 
 const REQUIRED_OPTIONS = ["amount", "date"];
-const OPTIONS = [...REQUIRED_OPTIONS, "description", "counterparty", "memo"];
+const OPTIONS = [
+  ...REQUIRED_OPTIONS,
+  "description",
+  "counterparty",
+  "category",
+  "memo",
+];
 
 export const DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 
@@ -126,6 +132,8 @@ export function ImportTableStep({ accounts }: ImportTableStepProps) {
         "yyyy-MM-dd",
       );
 
+      const categoryName = row.fields[optionToColumnIndex.category];
+
       return {
         ...Object.fromEntries(
           Object.entries(optionToColumnIndex).map(([option, columnIndex]) => [
@@ -136,6 +144,9 @@ export function ImportTableStep({ accounts }: ImportTableStepProps) {
         amount: parsedAmount,
         date: formattedDate,
         accountId: selectedAccountId,
+        category: {
+          name: categoryName,
+        },
       };
     });
 

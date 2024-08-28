@@ -200,7 +200,23 @@ export const transactions = new Hono()
   .post(
     "/bulk-create",
     clerkMiddleware(),
-    zValidator("json", z.array(insertTransactionSchema)),
+    zValidator(
+      "json",
+      z.array(
+        insertTransactionSchema
+          .omit({
+            categoryId: true,
+          })
+          .extend({
+            category: z
+              .union([
+                z.object({ id: z.string() }),
+                z.object({ id: z.undefined(), name: z.string() }),
+              ])
+              .optional(),
+          }),
+      ),
+    ),
     async (c) => {
       const auth = getAuth(c);
       const values = c.req.valid("json");
@@ -209,13 +225,79 @@ export const transactions = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
+      // if ts 5.5 or later, this `as` should not be needed, but `filter` method does not infer the type well...
+      const mayBeSavedCategoryNames = Array.from(
+        new Set(
+          values
+            .map((value) => value.category)
+            .filter((category) => category && !category.id)
+            .map((category) => (category as { name: string }).name),
+        ),
+      );
+
+      if (mayBeSavedCategoryNames.length === 0) {
+        const data = await db
+          .insert(transaction)
+          .values(
+            values.map((value) => ({
+              id: createId(),
+              ...value,
+              date: new Date(value.date),
+            })),
+          )
+          .returning();
+
+        return c.json({ data });
+      }
+
+      const existingCategories = await db
+        .select({
+          id: category.id,
+          name: category.name,
+        })
+        .from(category)
+        .where(
+          and(
+            eq(category.userId, auth.userId),
+            inArray(category.name, mayBeSavedCategoryNames),
+          ),
+        );
+
+      const existingCategoryNameSet = new Set(
+        existingCategories.map((category) => category.name),
+      );
+
+      const savedCategories = await db
+        .insert(category)
+        .values(
+          mayBeSavedCategoryNames
+            .filter(
+              (categoryName) => !existingCategoryNameSet.has(categoryName),
+            )
+            .map((categoryName) => ({
+              id: createId(),
+              userId: auth.userId,
+              name: categoryName,
+            })),
+        )
+        .returning({ id: category.id, name: category.name });
+
+      const categoryNameToIdMap = new Map(
+        existingCategories
+          .concat(savedCategories)
+          .map((category) => [category.name, category.id]),
+      );
+
       const data = await db
         .insert(transaction)
         .values(
-          values.map((value) => ({
+          values.map(({ date, category, ...value }) => ({
             id: createId(),
             ...value,
-            date: new Date(value.date),
+            date: new Date(date),
+            categoryId: category
+              ? (category.id ?? categoryNameToIdMap.get(category.name))
+              : undefined,
           })),
         )
         .returning();
