@@ -93,7 +93,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
             data={chartData}
             layout="vertical"
             margin={{
-              left: 0,
+              left: 24,
               right: 56,
             }}
           >
@@ -121,7 +121,7 @@ export function ByCategoryBarChart({ title, type }: ByCategoryBarChartProps) {
               <LabelList
                 dataKey="totalAmount"
                 position="right"
-                offset={8}
+                offset={12}
                 className="fill-foreground"
                 fontSize={12}
                 formatter={labelListFormatter}
