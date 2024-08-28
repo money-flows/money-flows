@@ -1,12 +1,18 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
-export const account = pgTable("account", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  userId: text("user_id").notNull(),
-});
+export const account = pgTable(
+  "account",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    userId: text("user_id").notNull(),
+  },
+  (table) => ({
+    unique: unique().on(table.name, table.userId),
+  }),
+);
 
 export const accountRelation = relations(account, ({ many }) => ({
   transactions: many(transaction),
@@ -14,11 +20,17 @@ export const accountRelation = relations(account, ({ many }) => ({
 
 export const insertAccountSchema = createInsertSchema(account);
 
-export const category = pgTable("category", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  userId: text("user_id").notNull(),
-});
+export const category = pgTable(
+  "category",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    userId: text("user_id").notNull(),
+  },
+  (table) => ({
+    unique: unique().on(table.name, table.userId),
+  }),
+);
 
 export const categoryRelation = relations(category, ({ many }) => ({
   transactions: many(transaction),
