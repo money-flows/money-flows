@@ -61,8 +61,8 @@ const OPTIONS = [
     value: "counterparty",
   },
   {
-    value: "memo",
     label: "メモ",
+    value: "memo",
   },
 ] as const;
 
