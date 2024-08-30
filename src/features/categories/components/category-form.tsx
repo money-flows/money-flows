@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,18 +18,14 @@ const formSchema = insertCategorySchema;
 export type CategoryFormValues = z.input<typeof formSchema>;
 
 interface CategoryFormProps {
-  id?: string;
   defaultValues?: CategoryFormValues;
   onSubmit: (values: CategoryFormValues) => void;
-  onDelete?: () => void;
   disabled?: boolean;
 }
 
 export const CategoryForm = ({
-  id,
   defaultValues,
   onSubmit,
-  onDelete,
   disabled,
 }: CategoryFormProps) => {
   const form = useForm<CategoryFormValues>({
@@ -43,10 +38,6 @@ export const CategoryForm = ({
   const handleSubmit = (values: CategoryFormValues) => {
     // TODO: Add validation to ensure the required fields are filled
     onSubmit(values);
-  };
-
-  const handleDelete = () => {
-    onDelete?.();
   };
 
   return (
@@ -72,20 +63,8 @@ export const CategoryForm = ({
           )}
         />
         <Button className="w-full" disabled={disabled}>
-          {id ? "更新" : "追加"}
+          送信
         </Button>
-        {!!id && (
-          <Button
-            type="button"
-            disabled={disabled}
-            onClick={handleDelete}
-            className="w-full"
-            variant="outline"
-          >
-            <Trash className="mr-2 size-4" />
-            削除
-          </Button>
-        )}
       </form>
     </Form>
   );
