@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,18 +18,14 @@ const formSchema = insertAccountSchema;
 export type AccountFormValues = z.input<typeof formSchema>;
 
 interface AccountFormProps {
-  id?: string;
   defaultValues?: AccountFormValues;
   onSubmit: (values: AccountFormValues) => void;
-  onDelete?: () => void;
   disabled?: boolean;
 }
 
 export const AccountForm = ({
-  id,
   defaultValues,
   onSubmit,
-  onDelete,
   disabled,
 }: AccountFormProps) => {
   const form = useForm<AccountFormValues>({
@@ -43,10 +38,6 @@ export const AccountForm = ({
   const handleSubmit = (values: AccountFormValues) => {
     // TODO: Add validation to ensure the required fields are filled
     onSubmit(values);
-  };
-
-  const handleDelete = () => {
-    onDelete?.();
   };
 
   return (
@@ -72,20 +63,8 @@ export const AccountForm = ({
           )}
         />
         <Button className="w-full" disabled={disabled}>
-          {id ? "更新" : "追加"}
+          送信
         </Button>
-        {!!id && (
-          <Button
-            type="button"
-            disabled={disabled}
-            onClick={handleDelete}
-            className="w-full"
-            variant="outline"
-          >
-            <Trash className="mr-2 size-4" />
-            削除
-          </Button>
-        )}
       </form>
     </Form>
   );
