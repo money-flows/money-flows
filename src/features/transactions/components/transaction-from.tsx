@@ -24,23 +24,31 @@ import {
   TransactionFormValues,
 } from "./schema";
 
-interface NewTransactionFormProps {
+interface TransactionFormProps {
+  defaultValues?: TransactionFormValues;
   onSubmit: (values: TransactionApiFormValues) => void;
   disabled?: boolean;
   accountOptions: { label: string; value: string }[];
   categoryOptions: { label: string; value: string }[];
 }
 
-export const NewTransactionForm = ({
+export const TransactionForm = ({
+  defaultValues,
   onSubmit,
   disabled,
   accountOptions,
   categoryOptions,
-}: NewTransactionFormProps) => {
+}: TransactionFormProps) => {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date: new Date(),
+      date: defaultValues?.date ?? new Date(),
+      description: defaultValues?.description,
+      amount: defaultValues?.amount,
+      counterparty: defaultValues?.counterparty,
+      memo: defaultValues?.memo,
+      accountId: defaultValues?.accountId,
+      categoryId: defaultValues?.categoryId,
     },
   });
 
@@ -49,11 +57,11 @@ export const NewTransactionForm = ({
 
     onSubmit({
       ...values,
-      categoryId: values.categoryId === "" ? null : values.categoryId,
-      description: values.description === "" ? null : values.description,
-      memo: values.memo === "" ? null : values.memo,
-      amount: parseInt(values.amount),
       date: format(values.date, "yyyy-MM-dd"),
+      description: values.description === "" ? null : values.description,
+      amount: parseInt(values.amount),
+      memo: values.memo === "" ? null : values.memo,
+      categoryId: values.categoryId === "" ? null : values.categoryId,
     });
   };
 
@@ -130,7 +138,7 @@ export const NewTransactionForm = ({
           )}
         />
         <Button className="w-full" disabled={disabled}>
-          追加
+          送信
         </Button>
       </form>
     </Form>

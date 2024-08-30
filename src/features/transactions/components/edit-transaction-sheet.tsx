@@ -14,8 +14,8 @@ import { useDeleteTransaction } from "../api/use-delete-transaction";
 import { useEditTransaction } from "../api/use-edit-transaction";
 import { useGetTransaction } from "../api/use-get-transaction";
 import { useOpenTransaction } from "../hooks/use-open-transaction";
-import { EditTransactionForm } from "./edit-transaction-form";
 import { TransactionApiFormValues } from "./schema";
+import { TransactionForm } from "./transaction-from";
 
 export function EditTransactionSheet() {
   const { isOpen, onClose, id } = useOpenTransaction();
@@ -64,9 +64,9 @@ export function EditTransactionSheet() {
           </div>
         )}
         {transactionQuery.data && (
-          <EditTransactionForm
+          <TransactionForm
             disabled={isPending}
-            initialValues={{
+            defaultValues={{
               accountId: transactionQuery.data.accountId,
               categoryId: transactionQuery.data.categoryId ?? "",
               amount: transactionQuery.data.amount.toString(),

@@ -12,8 +12,8 @@ import { useGetCategories } from "@/features/categories/api/use-get-categories";
 
 import { useCreateTransaction } from "../api/use-create-transaction";
 import { useNewTransaction } from "../hooks/use-new-transaction";
-import { NewTransactionForm } from "./new-transaction-form";
 import { TransactionApiFormValues } from "./schema";
+import { TransactionForm } from "./transaction-from";
 
 export function NewTransactionSheet() {
   const { isOpen, onClose } = useNewTransaction();
@@ -56,7 +56,7 @@ export function NewTransactionSheet() {
             <Loader2 className="size-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <NewTransactionForm
+          <TransactionForm
             onSubmit={handleSubmit}
             disabled={isPending}
             accountOptions={accountOptions}
