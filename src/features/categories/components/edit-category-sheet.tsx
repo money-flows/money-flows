@@ -27,7 +27,9 @@ export function EditCategorySheet() {
     });
   };
 
-  const defaultValues = category ? { name: category.name } : undefined;
+  const defaultValues = category
+    ? { name: category.name, type: category.type }
+    : undefined;
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>

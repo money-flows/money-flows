@@ -22,6 +22,7 @@ export const categories = new Hono()
       .select({
         id: category.id,
         name: category.name,
+        type: category.type,
         userId: category.userId,
       })
       .from(category)
@@ -49,6 +50,7 @@ export const categories = new Hono()
         .select({
           id: category.id,
           name: category.name,
+          type: category.type,
           userId: category.userId,
         })
         .from(category)

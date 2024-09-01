@@ -35,6 +35,8 @@ function generateRandomAmount(category: Category) {
       return Math.floor(Math.random() * 3000) + 500;
     case "衣類":
       return Math.floor(Math.random() * 5000) + 1000;
+    case "給与":
+      return Math.floor(Math.random() * 10000) + 20000;
     default:
       throw new Error(`Unknown category: ${category.name}`);
   }
@@ -46,12 +48,16 @@ function generateDailyTransactions(
   categories: Category[],
 ): Transaction[] {
   const transactionCount = Math.floor(Math.random() * 5); // 0-4 transactions per day
+  const incomeCategories = categories.filter((c) => c.type === "income");
+  const expenseCategories = categories.filter((c) => c.type === "expense");
 
   return Array.from({ length: transactionCount }).map((_, i) => {
-    const category = categories[Math.floor(Math.random() * categories.length)];
     const accountId = accounts[Math.floor(Math.random() * accounts.length)].id;
 
     const isExpense = Math.random() < 0.6;
+    const category = isExpense
+      ? expenseCategories[Math.floor(Math.random() * expenseCategories.length)]
+      : incomeCategories[Math.floor(Math.random() * incomeCategories.length)];
     const amount = generateRandomAmount(category) * (isExpense ? -1 : 1);
 
     return {
@@ -93,21 +99,31 @@ const SEED_CATEGORIES: Category[] = [
   {
     id: "category_1",
     name: "食費",
+    type: "expense",
     userId: process.env.TEST_USER_ID,
   },
   {
     id: "category_2",
     name: "交通費",
+    type: "expense",
     userId: process.env.TEST_USER_ID,
   },
   {
     id: "category_3",
     name: "娯楽",
+    type: "expense",
     userId: process.env.TEST_USER_ID,
   },
   {
     id: "category_4",
     name: "衣類",
+    type: "expense",
+    userId: process.env.TEST_USER_ID,
+  },
+  {
+    id: "category_5",
+    name: "給与",
+    type: "income",
     userId: process.env.TEST_USER_ID,
   },
 ];

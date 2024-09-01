@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const account = pgTable(
@@ -20,15 +27,18 @@ export const accountRelation = relations(account, ({ many }) => ({
 
 export const insertAccountSchema = createInsertSchema(account);
 
+export const categoryTypeEnum = pgEnum("category_type", ["income", "expense"]);
+
 export const category = pgTable(
   "category",
   {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
+    type: categoryTypeEnum("type").notNull(),
     userId: text("user_id").notNull(),
   },
   (table) => ({
-    unique: unique().on(table.name, table.userId),
+    unique: unique().on(table.name, table.type, table.userId),
   }),
 );
 

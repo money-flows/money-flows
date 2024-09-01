@@ -226,16 +226,29 @@ export const transactions = new Hono()
       }
 
       // if ts 5.5 or later, this `as` should not be needed, but `filter` method does not infer the type well...
-      const mayBeSavedCategoryNames = Array.from(
-        new Set(
+      const mayBeSavedCategories = Array.from(
+        new Map(
           values
-            .map((value) => value.category)
-            .filter((category) => category && !category.id)
-            .map((category) => (category as { name: string }).name),
-        ),
+            .filter((value) => value.category && !value.category.id)
+            .map((value) => {
+              const name =
+                value.category && "name" in value.category
+                  ? value.category?.name
+                  : "";
+
+              const type = value.amount > 0 ? "income" : "expense";
+
+              const category = {
+                ...value.category,
+                type: value.amount > 0 ? "income" : "expense",
+              } as { name: string; type: "income" | "expense" };
+
+              return [`${name}:${type}`, category];
+            }),
+        ).values(),
       );
 
-      if (mayBeSavedCategoryNames.length === 0) {
+      if (mayBeSavedCategories.length === 0) {
         const data = await db
           .insert(transaction)
           .values(
@@ -254,12 +267,16 @@ export const transactions = new Hono()
         .select({
           id: category.id,
           name: category.name,
+          type: category.type,
         })
         .from(category)
         .where(
           and(
             eq(category.userId, auth.userId),
-            inArray(category.name, mayBeSavedCategoryNames),
+            inArray(
+              category.name,
+              mayBeSavedCategories.map((category) => category.name),
+            ),
           ),
         );
 
@@ -270,17 +287,16 @@ export const transactions = new Hono()
       const savedCategories = await db
         .insert(category)
         .values(
-          mayBeSavedCategoryNames
-            .filter(
-              (categoryName) => !existingCategoryNameSet.has(categoryName),
-            )
-            .map((categoryName) => ({
+          mayBeSavedCategories
+            .filter((category) => !existingCategoryNameSet.has(category.name))
+            .map((category) => ({
               id: createId(),
+              name: category.name,
+              type: category.type,
               userId: auth.userId,
-              name: categoryName,
             })),
         )
-        .returning({ id: category.id, name: category.name });
+        .returning();
 
       const categoryNameToIdMap = new Map(
         existingCategories

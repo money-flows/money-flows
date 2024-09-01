@@ -12,6 +12,7 @@ export const insertAccountSchema = DBInsertAccountSchema.pick({
 
 export const insertCategorySchema = DBInsertCategorySchema.pick({
   name: true,
+  type: true,
 });
 
 export const insertTransactionSchema = DBInsertTransactionSchema.omit({

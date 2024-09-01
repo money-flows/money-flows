@@ -12,6 +12,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = insertCategorySchema;
 
@@ -32,6 +33,7 @@ export const CategoryForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: defaultValues?.name ?? "",
+      type: defaultValues?.type ?? "expense",
     },
   });
 
@@ -58,6 +60,35 @@ export const CategoryForm = ({
                   placeholder="例：食費、交通費、給料"
                   {...field}
                 />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>種別</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="expense" />
+                    </FormControl>
+                    <FormLabel className="font-normal">支出</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="income" />
+                    </FormControl>
+                    <FormLabel className="font-normal">収入</FormLabel>
+                  </FormItem>
+                </RadioGroup>
               </FormControl>
             </FormItem>
           )}
