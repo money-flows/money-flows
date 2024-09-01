@@ -26,13 +26,30 @@ export function NewTransactionSheet() {
     value: account.id,
   }));
 
-  const categoryQuery = useGetCategories();
-  const categoryOptions = (categoryQuery.data ?? []).map((category) => ({
-    label: category.name,
-    value: category.id,
-  }));
+  const incomeCategoryQuery = useGetCategories({
+    types: ["income"],
+  });
+  const expenseCategoryQuery = useGetCategories({
+    types: ["expense"],
+  });
 
-  const isLoading = accountQuery.isLoading || categoryQuery.isLoading;
+  const incomeCategoryOptions = (incomeCategoryQuery.data ?? []).map(
+    (category) => ({
+      label: category.name,
+      value: category.id,
+    }),
+  );
+  const expenseCategoryOptions = (expenseCategoryQuery.data ?? []).map(
+    (category) => ({
+      label: category.name,
+      value: category.id,
+    }),
+  );
+
+  const isLoading =
+    accountQuery.isLoading ||
+    incomeCategoryQuery.isLoading ||
+    expenseCategoryQuery.isLoading;
 
   const handleSubmit = (values: TransactionApiFormValues) => {
     mutate(values, {
@@ -60,7 +77,8 @@ export function NewTransactionSheet() {
             onSubmit={handleSubmit}
             disabled={isPending}
             accountOptions={accountOptions}
-            categoryOptions={categoryOptions}
+            incomeCategoryOptions={incomeCategoryOptions}
+            expenseCategoryOptions={expenseCategoryOptions}
           />
         )}
       </SheetContent>

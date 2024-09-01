@@ -29,7 +29,8 @@ interface TransactionFormProps {
   onSubmit: (values: TransactionApiFormValues) => void;
   disabled?: boolean;
   accountOptions: { label: string; value: string }[];
-  categoryOptions: { label: string; value: string }[];
+  incomeCategoryOptions: { label: string; value: string }[];
+  expenseCategoryOptions: { label: string; value: string }[];
 }
 
 export const TransactionForm = ({
@@ -37,7 +38,8 @@ export const TransactionForm = ({
   onSubmit,
   disabled,
   accountOptions,
-  categoryOptions,
+  incomeCategoryOptions,
+  expenseCategoryOptions,
 }: TransactionFormProps) => {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
@@ -64,6 +66,8 @@ export const TransactionForm = ({
       categoryId: values.categoryId === "" ? null : values.categoryId,
     });
   };
+
+  const isExpense = form.watch("amount")?.startsWith("-");
 
   return (
     <Form {...form}>
@@ -111,7 +115,17 @@ export const TransactionForm = ({
             </FormItem>
           )}
         />
-        <CategorySelectFormField form={form} options={categoryOptions} />
+        {isExpense ? (
+          <CategorySelectFormField
+            form={form}
+            options={expenseCategoryOptions}
+          />
+        ) : (
+          <CategorySelectFormField
+            form={form}
+            options={incomeCategoryOptions}
+          />
+        )}
         <FormField
           name="counterparty"
           control={form.control}

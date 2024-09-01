@@ -1,7 +1,7 @@
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -11,25 +11,45 @@ import { category } from "@/db/schema";
 import { insertCategorySchema } from "./schema";
 
 export const categories = new Hono()
-  .get("/", clerkMiddleware(), async (c) => {
-    const auth = getAuth(c);
+  .get(
+    "/",
+    clerkMiddleware(),
+    zValidator(
+      "query",
+      z.object({
+        types: z
+          .string()
+          .optional()
+          .transform((value) => value?.split(","))
+          .pipe(z.array(z.enum(["income", "expense"])).optional()),
+      }),
+    ),
+    async (c) => {
+      const auth = getAuth(c);
+      const { types } = c.req.valid("query");
 
-    if (!auth?.userId) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
 
-    const data = await db
-      .select({
-        id: category.id,
-        name: category.name,
-        type: category.type,
-        userId: category.userId,
-      })
-      .from(category)
-      .where(eq(category.userId, auth.userId));
+      const data = await db
+        .select({
+          id: category.id,
+          name: category.name,
+          type: category.type,
+          userId: category.userId,
+        })
+        .from(category)
+        .where(
+          and(
+            eq(category.userId, auth.userId),
+            types ? inArray(category.type, types) : undefined,
+          ),
+        );
 
-    return c.json({ data });
-  })
+      return c.json({ data });
+    },
+  )
   .get(
     "/:id",
     clerkMiddleware(),

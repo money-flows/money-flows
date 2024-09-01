@@ -7,7 +7,9 @@ import { useGetCategories } from "@/features/categories/api/use-get-categories";
 import { columns } from "./columns";
 
 export function CategoryTable() {
-  const categoriesQuery = useGetCategories();
+  const categoriesQuery = useGetCategories({
+    types: ["income", "expense"],
+  });
 
   if (categoriesQuery.isPending) {
     return <Skeleton className="h-48 w-full" />;

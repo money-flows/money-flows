@@ -9,13 +9,19 @@ import { MonthlyIncomeExpenseRemainingChart } from "./monthly-income-expense-rem
 import { MonthlyLineChart } from "./monthly-line-chart";
 
 export default function AnalyticsPage() {
-  const categoriesQuery = useGetCategories();
+  const expenseCategoriesQuery = useGetCategories({
+    types: ["expense"],
+  });
 
-  if (categoriesQuery.isPending) {
+  const incomeCategoriesQuery = useGetCategories({
+    types: ["income"],
+  });
+
+  if (expenseCategoriesQuery.isPending || incomeCategoriesQuery.isPending) {
     return <p>Loading...</p>;
   }
 
-  if (categoriesQuery.isError) {
+  if (expenseCategoriesQuery.isError || incomeCategoriesQuery.isError) {
     return <p>Error</p>;
   }
 
@@ -48,7 +54,7 @@ export default function AnalyticsPage() {
       />
       <ByCategoryBarChart title="カテゴリ別の収入" type="income" />
       <ByCategoryBarChart title="カテゴリ別の支出" type="expense" />
-      {categoriesQuery.data.map((category) => (
+      {expenseCategoriesQuery.data.map((category) => (
         <div key={category.id}>
           <MonthlyLineChart
             title={`${category.name}の推移（年間）`}

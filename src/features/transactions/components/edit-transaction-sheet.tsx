@@ -30,18 +30,33 @@ export function EditTransactionSheet() {
     value: account.id,
   }));
 
-  const categoryQuery = useGetCategories();
-  const categoryOptions = (categoryQuery.data ?? []).map((category) => ({
-    label: category.name,
-    value: category.id,
-  }));
+  const incomeCategoryQuery = useGetCategories({
+    types: ["income"],
+  });
+  const expenseCategoryQuery = useGetCategories({
+    types: ["expense"],
+  });
+
+  const incomeCategoryOptions = (incomeCategoryQuery.data ?? []).map(
+    (category) => ({
+      label: category.name,
+      value: category.id,
+    }),
+  );
+  const expenseCategoryOptions = (expenseCategoryQuery.data ?? []).map(
+    (category) => ({
+      label: category.name,
+      value: category.id,
+    }),
+  );
 
   const isPending = editMutation.isPending || deleteMutation.isPending;
 
   const isLoading =
     transactionQuery.isLoading ||
     accountQuery.isLoading ||
-    categoryQuery.isLoading;
+    incomeCategoryQuery.isLoading ||
+    expenseCategoryQuery.isLoading;
 
   const handleSubmit = (values: TransactionApiFormValues) => {
     editMutation.mutate(values, {
@@ -77,7 +92,8 @@ export function EditTransactionSheet() {
             }}
             onSubmit={handleSubmit}
             accountOptions={accountOptions}
-            categoryOptions={categoryOptions}
+            incomeCategoryOptions={incomeCategoryOptions}
+            expenseCategoryOptions={expenseCategoryOptions}
           />
         )}
       </SheetContent>
