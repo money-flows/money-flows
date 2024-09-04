@@ -14,10 +14,9 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Selector from "@/components/ui/selector";
 import { Textarea } from "@/components/ui/textarea";
 
-import { AccountSelectFormField } from "./account-select-form-field";
-import { CategorySelectFormField } from "./category-select-form-field";
 import {
   formSchema,
   TransactionApiFormValues,
@@ -116,14 +115,26 @@ export const TransactionForm = ({
           )}
         />
         {isExpense ? (
-          <CategorySelectFormField
-            form={form}
-            options={expenseCategoryOptions}
+          <FormField
+            name="categoryId"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>カテゴリー</FormLabel>
+                <Selector {...field} options={expenseCategoryOptions} />
+              </FormItem>
+            )}
           />
         ) : (
-          <CategorySelectFormField
-            form={form}
-            options={incomeCategoryOptions}
+          <FormField
+            name="categoryId"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>カテゴリー</FormLabel>
+                <Selector {...field} options={incomeCategoryOptions} />
+              </FormItem>
+            )}
           />
         )}
         <FormField
@@ -138,7 +149,16 @@ export const TransactionForm = ({
             </FormItem>
           )}
         />
-        <AccountSelectFormField form={form} options={accountOptions} />
+        <FormField
+          name="accountId"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>口座</FormLabel>
+              <Selector {...field} options={accountOptions} />
+            </FormItem>
+          )}
+        />
         <FormField
           name="memo"
           control={form.control}
