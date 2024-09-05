@@ -19,7 +19,7 @@ export interface Option {
   label: string;
 }
 
-interface SelectorProps {
+interface SearchableSelectProps {
   value?: string;
   options: Option[];
   placeholder?: string;
@@ -28,12 +28,15 @@ interface SelectorProps {
   onChange?: (value?: string) => void;
 }
 
-export interface SelectorRef {
+export interface SearchableSelectRef {
   selectedValue?: Option;
   input: HTMLInputElement;
 }
 
-const Selector = React.forwardRef<SelectorRef, SelectorProps>(
+const SearchableSelect = React.forwardRef<
+  SearchableSelectRef,
+  SearchableSelectProps
+>(
   (
     {
       value,
@@ -42,8 +45,8 @@ const Selector = React.forwardRef<SelectorRef, SelectorProps>(
       disabled,
       className,
       onChange,
-    }: SelectorProps,
-    ref: React.Ref<SelectorRef>,
+    }: SearchableSelectProps,
+    ref: React.Ref<SearchableSelectRef>,
   ) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
@@ -167,6 +170,6 @@ const Selector = React.forwardRef<SelectorRef, SelectorProps>(
     );
   },
 );
-Selector.displayName = "Selector";
+SearchableSelect.displayName = "SearchableSelect";
 
-export default Selector;
+export { SearchableSelect };

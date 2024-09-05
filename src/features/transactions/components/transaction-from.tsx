@@ -14,7 +14,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Selector from "@/components/ui/selector";
+import { SearchableSelect } from "@/components/ui/selector";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
@@ -121,7 +121,7 @@ export const TransactionForm = ({
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>カテゴリー</FormLabel>
-                <Selector {...field} options={expenseCategoryOptions} />
+                <SearchableSelect {...field} options={expenseCategoryOptions} />
               </FormItem>
             )}
           />
@@ -132,7 +132,7 @@ export const TransactionForm = ({
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>カテゴリー</FormLabel>
-                <Selector {...field} options={incomeCategoryOptions} />
+                <SearchableSelect {...field} options={incomeCategoryOptions} />
               </FormItem>
             )}
           />
@@ -155,7 +155,7 @@ export const TransactionForm = ({
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>口座</FormLabel>
-              <Selector {...field} options={accountOptions} />
+              <SearchableSelect {...field} options={accountOptions} />
             </FormItem>
           )}
         />
