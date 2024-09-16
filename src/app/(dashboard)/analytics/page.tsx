@@ -1,14 +1,48 @@
 "use client";
 
-import { H1 } from "@/components/ui/h1";
+import "gridstack/dist/gridstack.css";
+
+import { GridStack } from "gridstack";
+import { useEffect } from "react";
+
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
 
-import { ByCategoryBarChart } from "./by-category-bar-chart";
-import { DailyLineChart } from "./daily-line-chart";
 import { MonthlyIncomeExpenseRemainingChart } from "./monthly-income-expense-remaining-chart";
 import { MonthlyLineChart } from "./monthly-line-chart";
 
+const layout = [
+  {
+    componentName: "MonthlyIncomeExpenseRemainingChart",
+    props: {
+      title: "収支の推移（年間）",
+    },
+  },
+  {
+    componentName: "MonthlyLineChart",
+    props: {
+      title: "残高の推移（年間）",
+      type: "remaining",
+    },
+  },
+  {
+    componentName: "MonthlyLineChart",
+    props: {
+      title: "収入の推移（年間）",
+      type: "income",
+    },
+  },
+];
+
+const componentMap = {
+  MonthlyIncomeExpenseRemainingChart,
+  MonthlyLineChart,
+} as const;
+
 export default function AnalyticsPage() {
+  useEffect(() => {
+    GridStack.init();
+  }, []);
+
   const expenseCategoriesQuery = useGetCategories({
     types: ["expense"],
   });
@@ -26,49 +60,19 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <H1>分析</H1>
-      <MonthlyIncomeExpenseRemainingChart title="収支の推移（年間）" />
-      <MonthlyLineChart title="残高の推移（年間）" type="remaining" />
-      <MonthlyLineChart title="収入の推移（年間）" type="income" />
-      <MonthlyLineChart
-        title="収入の推移（年間の累計）"
-        type="income"
-        cumulative
-      />
-      <MonthlyLineChart title="支出の推移（年間）" type="expense" />
-      <MonthlyLineChart
-        title="支出の推移（年間の累計）"
-        type="expense"
-        cumulative
-      />
-      <DailyLineChart
-        title="収入の推移（月間の累計）"
-        type="income"
-        cumulative
-      />
-      <DailyLineChart
-        title="支出の推移（月間の累計）"
-        type="expense"
-        cumulative
-      />
-      <ByCategoryBarChart title="カテゴリ別の収入" type="income" />
-      <ByCategoryBarChart title="カテゴリ別の支出" type="expense" />
-      {expenseCategoriesQuery.data.map((category) => (
-        <div key={category.id}>
-          <MonthlyLineChart
-            title={`${category.name}の推移（年間）`}
-            type="expense"
-            categoryIds={[category.id]}
-          />
-          <DailyLineChart
-            title={`${category.name}の推移（月間の累計）`}
-            type="expense"
-            cumulative
-            categoryIds={[category.id]}
-          />
-        </div>
-      ))}
+    <div className="grid-stack">
+      {layout.map(({ componentName, props }, index) => {
+        // @ts-expect-error componentName is a key of componentMap
+        const Component = componentMap[componentName];
+
+        return (
+          <div key={index} className="grid-stack-item">
+            <div className="grid-stack-item-content">
+              <Component {...props} />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

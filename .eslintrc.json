@@ -24,12 +24,17 @@
   },
   "overrides": [
     {
-      "files": ["src/components/ui/sonner.tsx"],
+      "files": ["src/**/*.tsx"],
       "rules": {
         "tailwindcss/no-custom-classname": [
           "warn",
           {
-            "whitelist": ["toaster"]
+            "whitelist": [
+              "toaster",
+              "grid-stack",
+              "grid-stack-item",
+              "grid-stack-item-content"
+            ]
           }
         ]
       }
