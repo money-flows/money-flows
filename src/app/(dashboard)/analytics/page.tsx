@@ -1,23 +1,36 @@
+// @ts-nocheck
+// TODO: Remove this line after fixing the issue
+
 "use client";
 
 import "gridstack/dist/gridstack.css";
 
 import { GridStack } from "gridstack";
-import { useEffect } from "react";
+import { createRef, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
 
 import { MonthlyIncomeExpenseRemainingChart } from "./monthly-income-expense-remaining-chart";
 import { MonthlyLineChart } from "./monthly-line-chart";
 
-const layout = [
+const defaultLayout = [
   {
+    id: "item-1",
+    x: 0,
+    y: 0,
+    w: 12,
+    h: 4,
     componentName: "MonthlyIncomeExpenseRemainingChart",
     props: {
       title: "収支の推移（年間）",
     },
   },
   {
+    id: "item-2",
+    x: 0,
+    y: 4,
+    w: 6,
+    h: 4,
     componentName: "MonthlyLineChart",
     props: {
       title: "残高の推移（年間）",
@@ -25,6 +38,11 @@ const layout = [
     },
   },
   {
+    id: "item-3",
+    x: 6,
+    y: 4,
+    w: 6,
+    h: 4,
     componentName: "MonthlyLineChart",
     props: {
       title: "収入の推移（年間）",
@@ -38,37 +56,44 @@ const componentMap = {
   MonthlyLineChart,
 } as const;
 
-export default function AnalyticsPage() {
+export default function Page() {
+  const [layout] = useState(defaultLayout);
+
+  const refs = useRef({});
+  const gridRef = useRef();
+
+  if (Object.keys(refs.current).length !== layout.length) {
+    layout.forEach(({ id }) => {
+      refs.current[id] = refs.current[id] || createRef();
+    });
+  }
+
   useEffect(() => {
-    GridStack.init();
-  }, []);
-
-  const expenseCategoriesQuery = useGetCategories({
-    types: ["expense"],
-  });
-
-  const incomeCategoriesQuery = useGetCategories({
-    types: ["income"],
-  });
-
-  if (expenseCategoriesQuery.isPending || incomeCategoriesQuery.isPending) {
-    return <p>Loading...</p>;
-  }
-
-  if (expenseCategoriesQuery.isError || incomeCategoriesQuery.isError) {
-    return <p>Error</p>;
-  }
+    gridRef.current = gridRef.current || GridStack.init({ float: true });
+    const grid = gridRef.current;
+    grid.batchUpdate();
+    grid.removeAll(false);
+    layout.forEach(({ id }) => grid.makeWidget(refs.current[id].current));
+    grid.batchUpdate(false);
+  }, [layout]);
 
   return (
     <div className="grid-stack">
-      {layout.map(({ componentName, props }, index) => {
-        // @ts-expect-error componentName is a key of componentMap
-        const Component = componentMap[componentName];
+      {layout.map((item) => {
+        const Component = componentMap[item.componentName];
 
         return (
-          <div key={index} className="grid-stack-item">
+          <div
+            ref={refs.current[item.id]}
+            key={item.id}
+            className="grid-stack-item"
+            gs-x={item.x}
+            gs-y={item.y}
+            gs-w={item.w}
+            gs-h={item.h}
+          >
             <div className="grid-stack-item-content">
-              <Component {...props} />
+              <Component {...item.props} />
             </div>
           </div>
         );

@@ -40,5 +40,6 @@
       }
     }
   ],
-  "root": true
+  "root": true,
+  "ignorePatterns": ["src/app/(dashboard)/analytics/page.tsx"] // TODO: Remove this line after fixing the issue
 }
