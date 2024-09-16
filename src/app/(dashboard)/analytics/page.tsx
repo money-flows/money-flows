@@ -69,7 +69,7 @@ export default function Page() {
   }
 
   useEffect(() => {
-    gridRef.current = gridRef.current || GridStack.init({ float: true });
+    gridRef.current = gridRef.current || GridStack.init();
     const grid = gridRef.current;
     grid.batchUpdate();
     grid.removeAll(false);
