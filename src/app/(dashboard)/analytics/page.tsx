@@ -78,7 +78,7 @@ export default function Page() {
   }, [layout]);
 
   return (
-    <div className="grid-stack">
+    <div className="grid-stack [&_.grid-stack-placeholder>.placeholder-content]:rounded-lg">
       {layout.map((item) => {
         const Component = componentMap[item.componentName];
 
@@ -92,7 +92,7 @@ export default function Page() {
             gs-w={item.w}
             gs-h={item.h}
           >
-            <div className="grid-stack-item-content">
+            <div className="grid-stack-item-content rounded-lg">
               <Component {...item.props} />
             </div>
           </div>
