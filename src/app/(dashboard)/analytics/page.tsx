@@ -1,28 +1,49 @@
-// @ts-nocheck
-// TODO: Remove this line after fixing the issue
-
 "use client";
 
 import "gridstack/dist/gridstack.css";
 
 import { GridStack } from "gridstack";
-import { createRef, useEffect, useLayoutEffect, useRef, useState } from "react";
-
-import { useGetCategories } from "@/features/categories/api/use-get-categories";
+import { createRef, useEffect, useRef, useState } from "react";
 
 import { MonthlyIncomeExpenseRemainingChart } from "./monthly-income-expense-remaining-chart";
 import { MonthlyLineChart } from "./monthly-line-chart";
 
-const defaultLayout = [
+type LayoutComponent =
+  | {
+      name: "MonthlyIncomeExpenseRemainingChart";
+      props: {
+        title: string;
+      };
+    }
+  | {
+      name: "MonthlyLineChart";
+      props: {
+        title: string;
+        type: "remaining" | "income" | "expense";
+      };
+    };
+
+interface LayoutItem {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  component: LayoutComponent;
+}
+
+const defaultLayout: LayoutItem[] = [
   {
     id: "item-1",
     x: 0,
     y: 0,
     w: 12,
     h: 4,
-    componentName: "MonthlyIncomeExpenseRemainingChart",
-    props: {
-      title: "収支の推移（年間）",
+    component: {
+      name: "MonthlyIncomeExpenseRemainingChart",
+      props: {
+        title: "収支の推移（年間）",
+      },
     },
   },
   {
@@ -31,10 +52,12 @@ const defaultLayout = [
     y: 4,
     w: 6,
     h: 4,
-    componentName: "MonthlyLineChart",
-    props: {
-      title: "残高の推移（年間）",
-      type: "remaining",
+    component: {
+      name: "MonthlyLineChart",
+      props: {
+        title: "残高の推移（年間）",
+        type: "remaining",
+      },
     },
   },
   {
@@ -43,45 +66,55 @@ const defaultLayout = [
     y: 4,
     w: 6,
     h: 4,
-    componentName: "MonthlyLineChart",
-    props: {
-      title: "収入の推移（年間）",
-      type: "income",
+    component: {
+      name: "MonthlyLineChart",
+      props: {
+        title: "収入の推移（年間）",
+        type: "income",
+      },
     },
   },
 ];
 
-const componentMap = {
-  MonthlyIncomeExpenseRemainingChart,
-  MonthlyLineChart,
-} as const;
+function ChartComponent({ component }: { component: LayoutComponent }) {
+  switch (component.name) {
+    case "MonthlyIncomeExpenseRemainingChart":
+      return <MonthlyIncomeExpenseRemainingChart {...component.props} />;
+    case "MonthlyLineChart":
+      return <MonthlyLineChart {...component.props} />;
+    default:
+      return null;
+  }
+}
 
 export default function Page() {
   const [layout] = useState(defaultLayout);
 
-  const refs = useRef({});
-  const gridRef = useRef();
+  const refs = useRef<{ [key in string]: React.RefObject<HTMLDivElement> }>({});
+  const gridRef = useRef<GridStack>();
 
   if (Object.keys(refs.current).length !== layout.length) {
     layout.forEach(({ id }) => {
-      refs.current[id] = refs.current[id] || createRef();
+      refs.current[id] = refs.current[id] || createRef<HTMLDivElement>();
     });
   }
 
   useEffect(() => {
-    gridRef.current = gridRef.current || GridStack.init();
+    gridRef.current = gridRef.current ?? GridStack.init();
     const grid = gridRef.current;
     grid.batchUpdate();
     grid.removeAll(false);
-    layout.forEach(({ id }) => grid.makeWidget(refs.current[id].current));
+    layout.forEach(({ id }) => {
+      if (refs.current[id].current) {
+        grid.makeWidget(refs.current[id].current);
+      }
+    });
     grid.batchUpdate(false);
   }, [layout]);
 
   return (
     <div className="grid-stack [&_.grid-stack-placeholder>.placeholder-content]:rounded-lg">
       {layout.map((item) => {
-        const Component = componentMap[item.componentName];
-
         return (
           <div
             ref={refs.current[item.id]}
@@ -93,7 +126,7 @@ export default function Page() {
             gs-h={item.h}
           >
             <div className="grid-stack-item-content rounded-lg">
-              <Component {...item.props} />
+              <ChartComponent component={item.component} />
             </div>
           </div>
         );
