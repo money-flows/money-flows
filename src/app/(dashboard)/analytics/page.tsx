@@ -5,6 +5,9 @@ import "gridstack/dist/gridstack.css";
 import { GridStack } from "gridstack";
 import { createRef, useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { H1 } from "@/components/ui/h1";
+
 import { MonthlyIncomeExpenseRemainingChart } from "./monthly-income-expense-remaining-chart";
 import { MonthlyLineChart } from "./monthly-line-chart";
 
@@ -113,24 +116,32 @@ export default function Page() {
   }, [layout]);
 
   return (
-    <div className="grid-stack [&_.grid-stack-placeholder>.placeholder-content]:rounded-lg">
-      {layout.map((item) => {
-        return (
-          <div
-            ref={refs.current[item.id]}
-            key={item.id}
-            className="grid-stack-item"
-            gs-x={item.x}
-            gs-y={item.y}
-            gs-w={item.w}
-            gs-h={item.h}
-          >
-            <div className="grid-stack-item-content rounded-lg">
-              <ChartComponent component={item.component} />
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <H1>分析</H1>
+        <div className="flex items-center gap-2">
+          <Button className="w-full sm:w-auto">レイアウトを編集</Button>
+        </div>
+      </div>
+      <div className="grid-stack -m-2.5 [&_.grid-stack-placeholder>.placeholder-content]:rounded-lg">
+        {layout.map((item) => {
+          return (
+            <div
+              ref={refs.current[item.id]}
+              key={item.id}
+              className="grid-stack-item"
+              gs-x={item.x}
+              gs-y={item.y}
+              gs-w={item.w}
+              gs-h={item.h}
+            >
+              <div className="grid-stack-item-content rounded-lg">
+                <ChartComponent component={item.component} />
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }
