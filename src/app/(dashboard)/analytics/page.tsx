@@ -7,9 +7,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
 
-import { EditChartLayout } from "./edit-chart-layout";
+import { ChartLayout } from "./chart-layout";
 import { LayoutItem } from "./types";
-import { ViewChartLayout } from "./view-chart-layout";
 
 const defaultLayout: LayoutItem[] = [
   {
@@ -73,11 +72,7 @@ export default function Page() {
           </Button>
         </div>
       </div>
-      {isEditing ? (
-        <EditChartLayout layout={layout} />
-      ) : (
-        <ViewChartLayout layout={layout} />
-      )}
+      <ChartLayout layout={layout} editable={isEditing} />
     </div>
   );
 }

@@ -16,11 +16,12 @@ function ChartComponent({ component }: { component: LayoutComponent }) {
   }
 }
 
-interface ViewChartLayoutProps {
+interface ChartLayoutProps {
   layout: LayoutItem[];
+  editable?: boolean;
 }
 
-export function ViewChartLayout({ layout }: ViewChartLayoutProps) {
+export function ChartLayout({ layout, editable }: ChartLayoutProps) {
   const refs = useRef<{ [key in string]: React.RefObject<HTMLDivElement> }>({});
   const gridRef = useRef<GridStack>();
 
@@ -41,7 +42,7 @@ export function ViewChartLayout({ layout }: ViewChartLayoutProps) {
       }
     });
     grid.batchUpdate(false);
-  }, [layout]);
+  }, [layout, editable]);
 
   return (
     <div className="grid-stack -m-2.5 [&_.grid-stack-placeholder>.placeholder-content]:rounded-lg">
@@ -55,9 +56,9 @@ export function ViewChartLayout({ layout }: ViewChartLayoutProps) {
             gs-y={item.y}
             gs-w={item.w}
             gs-h={item.h}
-            gs-no-resize="true"
-            gs-no-move="true"
-            gs-locked="true"
+            gs-no-resize={editable ? undefined : "true"}
+            gs-no-move={editable ? undefined : "true"}
+            gs-locked={editable ? undefined : "true"}
           >
             <div className="grid-stack-item-content rounded-lg">
               <ChartComponent component={item.component} />
