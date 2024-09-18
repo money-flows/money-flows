@@ -55,8 +55,8 @@ const defaultLayout: LayoutItem[] = [
     component: {
       name: "MonthlyLineChart",
       props: {
-        title: "残高の推移（年間）",
-        type: "remaining",
+        title: "収入の推移（年間）",
+        type: "income",
       },
     },
   },
@@ -69,8 +69,8 @@ const defaultLayout: LayoutItem[] = [
     component: {
       name: "MonthlyLineChart",
       props: {
-        title: "収入の推移（年間）",
-        type: "income",
+        title: "支出の推移（年間）",
+        type: "expense",
       },
     },
   },
