@@ -56,10 +56,21 @@ const defaultLayout: LayoutItem[] = [
 
 export default function Page() {
   const [layoutState, setLayoutState] = useState(defaultLayout);
+  const [currentLayoutState, setCurrentLayoutState] = useState(defaultLayout);
   const [isEditing, setIsEditing] = useState(false);
 
-  const toggleEditing = () => {
-    setIsEditing((prev) => !prev);
+  const edit = () => {
+    setIsEditing(true);
+  };
+
+  const save = () => {
+    setLayoutState(currentLayoutState);
+    setIsEditing(false);
+  };
+
+  const cancel = () => {
+    setCurrentLayoutState(layoutState);
+    setIsEditing(false);
   };
 
   return (
@@ -67,14 +78,29 @@ export default function Page() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <H1>分析</H1>
         <div className="flex items-center gap-2">
-          <Button className="w-full sm:w-auto" onClick={toggleEditing}>
-            {isEditing ? "編集を完了" : "レイアウトを編集"}
-          </Button>
+          {isEditing ? (
+            <>
+              <Button
+                variant="outline"
+                onClick={cancel}
+                className="w-full sm:w-auto"
+              >
+                キャンセル
+              </Button>
+              <Button onClick={save} className="w-full sm:w-auto">
+                編集を完了
+              </Button>
+            </>
+          ) : (
+            <Button onClick={edit} className="w-full sm:w-auto">
+              レイアウトを編集
+            </Button>
+          )}
         </div>
       </div>
       <ChartLayout
-        layoutState={layoutState}
-        setLayoutState={setLayoutState}
+        layoutState={currentLayoutState}
+        setLayoutState={setCurrentLayoutState}
         editable={isEditing}
       />
     </div>
