@@ -55,7 +55,7 @@ const defaultLayout: LayoutItem[] = [
 ];
 
 export default function Page() {
-  const [layout] = useState(defaultLayout);
+  const [layoutState, setLayoutState] = useState(defaultLayout);
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEditing = () => {
@@ -72,7 +72,11 @@ export default function Page() {
           </Button>
         </div>
       </div>
-      <ChartLayout layout={layout} editable={isEditing} />
+      <ChartLayout
+        layoutState={layoutState}
+        setLayoutState={setLayoutState}
+        editable={isEditing}
+      />
     </div>
   );
 }
