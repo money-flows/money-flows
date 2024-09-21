@@ -139,12 +139,12 @@ export function MonthlyIncomeExpenseRemainingChart({
 
   if (isPending) {
     return (
-      <Card>
-        <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
+      <Card className="relative h-full">
+        <CardHeader className="absolute">
           <CardTitle>{title}</CardTitle>
         </CardHeader>
-        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-          <Skeleton className="h-[350px] w-full" />
+        <CardContent className="h-full p-6 pt-[4.5rem]">
+          <Skeleton className="h-full" />
         </CardContent>
       </Card>
     );

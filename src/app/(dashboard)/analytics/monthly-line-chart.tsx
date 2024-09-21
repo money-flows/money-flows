@@ -97,8 +97,8 @@ export function MonthlyLineChart({
         <CardHeader className="absolute">
           <CardTitle>{title}</CardTitle>
         </CardHeader>
-        <CardContent className="h-full">
-          <Skeleton className="mt-[4.5rem] h-[calc(100%-4.5rem)]" />
+        <CardContent className="h-full p-6 pt-[4.5rem]">
+          <Skeleton className="h-full" />
         </CardContent>
       </Card>
     );
