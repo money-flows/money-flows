@@ -98,11 +98,13 @@ export default function Page() {
           )}
         </div>
       </div>
-      <ChartLayout
-        layoutState={currentLayoutState}
-        setLayoutState={setCurrentLayoutState}
-        editable={isEditing}
-      />
+      <div>
+        <ChartLayout
+          layoutState={currentLayoutState}
+          setLayoutState={setCurrentLayoutState}
+          editable={isEditing}
+        />
+      </div>
     </div>
   );
 }
