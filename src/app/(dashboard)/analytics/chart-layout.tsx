@@ -1,6 +1,9 @@
 import { GridStack } from "gridstack";
 import groupBy from "lodash/groupBy";
+import { X } from "lucide-react";
 import { createRef, useEffect, useRef } from "react";
+
+import { Button } from "@/components/ui/button";
 
 import { MonthlyIncomeExpenseRemainingChart } from "./monthly-income-expense-remaining-chart";
 import { MonthlyLineChart } from "./monthly-line-chart";
@@ -36,6 +39,10 @@ export function ChartLayout({
       refs.current[id] = refs.current[id] || createRef<HTMLDivElement>();
     });
   }
+
+  const removeChart = (id: string) => {
+    setLayoutState(layoutState.filter((item) => item.id !== id));
+  };
 
   useEffect(() => {
     gridRef.current = gridRef.current ?? GridStack.init();
@@ -87,8 +94,18 @@ export function ChartLayout({
             gs-no-move={editable ? undefined : "true"}
             gs-locked={editable ? undefined : "true"}
           >
-            <div className="grid-stack-item-content rounded-lg">
+            <div className="grid-stack-item-content relative rounded-lg">
               <ChartComponent component={item.component} />
+              {editable && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => removeChart(item.id)}
+                  className="absolute right-0 top-0 size-7 p-1 text-muted-foreground"
+                >
+                  <X />
+                </Button>
+              )}
             </div>
           </div>
         );
