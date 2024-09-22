@@ -6,6 +6,9 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
+import { useCreateChartLayout } from "@/features/chart-layout/api/use-create-chart-layout";
+import { useEditChartLayout } from "@/features/chart-layout/api/use-edit-chart-layout";
+import { useGetChartLayouts } from "@/features/chart-layout/api/use-get-chart-layouts";
 
 import { ChartEditor } from "./chart-editor";
 import { ChartLayout } from "./chart-layout";
@@ -55,27 +58,45 @@ const defaultLayout: LayoutItem[] = [
   },
 ];
 
-export default function Page() {
-  const [layoutState, setLayoutState] = useState(defaultLayout);
-  const [currentLayoutState, setCurrentLayoutState] = useState(defaultLayout);
+interface PageInnerProps {
+  layoutId?: string;
+  layoutState?: LayoutItem[];
+}
+
+function PageInner({ layoutId, layoutState }: PageInnerProps) {
+  const [currentLayoutState, setCurrentLayoutState] = useState(
+    layoutState ?? defaultLayout,
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [selectedLayoutItemId, setSelectedLayoutItemId] = useState<string>();
   const selectedLayoutItem = selectedLayoutItemId
     ? currentLayoutState.find((item) => item.id === selectedLayoutItemId)
     : undefined;
 
+  const createMutation = useCreateChartLayout();
+  const updateMutation = useEditChartLayout(layoutId);
+
   const edit = () => {
     setIsEditing(true);
   };
 
   const save = () => {
-    setLayoutState(currentLayoutState);
+    if (layoutState) {
+      updateMutation.mutate({
+        state: currentLayoutState,
+      });
+    } else {
+      createMutation.mutate({
+        state: currentLayoutState,
+      });
+    }
+
     setIsEditing(false);
     setSelectedLayoutItemId(undefined);
   };
 
   const cancel = () => {
-    setCurrentLayoutState(layoutState);
+    setCurrentLayoutState(layoutState ?? defaultLayout);
     setIsEditing(false);
     setSelectedLayoutItemId(undefined);
   };
@@ -132,4 +153,18 @@ export default function Page() {
       )}
     </>
   );
+}
+
+export default function Page() {
+  const { data, isPending, isError } = useGetChartLayouts();
+
+  if (isPending) {
+    return <p>Loading...</p>;
+  }
+
+  if (isError) {
+    return <p>Error</p>;
+  }
+
+  return <PageInner layoutId={data?.[0]?.id} layoutState={data?.[0]?.state} />;
 }

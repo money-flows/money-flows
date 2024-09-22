@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -77,3 +78,11 @@ export const transactionRelation = relations(transaction, ({ one }) => ({
 }));
 
 export const insertTransactionSchema = createInsertSchema(transaction);
+
+export const chartLayout = pgTable("chart_layout", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  state: jsonb("state").notNull(),
+});
+
+export const insertChartLayoutSchema = createInsertSchema(chartLayout);

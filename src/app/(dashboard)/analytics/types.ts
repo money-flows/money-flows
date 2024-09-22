@@ -13,11 +13,12 @@ export type LayoutComponent =
       };
     };
 
-export interface LayoutItem {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type LayoutItem = {
   id: string;
   x: number;
   y: number;
   w: number;
   h: number;
   component: LayoutComponent;
-}
+};
