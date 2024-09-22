@@ -45,6 +45,12 @@ export function ChartLayout({
     });
   }
 
+  const selectLayoutItem = (item: LayoutStateItem) => {
+    if (editable) {
+      setSelectedLayoutItem(item);
+    }
+  };
+
   const removeChart = (id: string) => {
     if (selectedLayoutItem?.id === id) {
       setSelectedLayoutItem(undefined); // TODO: This is not working
@@ -104,7 +110,7 @@ export function ChartLayout({
             gs-locked={editable ? undefined : "true"}
           >
             <div
-              onClick={() => setSelectedLayoutItem(item)} // TODO: Use clickable tag (e.g. button) instead of div
+              onClick={() => selectLayoutItem(item)} // TODO: Use clickable tag (e.g. button) instead of div
               className={cn(
                 "grid-stack-item-content relative rounded-lg",
                 selectedLayoutItem?.id === item.id &&
