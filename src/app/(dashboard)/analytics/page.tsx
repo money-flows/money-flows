@@ -58,6 +58,7 @@ export default function Page() {
   const [layoutState, setLayoutState] = useState(defaultLayout);
   const [currentLayoutState, setCurrentLayoutState] = useState(defaultLayout);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedLayoutItem, setSelectedLayoutItem] = useState<LayoutItem>();
 
   const edit = () => {
     setIsEditing(true);
@@ -66,11 +67,13 @@ export default function Page() {
   const save = () => {
     setLayoutState(currentLayoutState);
     setIsEditing(false);
+    setSelectedLayoutItem(undefined);
   };
 
   const cancel = () => {
     setCurrentLayoutState(layoutState);
     setIsEditing(false);
+    setSelectedLayoutItem(undefined);
   };
 
   return (
@@ -103,6 +106,8 @@ export default function Page() {
           layoutState={currentLayoutState}
           setLayoutState={setCurrentLayoutState}
           editable={isEditing}
+          selectedLayoutItem={selectedLayoutItem}
+          setSelectedLayoutItem={setSelectedLayoutItem}
         />
       </div>
     </div>
