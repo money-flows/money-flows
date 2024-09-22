@@ -36,7 +36,6 @@ export function ChartLayout({
   selectedLayoutItem,
   setSelectedLayoutItem,
 }: ChartLayoutProps) {
-  console.log({ selectedLayoutItem });
   const refs = useRef<{ [key in string]: React.RefObject<HTMLDivElement> }>({});
   const gridRef = useRef<GridStack>();
 
