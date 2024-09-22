@@ -25,16 +25,16 @@ interface ChartLayoutProps {
   layoutState: LayoutStateItem[];
   setLayoutState: (layoutState: LayoutStateItem[]) => void;
   editable?: boolean;
-  selectedLayoutItem?: LayoutStateItem;
-  setSelectedLayoutItem: (layoutItem?: LayoutStateItem) => void;
+  selectedLayoutItemId?: string;
+  setSelectedLayoutItemId: (id?: string) => void;
 }
 
 export function ChartLayout({
   layoutState,
   setLayoutState,
   editable,
-  selectedLayoutItem,
-  setSelectedLayoutItem,
+  selectedLayoutItemId,
+  setSelectedLayoutItemId,
 }: ChartLayoutProps) {
   const refs = useRef<{ [key in string]: React.RefObject<HTMLDivElement> }>({});
   const gridRef = useRef<GridStack>();
@@ -45,15 +45,15 @@ export function ChartLayout({
     });
   }
 
-  const selectLayoutItem = (item: LayoutStateItem) => {
+  const selectLayoutItemId = (id: string) => {
     if (editable) {
-      setSelectedLayoutItem(item);
+      setSelectedLayoutItemId(id);
     }
   };
 
   const removeChart = (id: string) => {
-    if (selectedLayoutItem?.id === id) {
-      setSelectedLayoutItem(undefined); // TODO: This is not working
+    if (selectedLayoutItemId && selectedLayoutItemId === id) {
+      setSelectedLayoutItemId(undefined); // TODO: This is not working
     }
 
     setLayoutState(layoutState.filter((item) => item.id !== id));
@@ -110,10 +110,10 @@ export function ChartLayout({
             gs-locked={editable ? undefined : "true"}
           >
             <div
-              onClick={() => selectLayoutItem(item)} // TODO: Use clickable tag (e.g. button) instead of div
+              onClick={() => selectLayoutItemId(item.id)} // TODO: Use clickable tag (e.g. button) instead of div
               className={cn(
                 "grid-stack-item-content relative rounded-lg",
-                selectedLayoutItem?.id === item.id &&
+                selectedLayoutItemId === item.id &&
                   "ring-2 ring-blue-500 ring-offset-2",
               )}
             >

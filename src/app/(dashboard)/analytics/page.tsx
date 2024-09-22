@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
 
+import { ChartEditor } from "./chart-editor";
 import { ChartLayout } from "./chart-layout";
 import { LayoutItem } from "./types";
 
@@ -58,7 +59,10 @@ export default function Page() {
   const [layoutState, setLayoutState] = useState(defaultLayout);
   const [currentLayoutState, setCurrentLayoutState] = useState(defaultLayout);
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedLayoutItem, setSelectedLayoutItem] = useState<LayoutItem>();
+  const [selectedLayoutItemId, setSelectedLayoutItemId] = useState<string>();
+  const selectedLayoutItem = selectedLayoutItemId
+    ? currentLayoutState.find((item) => item.id === selectedLayoutItemId)
+    : undefined;
 
   const edit = () => {
     setIsEditing(true);
@@ -67,49 +71,65 @@ export default function Page() {
   const save = () => {
     setLayoutState(currentLayoutState);
     setIsEditing(false);
-    setSelectedLayoutItem(undefined);
+    setSelectedLayoutItemId(undefined);
   };
 
   const cancel = () => {
     setCurrentLayoutState(layoutState);
     setIsEditing(false);
-    setSelectedLayoutItem(undefined);
+    setSelectedLayoutItemId(undefined);
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <H1>分析</H1>
-        <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
-              <Button
-                variant="outline"
-                onClick={cancel}
-                className="w-full sm:w-auto"
-              >
-                キャンセル
+    <>
+      <div className="space-y-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <H1>分析</H1>
+          <div className="flex items-center gap-2">
+            {isEditing ? (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={cancel}
+                  className="w-full sm:w-auto"
+                >
+                  キャンセル
+                </Button>
+                <Button onClick={save} className="w-full sm:w-auto">
+                  編集を完了
+                </Button>
+              </>
+            ) : (
+              <Button onClick={edit} className="w-full sm:w-auto">
+                レイアウトを編集
               </Button>
-              <Button onClick={save} className="w-full sm:w-auto">
-                編集を完了
-              </Button>
-            </>
-          ) : (
-            <Button onClick={edit} className="w-full sm:w-auto">
-              レイアウトを編集
-            </Button>
-          )}
+            )}
+          </div>
+        </div>
+        <div>
+          <ChartLayout
+            layoutState={currentLayoutState}
+            setLayoutState={setCurrentLayoutState}
+            editable={isEditing}
+            selectedLayoutItemId={selectedLayoutItemId}
+            setSelectedLayoutItemId={setSelectedLayoutItemId}
+          />
         </div>
       </div>
-      <div>
-        <ChartLayout
-          layoutState={currentLayoutState}
-          setLayoutState={setCurrentLayoutState}
-          editable={isEditing}
-          selectedLayoutItem={selectedLayoutItem}
-          setSelectedLayoutItem={setSelectedLayoutItem}
-        />
-      </div>
-    </div>
+      {selectedLayoutItem && (
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <ChartEditor
+            item={selectedLayoutItem}
+            onChange={(item) => {
+              setCurrentLayoutState((prev) =>
+                prev.map((prevItem) =>
+                  prevItem.id === item.id ? item : prevItem,
+                ),
+              );
+            }}
+          />
+        </div>
+      )}
+    </>
   );
 }
