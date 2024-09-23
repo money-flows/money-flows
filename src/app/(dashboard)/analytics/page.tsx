@@ -9,6 +9,7 @@ import { H1 } from "@/components/ui/h1";
 import { useCreateChartLayout } from "@/features/chart-layout/api/use-create-chart-layout";
 import { useEditChartLayout } from "@/features/chart-layout/api/use-edit-chart-layout";
 import { useGetChartLayouts } from "@/features/chart-layout/api/use-get-chart-layouts";
+import { useNewChart } from "@/features/chart-layout/hooks/use-new-chart";
 
 import { ChartEditor } from "./chart-editor";
 import { ChartLayout } from "./chart-layout";
@@ -76,6 +77,8 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
   const createMutation = useCreateChartLayout();
   const updateMutation = useEditChartLayout(layoutId);
 
+  const { onOpen } = useNewChart();
+
   const edit = () => {
     setIsEditing(true);
   };
@@ -109,6 +112,9 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
           <div className="flex items-center gap-2">
             {isEditing ? (
               <>
+                <Button onClick={onOpen} className="w-full sm:w-auto">
+                  チャートを追加
+                </Button>
                 <Button
                   variant="outline"
                   onClick={cancel}
