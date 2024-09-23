@@ -9,11 +9,13 @@ import { H1 } from "@/components/ui/h1";
 import { useCreateChartLayout } from "@/features/chart-layout/api/use-create-chart-layout";
 import { useEditChartLayout } from "@/features/chart-layout/api/use-edit-chart-layout";
 import { useGetChartLayouts } from "@/features/chart-layout/api/use-get-chart-layouts";
+import { NewChartDialog } from "@/features/chart-layout/components/new-chart-dialog";
 import { useNewChart } from "@/features/chart-layout/hooks/use-new-chart";
+import { ChartComponentName } from "@/features/chart-layout/types";
 
 import { ChartEditor } from "./chart-editor";
 import { ChartLayout } from "./chart-layout";
-import { LayoutItem } from "./types";
+import { LayoutComponent, LayoutItem } from "./types";
 
 const defaultLayout: LayoutItem[] = [
   {
@@ -104,6 +106,42 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
     setSelectedLayoutItemId(undefined);
   };
 
+  const addNewChart = (componentName: ChartComponentName) => {
+    let component: LayoutComponent;
+
+    switch (componentName) {
+      case "MonthlyIncomeExpenseRemainingChart":
+        component = {
+          name: "MonthlyIncomeExpenseRemainingChart",
+          props: {
+            title: "新しいチャート",
+          },
+        };
+        break;
+      case "MonthlyLineChart":
+        component = {
+          name: "MonthlyLineChart",
+          props: {
+            title: "新しいチャート",
+            type: "remaining",
+          },
+        };
+        break;
+    }
+
+    const newChart: LayoutItem = {
+      id: `item-${currentLayoutState.length + 1}`,
+      x: 0,
+      y: 0,
+      w: 12,
+      h: 4,
+      component,
+    };
+
+    setCurrentLayoutState((prev) => [...prev, newChart]);
+    setSelectedLayoutItemId(newChart.id);
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -112,9 +150,6 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
           <div className="flex items-center gap-2">
             {isEditing ? (
               <>
-                <Button onClick={onOpen} className="w-full sm:w-auto">
-                  チャートを追加
-                </Button>
                 <Button
                   variant="outline"
                   onClick={cancel}
@@ -124,6 +159,9 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
                 </Button>
                 <Button onClick={save} className="w-full sm:w-auto">
                   編集を完了
+                </Button>
+                <Button onClick={onOpen} className="w-full sm:w-auto">
+                  チャートを追加
                 </Button>
               </>
             ) : (
@@ -157,6 +195,7 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
           />
         </div>
       )}
+      <NewChartDialog onChartSelect={addNewChart} />
     </>
   );
 }
