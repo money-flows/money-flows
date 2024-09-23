@@ -138,6 +138,7 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
       component,
     };
 
+    // TODO: Should add it via gridstack because the coordinates will remain overlapping with other charts
     setCurrentLayoutState((prev) => [...prev, newChart]);
     setSelectedLayoutItemId(newChart.id);
   };
