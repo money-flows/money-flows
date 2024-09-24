@@ -215,7 +215,7 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
       {selectedLayoutItem && (
         <div
           ref={editBoxRef}
-          className="fixed right-4 top-1/2 -translate-y-1/2"
+          className="fixed right-4 top-1/2 z-[20000] -translate-y-1/2"
         >
           <ChartEditor
             item={selectedLayoutItem}
