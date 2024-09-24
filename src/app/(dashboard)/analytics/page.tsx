@@ -2,7 +2,7 @@
 
 import "gridstack/dist/gridstack.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
@@ -80,6 +80,20 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
   const updateMutation = useEditChartLayout(layoutId);
 
   const { onOpen } = useNewChart();
+
+  useEffect(() => {
+    const clearSelection = () => {
+      if (isEditing) {
+        setSelectedLayoutItemId(undefined);
+      }
+    };
+
+    document.body.addEventListener("click", clearSelection);
+
+    return () => {
+      document.body.removeEventListener("click", clearSelection);
+    };
+  }, [isEditing]);
 
   const edit = () => {
     setIsEditing(true);
