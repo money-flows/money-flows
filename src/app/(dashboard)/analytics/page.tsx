@@ -2,7 +2,7 @@
 
 import "gridstack/dist/gridstack.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
@@ -79,13 +79,29 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
   const createMutation = useCreateChartLayout();
   const updateMutation = useEditChartLayout(layoutId);
 
+  const editBoxRef = useRef<HTMLDivElement>(null);
+
   const { onOpen } = useNewChart();
 
   useEffect(() => {
-    const clearSelection = () => {
-      if (isEditing) {
-        setSelectedLayoutItemId(undefined);
+    if (!isEditing) {
+      return;
+    }
+
+    const clearSelection = (event: MouseEvent) => {
+      if (!editBoxRef.current) {
+        return;
       }
+
+      const isClickInsideEditBox =
+        event.target instanceof Node &&
+        editBoxRef.current.contains(event.target);
+
+      if (isClickInsideEditBox) {
+        return;
+      }
+
+      setSelectedLayoutItemId(undefined);
     };
 
     document.body.addEventListener("click", clearSelection);
@@ -197,7 +213,10 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
         </div>
       </div>
       {selectedLayoutItem && (
-        <div className="fixed right-4 top-1/2 -translate-y-1/2">
+        <div
+          ref={editBoxRef}
+          className="fixed right-4 top-1/2 -translate-y-1/2"
+        >
           <ChartEditor
             item={selectedLayoutItem}
             onChange={(item) => {
