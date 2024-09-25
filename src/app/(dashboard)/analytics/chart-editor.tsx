@@ -1,3 +1,6 @@
+import { X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,9 +10,10 @@ import { LayoutItem } from "./types";
 interface ChartEditorProps {
   item: LayoutItem;
   onChange: (item: LayoutItem) => void;
+  onClose: () => void;
 }
 
-export function ChartEditor({ item, onChange }: ChartEditorProps) {
+export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
   const { component } = item;
 
   if (component.name === "MonthlyIncomeExpenseRemainingChart") {
@@ -27,7 +31,17 @@ export function ChartEditor({ item, onChange }: ChartEditorProps) {
 
     return (
       <Card>
-        <CardHeader className="font-semibold">チャートの編集</CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between font-semibold">
+          チャートの編集
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="size-6 p-1 text-muted-foreground"
+          >
+            <X />
+          </Button>
+        </CardHeader>
         <CardContent>
           <div className="space-y-1">
             <Label>タイトル</Label>

@@ -226,6 +226,7 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
                 ),
               );
             }}
+            onClose={() => setSelectedLayoutItemId(undefined)}
           />
         </div>
       )}
