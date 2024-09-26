@@ -67,7 +67,17 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
 
     return (
       <Card>
-        <CardHeader className="font-semibold">チャートの編集</CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between font-semibold">
+          チャートの編集
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="size-6 p-1 text-muted-foreground"
+          >
+            <X />
+          </Button>
+        </CardHeader>
         <CardContent>
           <div className="space-y-1">
             <Label>タイトル</Label>
