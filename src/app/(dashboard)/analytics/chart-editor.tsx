@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -65,6 +66,21 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
       onChange(newItem);
     };
 
+    const handleCumulativeChange = (checked: CheckedState) => {
+      if (checked === "indeterminate") {
+        return;
+      }
+
+      const newItem: LayoutItem = {
+        ...item,
+        component: {
+          name: "MonthlyLineChart",
+          props: { ...component.props, cumulative: checked },
+        },
+      };
+      onChange(newItem);
+    };
+
     return (
       <Card>
         <CardHeader className="flex flex-row items-center justify-between font-semibold">
@@ -78,10 +94,18 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
             <X />
           </Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="space-y-1">
             <Label>タイトル</Label>
             <Input value={component.props.title} onChange={handleTitleChange} />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Checkbox
+              id="cumulative"
+              checked={component.props.cumulative}
+              onCheckedChange={handleCumulativeChange}
+            />
+            <Label htmlFor="cumulative">累計表示</Label>
           </div>
         </CardContent>
       </Card>

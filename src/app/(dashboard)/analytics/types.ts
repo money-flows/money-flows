@@ -10,6 +10,7 @@ export type LayoutComponent =
       props: {
         title: string;
         type: "remaining" | "income" | "expense";
+        cumulative?: boolean;
       };
     };
 
