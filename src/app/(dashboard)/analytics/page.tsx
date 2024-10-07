@@ -2,6 +2,7 @@
 
 import "gridstack/dist/gridstack.css";
 
+import { createId } from "@paralleldrive/cuid2";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ import { LayoutComponent, LayoutItem } from "./types";
 
 const defaultLayout: LayoutItem[] = [
   {
-    id: "item-1",
+    id: createId(),
     x: 0,
     y: 0,
     w: 12,
@@ -32,7 +33,7 @@ const defaultLayout: LayoutItem[] = [
     },
   },
   {
-    id: "item-2",
+    id: createId(),
     x: 0,
     y: 4,
     w: 6,
@@ -46,7 +47,7 @@ const defaultLayout: LayoutItem[] = [
     },
   },
   {
-    id: "item-3",
+    id: createId(),
     x: 6,
     y: 4,
     w: 6,
@@ -160,7 +161,7 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
     }
 
     const newChart: LayoutItem = {
-      id: `item-${currentLayoutState.length + 1}`,
+      id: createId(),
       x: 0,
       y: 0,
       w: 12,
