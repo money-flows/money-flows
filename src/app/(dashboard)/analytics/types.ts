@@ -11,6 +11,7 @@ export type LayoutComponent =
         title: string;
         type: "remaining" | "income" | "expense";
         cumulative?: boolean;
+        categoryIds?: string[];
       };
     };
 

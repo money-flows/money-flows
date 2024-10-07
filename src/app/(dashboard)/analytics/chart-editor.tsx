@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/ui/selector";
+import { useGetCategories } from "@/features/categories/api/use-get-categories";
 
 import { LayoutItem } from "./types";
 
@@ -15,6 +17,18 @@ interface ChartEditorProps {
 }
 
 export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
+  const categoriesQuery = useGetCategories({
+    types: ["income", "expense"],
+  });
+
+  if (categoriesQuery.isPending) {
+    return <p>読み込み中...</p>;
+  }
+
+  if (categoriesQuery.isError) {
+    return <p>エラーが発生しました</p>;
+  }
+
   const { component } = item;
 
   if (component.name === "MonthlyIncomeExpenseRemainingChart") {
@@ -54,6 +68,11 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
   }
 
   if (component.name === "MonthlyLineChart") {
+    const categoryOptions = categoriesQuery.data.map((category) => ({
+      label: category.name,
+      value: category.id,
+    }));
+
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const title = event.target.value;
       const newItem: LayoutItem = {
@@ -76,6 +95,20 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
         component: {
           name: "MonthlyLineChart",
           props: { ...component.props, cumulative: checked },
+        },
+      };
+      onChange(newItem);
+    };
+
+    const handleCategoryChange = (value?: string) => {
+      const newItem: LayoutItem = {
+        ...item,
+        component: {
+          name: "MonthlyLineChart",
+          props: {
+            ...component.props,
+            categoryIds: value ? [value] : undefined,
+          },
         },
       };
       onChange(newItem);
@@ -106,6 +139,13 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
               onCheckedChange={handleCumulativeChange}
             />
             <Label htmlFor="cumulative">累計表示</Label>
+          </div>
+          <div className="space-y-1">
+            <Label>カテゴリー</Label>
+            <SearchableSelect
+              options={categoryOptions}
+              onChange={handleCategoryChange}
+            />
           </div>
         </CardContent>
       </Card>
