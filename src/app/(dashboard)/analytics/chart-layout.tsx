@@ -120,10 +120,10 @@ export function ChartLayout({
               <ChartComponent component={item.component} />
               {editable && (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={() => removeChart(item.id)}
-                  className="absolute right-0 top-0 size-7 p-1 text-muted-foreground"
+                  className="absolute right-2 top-2 size-7 p-1.5 text-muted-foreground"
                 >
                   <X />
                 </Button>
