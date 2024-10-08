@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SearchableSelect } from "@/components/ui/selector";
+import { MultiSelector, Option } from "@/components/ui/multi-selector";
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
 
 import { LayoutItem } from "./types";
@@ -100,14 +100,16 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
       onChange(newItem);
     };
 
-    const handleCategoryChange = (value?: string) => {
+    const handleCategoriesChange = (options?: Option[]) => {
       const newItem: LayoutItem = {
         ...item,
         component: {
           name: "MonthlyLineChart",
           props: {
             ...component.props,
-            categoryIds: value ? [value] : undefined,
+            categoryIds: options
+              ? options.map((option) => option.value)
+              : undefined,
           },
         },
       };
@@ -142,9 +144,9 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
           </div>
           <div className="space-y-1">
             <Label>カテゴリー</Label>
-            <SearchableSelect
+            <MultiSelector
               options={categoryOptions}
-              onChange={handleCategoryChange}
+              onChange={handleCategoriesChange}
             />
           </div>
         </CardContent>
