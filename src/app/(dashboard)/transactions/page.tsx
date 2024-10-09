@@ -77,11 +77,11 @@ export default function TransactionsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <H1>履歴</H1>
         <div className="flex items-center gap-2">
-          <Button size="sm" onClick={onOpen} className="w-full sm:w-auto">
+          <Button onClick={onOpen} className="w-full sm:w-auto">
             <Plus className="mr-2 size-4" />
             取引を追加
           </Button>
-          <Button asChild size="sm" className="w-full sm:w-auto">
+          <Button asChild className="w-full sm:w-auto">
             <Link href="/transactions/import-csv">
               <Upload className="mr-2 size-4" />
               CSV取り込み

@@ -15,7 +15,7 @@ export default function AccountsPage() {
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <H1>口座</H1>
-        <Button size="sm" onClick={onOpen}>
+        <Button onClick={onOpen}>
           <Plus className="mr-2 size-4" />
           口座を追加
         </Button>

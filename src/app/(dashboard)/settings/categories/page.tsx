@@ -15,7 +15,7 @@ export default function CategoriesPage() {
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <H1>カテゴリー</H1>
-        <Button size="sm" onClick={onOpen}>
+        <Button onClick={onOpen}>
           <Plus className="mr-2 size-4" />
           カテゴリーを追加
         </Button>
