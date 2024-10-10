@@ -45,7 +45,7 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
     };
 
     return (
-      <Card>
+      <Card className="w-96">
         <CardHeader className="flex flex-row items-center justify-between font-semibold">
           チャートの編集
           <Button
@@ -117,7 +117,7 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
     };
 
     return (
-      <Card>
+      <Card className="w-96">
         <CardHeader className="flex flex-row items-center justify-between font-semibold">
           チャートの編集
           <Button
