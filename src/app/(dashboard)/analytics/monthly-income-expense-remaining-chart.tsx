@@ -165,8 +165,8 @@ export function MonthlyIncomeExpenseRemainingChart({
             accessibilityLayer
             data={chartData}
             margin={{ top: 72 }}
-            barGap="-78.5%"
             maxBarSize={48}
+            stackOffset="sign"
           >
             <CartesianGrid vertical={false} />
             <XAxis
@@ -199,12 +199,14 @@ export function MonthlyIncomeExpenseRemainingChart({
               fill="var(--color-income)"
               fillOpacity={0.85}
               radius={[4, 4, 0, 0]}
+              stackId="income-and-expense"
             />
             <Bar
               dataKey="expense"
               fill="var(--color-expense)"
               fillOpacity={0.85}
               radius={[4, 4, 0, 0]}
+              stackId="income-and-expense"
             />
             <Line
               dataKey="remaining"
