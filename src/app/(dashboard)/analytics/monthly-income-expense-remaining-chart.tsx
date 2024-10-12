@@ -176,6 +176,7 @@ export function MonthlyIncomeExpenseRemainingChart({
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => `${value}月`}
+              interval="preserveStart"
             />
             <YAxis
               tickLine={false}

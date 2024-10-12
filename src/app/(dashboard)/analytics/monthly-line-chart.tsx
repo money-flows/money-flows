@@ -125,6 +125,7 @@ export function MonthlyLineChart({
               minTickGap={32}
               tickFormatter={(value) => `${value}月`}
               padding={{ left: 4, right: 4 }}
+              interval="preserveStart"
             />
             <YAxis
               tickLine={false}
