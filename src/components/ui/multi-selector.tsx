@@ -225,7 +225,6 @@ const MultiSelector = React.forwardRef<
                       setInputValue("");
                       updateSelected(option);
                       onChange?.(newOptions);
-                      inputRef.current?.blur();
                     }}
                     className="cursor-pointer"
                   >
