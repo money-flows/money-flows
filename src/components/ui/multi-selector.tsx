@@ -135,7 +135,7 @@ const MultiSelector = React.forwardRef<
           className={cn(
             "min-h-10 rounded-md border border-input text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
             {
-              "px-3 py-2": selected.length !== 0,
+              "px-2 py-2": selected.length !== 0,
               "cursor-text": !disabled && selected.length !== 0,
             },
             className,
@@ -147,6 +147,7 @@ const MultiSelector = React.forwardRef<
               return (
                 <Badge
                   key={option.value}
+                  variant="outline"
                   className={cn(
                     "data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
@@ -156,7 +157,7 @@ const MultiSelector = React.forwardRef<
                   {option.label}
                   <button
                     className={cn(
-                      "ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                      "ml-1 -mr-0.5 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
                     )}
                     onKeyDown={(event) => {
                       if (event.key === "Enter") {
