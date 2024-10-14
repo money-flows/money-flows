@@ -1,6 +1,9 @@
+"use client";
+
 import { ArrowUpDown, House, LayoutGrid, Plus, Settings } from "lucide-react";
 import { NavLink } from "./nav-item";
 import { Separator } from "@/components/ui/separator";
+import { usePathname } from "next/navigation";
 
 const generalLinks = [
   {
@@ -35,14 +38,27 @@ const dashboardLinks = [
   },
 ];
 
+function isActiveLink(link: string, pathname: string) {
+  if (link === "/") {
+    return pathname === "/";
+  }
+  return pathname.startsWith(link);
+}
+
 export function NavBar() {
+  const pathname = usePathname();
+
   return (
     <nav className="px-4 flex flex-col bg-background-white border-r border-border">
       <div className="py-6 text-sm font-bold">MoneyFlows</div>
       <ul>
         {generalLinks.map(({ label, link, icon: Icon }) => (
           <li key={link}>
-            <NavLink href={link} icon={<Icon size={20} />}>
+            <NavLink
+              href={link}
+              icon={<Icon size={20} />}
+              active={isActiveLink(link, pathname)}
+            >
               {label}
             </NavLink>
           </li>
@@ -64,6 +80,7 @@ export function NavBar() {
             <NavLink
               href={`/dashboards/${id}`}
               icon={<div className="size-5" />}
+              active={isActiveLink(`/dashboards/${id}`, pathname)}
             >
               {name}
             </NavLink>
@@ -71,7 +88,11 @@ export function NavBar() {
         ))}
       </ul>
       <div className="mt-auto pb-4">
-        <NavLink href="/settings" icon={<Settings size={20} />}>
+        <NavLink
+          href="/settings"
+          icon={<Settings size={20} />}
+          active={isActiveLink("/settings", pathname)}
+        >
           設定
         </NavLink>
       </div>
