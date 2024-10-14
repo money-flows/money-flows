@@ -225,6 +225,8 @@ export const transactions = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
+      console.log(`request body: ${values}`);
+
       // if ts 5.5 or later, this `as` should not be needed, but `filter` method does not infer the type well...
       const mayBeSavedCategories = Array.from(
         new Map(
@@ -247,6 +249,8 @@ export const transactions = new Hono()
             }),
         ).values(),
       );
+
+      console.log({ mayBeSavedCategories });
 
       if (mayBeSavedCategories.length === 0) {
         const data = await db
@@ -279,6 +283,8 @@ export const transactions = new Hono()
             ),
           ),
         );
+
+      console.log({ existingCategories });
 
       const existingCategoryNameSet = new Set(
         existingCategories.map((category) => category.name),
