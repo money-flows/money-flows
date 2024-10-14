@@ -37,8 +37,8 @@ const dashboardLinks = [
 
 export function NavBar() {
   return (
-    <nav className="px-4 flex flex-col bg-gray-50 border-r border-gray-100 text-sm leading-4 font-bold">
-      <div className="py-6 font-bold">MoneyFlows</div>
+    <nav className="px-4 flex flex-col bg-background-white border-r border-border">
+      <div className="py-6 text-sm font-bold text-text-main">MoneyFlows</div>
       <ul>
         {generalLinks.map(({ label, link, icon: Icon }) => (
           <li key={link}>
@@ -50,9 +50,9 @@ export function NavBar() {
       </ul>
       <Separator className="my-4" />
       <ul>
-        <div className="mb-2 pl-2 flex items-center justify-between text-gray-500 text-xs">
-          ダッシュボード
-          <button className="p-1 rounded-md hover:bg-gray-100">
+        <div className="mb-2 flex items-center justify-between text-text-sub">
+          <span className="px-2 font-bold text-xs">ダッシュボード</span>
+          <button className="p-1 rounded-md hover:bg-background-gray">
             <Plus size={16} />
           </button>
         </div>
@@ -76,9 +76,9 @@ export function NavBar() {
         </NavLink>
       </div>
       <Separator />
-      <div className="flex items-center gap-2 px-2 py-4 text-xs">
-        <div className="size-8 bg-gray-300 rounded-full" />
-        Username
+      <div className="flex items-center gap-2 px-2 py-4">
+        <div className="size-8 bg-text-sub/50 rounded-full" />
+        <span className="font-bold text-xs text-text-sub">Username</span>
       </div>
     </nav>
   );
