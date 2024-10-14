@@ -22,12 +22,7 @@ export function NavLink({ children, href, icon, active }: NavLinkProps) {
           {icon}
         </span>
       )}
-      <span
-        className={cn(
-          "text-sm font-bold text-text-main",
-          active && "text-blue-500",
-        )}
-      >
+      <span className={cn("text-sm font-bold", active && "text-blue-500")}>
         {children}
       </span>
     </Link>
