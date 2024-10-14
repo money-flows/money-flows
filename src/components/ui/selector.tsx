@@ -53,7 +53,11 @@ const SearchableSelect = React.forwardRef<
 
     const [selected, setSelected] = React.useState<Option>();
     const selectedRef = React.useRef<Option>();
-    const [inputValue, setInputValue] = React.useState(value ?? "");
+    const [inputValue, setInputValue] = React.useState(
+      (value
+        ? options.find((option) => option.value === value)?.label
+        : undefined) ?? "",
+    );
 
     const updateSelected = (option?: Option) => {
       selectedRef.current = option;
