@@ -145,6 +145,9 @@ export function ChartEditor({ item, onChange, onClose }: ChartEditorProps) {
           <div className="space-y-1">
             <Label>カテゴリー</Label>
             <MultiSelector
+              value={categoryOptions.filter((option) =>
+                component.props.categoryIds?.includes(option.value),
+              )}
               options={categoryOptions}
               onChange={handleCategoriesChange}
             />
