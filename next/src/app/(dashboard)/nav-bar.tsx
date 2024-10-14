@@ -23,15 +23,15 @@ const generalLinks = [
 const dashboardLinks = [
   {
     id: "1",
-    name: "収入全般",
+    name: "ダッシュボード１",
   },
   {
     id: "2",
-    name: "支出全般",
+    name: "ダッシュボード２",
   },
   {
     id: "3",
-    name: "カテゴリー別",
+    name: "ダッシュボード３",
   },
 ];
 
@@ -50,7 +50,7 @@ export function NavBar() {
       </ul>
       <Separator className="my-4" />
       <ul>
-        <div className="h-8 pl-2 flex items-center justify-between text-gray-500 text-xs">
+        <div className="mb-2 pl-2 flex items-center justify-between text-gray-500 text-xs">
           ダッシュボード
           <button className="p-1 rounded-md hover:bg-gray-100">
             <Plus size={16} />
