@@ -78,7 +78,7 @@ export function NavBar() {
       <Separator />
       <div className="flex items-center gap-2 px-2 py-4">
         <div className="size-8 bg-text-sub/50 rounded-full" />
-        <span className="font-bold text-xs text-text-sub">Username</span>
+        <span className="font-bold text-xs text-text-main">Username</span>
       </div>
     </nav>
   );
