@@ -74,6 +74,33 @@ export function ChartLayout({
     });
     grid.batchUpdate(false);
 
+    const newLayoutState = grid
+      .getGridItems()
+      .map((item) => item.gridstackNode)
+      .map((node) => {
+        if (!node) {
+          throw new Error("Node not found");
+        }
+
+        const element = layoutState.find((item) => item.id === node?.id);
+        if (!element) {
+          throw new Error("Element not found");
+        }
+
+        return {
+          id: element.id,
+          x: node.x ?? element.x,
+          y: node.y ?? element.y,
+          w: node.w ?? element.w,
+          h: node.h ?? element.h,
+          component: element.component,
+        };
+      });
+
+    if (JSON.stringify(newLayoutState) !== JSON.stringify(layoutState)) {
+      setLayoutState(newLayoutState);
+    }
+
     grid.on("change", (_, element) => {
       const elementMap = groupBy(element, "id");
 
