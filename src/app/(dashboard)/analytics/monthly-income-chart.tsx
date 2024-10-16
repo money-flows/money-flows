@@ -22,26 +22,24 @@ function yAxisTickFormatter(value: number) {
   return `${formatter.format(value)}円`;
 }
 
-interface MonthlyLineChartProps {
+interface MonthlyIncomeChartProps {
   title: React.ReactNode;
-  type: "income" | "expense" | "remaining";
   cumulative?: boolean;
   categoryIds?: string[];
 }
 
-export function MonthlyLineChart({
+export function MonthlyIncomeChart({
   title,
-  type,
   cumulative = false,
   categoryIds,
-}: MonthlyLineChartProps) {
+}: MonthlyIncomeChartProps) {
   const [years] = useState([
     new Date().getFullYear(),
     new Date().getFullYear() - 1,
     new Date().getFullYear() - 2,
   ]);
   const { data, isPending, isError } = useGetTransactionsMonthly({
-    types: type === "remaining" ? undefined : [type],
+    types: ["income"],
     years,
     yearlyCumulative: cumulative,
     categoryIds,
@@ -68,7 +66,7 @@ export function MonthlyLineChart({
           ...acc,
           [month]: {
             ...acc[month],
-            [year]: totalAmount * (type === "expense" ? -1 : 1),
+            [year]: totalAmount,
           },
         };
       },
@@ -89,7 +87,7 @@ export function MonthlyLineChart({
     );
 
     return Object.values(groupByMonthData);
-  }, [type, data, isPending, isError]);
+  }, [data, isPending, isError]);
 
   if (isPending) {
     return (

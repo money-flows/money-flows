@@ -1,3 +1,4 @@
 export type ChartComponentName =
   | "MonthlyIncomeExpenseRemainingChart"
-  | "MonthlyLineChart";
+  | "MonthlyExpenseChart"
+  | "MonthlyIncomeChart";

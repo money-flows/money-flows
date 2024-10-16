@@ -6,10 +6,17 @@ export type LayoutComponent =
       };
     }
   | {
-      name: "MonthlyLineChart";
+      name: "MonthlyExpenseChart";
       props: {
         title: string;
-        type: "remaining" | "income" | "expense";
+        cumulative?: boolean;
+        categoryIds?: string[];
+      };
+    }
+  | {
+      name: "MonthlyIncomeChart";
+      props: {
+        title: string;
         cumulative?: boolean;
         categoryIds?: string[];
       };

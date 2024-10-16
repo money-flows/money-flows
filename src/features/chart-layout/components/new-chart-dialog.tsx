@@ -16,8 +16,12 @@ const charts = [
     title: "収支チャート",
   },
   {
-    component: "MonthlyLineChart",
-    title: "年間比較チャート",
+    component: "MonthlyExpenseChart",
+    title: "年間支出チャート",
+  },
+  {
+    component: "MonthlyIncomeChart",
+    title: "年間収入チャート",
   },
 ] as const satisfies { component: ChartComponentName; title: string }[];
 

@@ -6,16 +6,19 @@ import { createRef, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import { MonthlyExpenseChart } from "./monthly-expense-chart";
+import { MonthlyIncomeChart } from "./monthly-income-chart";
 import { MonthlyIncomeExpenseRemainingChart } from "./monthly-income-expense-remaining-chart";
-import { MonthlyLineChart } from "./monthly-line-chart";
 import { LayoutComponent, LayoutItem as LayoutStateItem } from "./types";
 
 function ChartComponent({ component }: { component: LayoutComponent }) {
   switch (component.name) {
     case "MonthlyIncomeExpenseRemainingChart":
       return <MonthlyIncomeExpenseRemainingChart {...component.props} />;
-    case "MonthlyLineChart":
-      return <MonthlyLineChart {...component.props} />;
+    case "MonthlyExpenseChart":
+      return <MonthlyExpenseChart {...component.props} />;
+    case "MonthlyIncomeChart":
+      return <MonthlyIncomeChart {...component.props} />;
     default:
       return null;
   }

@@ -39,10 +39,9 @@ const defaultLayout: LayoutItem[] = [
     w: 6,
     h: 4,
     component: {
-      name: "MonthlyLineChart",
+      name: "MonthlyIncomeChart",
       props: {
         title: "収入の推移（年間）",
-        type: "income",
       },
     },
   },
@@ -53,10 +52,9 @@ const defaultLayout: LayoutItem[] = [
     w: 6,
     h: 4,
     component: {
-      name: "MonthlyLineChart",
+      name: "MonthlyExpenseChart",
       props: {
         title: "支出の推移（年間）",
-        type: "expense",
       },
     },
   },
@@ -71,6 +69,7 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
   const [currentLayoutState, setCurrentLayoutState] = useState(
     layoutState ?? defaultLayout,
   );
+  console.log({ currentLayoutState });
   const [isEditing, setIsEditing] = useState(false);
   const [selectedLayoutItemId, setSelectedLayoutItemId] = useState<string>();
   const selectedLayoutItem = selectedLayoutItemId
@@ -149,12 +148,19 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
           },
         };
         break;
-      case "MonthlyLineChart":
+      case "MonthlyExpenseChart":
         component = {
-          name: "MonthlyLineChart",
+          name: "MonthlyExpenseChart",
           props: {
             title: "新しいチャート",
-            type: "remaining",
+          },
+        };
+        break;
+      case "MonthlyIncomeChart":
+        component = {
+          name: "MonthlyIncomeChart",
+          props: {
+            title: "新しいチャート",
           },
         };
         break;
