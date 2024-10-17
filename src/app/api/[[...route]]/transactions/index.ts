@@ -14,10 +14,17 @@ import {
   sql,
 } from "drizzle-orm";
 import { Hono } from "hono";
+import groupBy from "lodash/groupBy";
 import { z } from "zod";
 
 import { db } from "@/db/drizzle";
-import { account, category, transaction } from "@/db/schema";
+import {
+  account,
+  category,
+  tag,
+  transaction,
+  transactionTag,
+} from "@/db/schema";
 
 import { insertTransactionSchema } from "../schema";
 import { aggregations } from "./aggregations";
@@ -130,9 +137,31 @@ export const transactions = new Hono()
           ),
         );
 
+      const transactionIds = data.map((transaction) => transaction.id);
+      const tags = await db
+        .select({
+          transactionId: transactionTag.transactionId,
+          tagId: transactionTag.tagId,
+          tag: tag.name,
+        })
+        .from(transactionTag)
+        .innerJoin(tag, eq(transactionTag.tagId, tag.id))
+        .where(inArray(transactionTag.transactionId, transactionIds));
+
+      const groupedTags = groupBy(tags, "transactionId");
+
+      const dataWithTags = data.map((transaction) => ({
+        ...transaction,
+        tags:
+          groupedTags[transaction.id]?.map((tag) => ({
+            id: tag.tagId,
+            name: tag.tag,
+          })) ?? [],
+      }));
+
       const pageCount = Math.ceil(totalCount / pageSize);
 
-      return c.json({ data, meta: { totalCount, pageCount } });
+      return c.json({ data: dataWithTags, meta: { totalCount, pageCount } });
     },
   )
   .get(

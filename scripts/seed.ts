@@ -7,6 +7,7 @@ import {
   subDays,
 } from "date-fns";
 import { drizzle } from "drizzle-orm/neon-http";
+import uniqBy from "lodash/uniqBy";
 
 import {
   account,
@@ -95,18 +96,29 @@ function generateTransactionTags(
   transactions: Transaction[],
   tags: Tag[],
 ): TransactionTag[] {
-  return transactions.flatMap((transaction) => {
+  const expenseTags = tags.filter((t) => t.type === "expense");
+  const incomeTags = tags.filter((t) => t.type === "income");
+
+  const transactionTags = transactions.flatMap((transaction) => {
     const tagCount = Math.floor(Math.random() * 3); // 0-2 tags per transaction
-    const transactionTags = Array.from({ length: tagCount }).map(() => {
-      const tag = tags[Math.floor(Math.random() * tags.length)];
+    return Array.from({ length: tagCount }).map(() => {
+      const tag =
+        transaction.amount > 0
+          ? incomeTags[Math.floor(Math.random() * incomeTags.length)]
+          : expenseTags[Math.floor(Math.random() * expenseTags.length)];
+
       return {
         transactionId: transaction.id,
         tagId: tag.id,
       };
     });
-
-    return transactionTags;
   });
+
+  return uniqBy(
+    transactionTags,
+    (transactionTag) =>
+      `${transactionTag.transactionId}-${transactionTag.tagId}`,
+  );
 }
 
 const SEED_ACCOUNTS: Account[] = [
