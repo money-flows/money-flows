@@ -49,6 +49,30 @@ export const categoryRelation = relations(category, ({ many }) => ({
 
 export const insertCategorySchema = createInsertSchema(category);
 
+export const tag = pgTable("tag", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  type: categoryTypeEnum("type").notNull(),
+  userId: text("user_id").notNull(),
+});
+
+export const transactionTag = pgTable("transaction_tag", {
+  transactionId: text("transaction_id").references(() => transaction.id, {
+    onDelete: "cascade",
+  }),
+  tagId: text("tag_id").references(() => tag.id, {
+    onDelete: "cascade",
+  }),
+});
+
+export const tagRelation = relations(tag, ({ many }) => ({
+  transactionTags: many(transactionTag),
+}));
+
+export const insertTagSchema = createInsertSchema(tag);
+
+export const insertTransactionTagSchema = createInsertSchema(transactionTag);
+
 export const transaction = pgTable("transaction", {
   id: text("id").primaryKey(),
   amount: integer("amount").notNull(),
@@ -66,7 +90,7 @@ export const transaction = pgTable("transaction", {
   memo: text("memo"),
 });
 
-export const transactionRelation = relations(transaction, ({ one }) => ({
+export const transactionRelation = relations(transaction, ({ one, many }) => ({
   account: one(account, {
     fields: [transaction.accountId],
     references: [account.id],
@@ -75,6 +99,7 @@ export const transactionRelation = relations(transaction, ({ one }) => ({
     fields: [transaction.categoryId],
     references: [category.id],
   }),
+  transactionTags: many(transactionTag),
 }));
 
 export const insertTransactionSchema = createInsertSchema(transaction);

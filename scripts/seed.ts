@@ -8,11 +8,20 @@ import {
 } from "date-fns";
 import { drizzle } from "drizzle-orm/neon-http";
 
-import { account, category, transaction } from "@/db/schema";
+import {
+  account,
+  category,
+  chartLayout,
+  tag,
+  transaction,
+  transactionTag,
+} from "@/db/schema";
 
 type Account = typeof account.$inferSelect;
 type Category = typeof category.$inferSelect;
+type Tag = typeof tag.$inferSelect;
 type Transaction = typeof transaction.$inferSelect;
+type TransactionTag = typeof transactionTag.$inferSelect;
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is missing");
@@ -82,6 +91,24 @@ function generateTransactions(accounts: Account[], categories: Category[]) {
   );
 }
 
+function generateTransactionTags(
+  transactions: Transaction[],
+  tags: Tag[],
+): TransactionTag[] {
+  return transactions.flatMap((transaction) => {
+    const tagCount = Math.floor(Math.random() * 3); // 0-2 tags per transaction
+    const transactionTags = Array.from({ length: tagCount }).map(() => {
+      const tag = tags[Math.floor(Math.random() * tags.length)];
+      return {
+        transactionId: transaction.id,
+        tagId: tag.id,
+      };
+    });
+
+    return transactionTags;
+  });
+}
+
 const SEED_ACCOUNTS: Account[] = [
   {
     id: "account_1",
@@ -128,23 +155,55 @@ const SEED_CATEGORIES: Category[] = [
   },
 ];
 
+const SEED_TAGS: Tag[] = [
+  {
+    id: "tag_1",
+    name: "固定費",
+    type: "expense",
+    userId: process.env.TEST_USER_ID,
+  },
+  {
+    id: "tag_2",
+    name: "サブスクリプション",
+    type: "expense",
+    userId: process.env.TEST_USER_ID,
+  },
+  {
+    id: "tag_3",
+    name: "タグ3",
+    type: "income",
+    userId: process.env.TEST_USER_ID,
+  },
+];
+
 const SEED_TRANSACTIONS: Transaction[] = generateTransactions(
   SEED_ACCOUNTS,
   SEED_CATEGORIES,
 );
 
+const SEED_TRANSACTION_TAGS: TransactionTag[] = generateTransactionTags(
+  SEED_TRANSACTIONS,
+  SEED_TAGS,
+);
+
 async function main() {
   try {
     // Reset database
+    await db.delete(tag).execute();
     await db.delete(transaction).execute();
     await db.delete(account).execute();
     await db.delete(category).execute();
+    await db.delete(chartLayout).execute();
     // Seed transactions
     await db.insert(category).values(SEED_CATEGORIES).execute();
     // Seed accounts
     await db.insert(account).values(SEED_ACCOUNTS).execute();
     // Seed transactions
     await db.insert(transaction).values(SEED_TRANSACTIONS).execute();
+    // Seed tags
+    await db.insert(tag).values(SEED_TAGS).execute();
+    // Seed transaction tags
+    await db.insert(transactionTag).values(SEED_TRANSACTION_TAGS).execute();
   } catch (error) {
     console.error("Error during seed:", error);
     process.exit(1);
