@@ -69,7 +69,6 @@ function PageInner({ layoutId, layoutState }: PageInnerProps) {
   const [currentLayoutState, setCurrentLayoutState] = useState(
     layoutState ?? defaultLayout,
   );
-  console.log({ currentLayoutState });
   const [isEditing, setIsEditing] = useState(false);
   const [selectedLayoutItemId, setSelectedLayoutItemId] = useState<string>();
   const selectedLayoutItem = selectedLayoutItemId
