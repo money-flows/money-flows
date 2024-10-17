@@ -57,12 +57,16 @@ export const tag = pgTable("tag", {
 });
 
 export const transactionTag = pgTable("transaction_tag", {
-  transactionId: text("transaction_id").references(() => transaction.id, {
-    onDelete: "cascade",
-  }),
-  tagId: text("tag_id").references(() => tag.id, {
-    onDelete: "cascade",
-  }),
+  transactionId: text("transaction_id")
+    .notNull()
+    .references(() => transaction.id, {
+      onDelete: "cascade",
+    }),
+  tagId: text("tag_id")
+    .notNull()
+    .references(() => tag.id, {
+      onDelete: "cascade",
+    }),
 });
 
 export const tagRelation = relations(tag, ({ many }) => ({
