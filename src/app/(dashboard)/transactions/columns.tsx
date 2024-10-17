@@ -2,6 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { InferResponseType } from "hono";
 
+import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatCurrency } from "@/lib/amount";
 import { getWeekday } from "@/lib/date";
@@ -85,6 +86,19 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "category",
     header: "カテゴリー",
+  },
+  {
+    accessorKey: "tags",
+    header: "タグ",
+    cell: ({ row }) => (
+      <div className="flex gap-1">
+        {row.original.tags.map((tag) => (
+          <Badge key={tag.id} variant="outline">
+            {tag.name}
+          </Badge>
+        ))}
+      </div>
+    ),
   },
   {
     accessorKey: "counterparty",
