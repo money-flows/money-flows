@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
+import { useGetTags } from "@/features/tags/api/use-get-tags";
 
 import { useCreateTransaction } from "../api/use-create-transaction";
 import { useNewTransaction } from "../hooks/use-new-transaction";
@@ -33,6 +34,13 @@ export function NewTransactionSheet() {
     types: ["expense"],
   });
 
+  const incomeTagQuery = useGetTags({
+    types: ["income"],
+  });
+  const expenseTagQuery = useGetTags({
+    types: ["expense"],
+  });
+
   const incomeCategoryOptions = (incomeCategoryQuery.data ?? []).map(
     (category) => ({
       label: category.name,
@@ -45,6 +53,15 @@ export function NewTransactionSheet() {
       value: category.id,
     }),
   );
+
+  const incomeTagOptions = (incomeTagQuery.data ?? []).map((tag) => ({
+    label: tag.name,
+    value: tag.id,
+  }));
+  const expenseTagOptions = (expenseTagQuery.data ?? []).map((tag) => ({
+    label: tag.name,
+    value: tag.id,
+  }));
 
   const isLoading =
     accountQuery.isLoading ||
@@ -79,6 +96,8 @@ export function NewTransactionSheet() {
             accountOptions={accountOptions}
             incomeCategoryOptions={incomeCategoryOptions}
             expenseCategoryOptions={expenseCategoryOptions}
+            incomeTagOptions={incomeTagOptions}
+            expenseTagOptions={expenseTagOptions}
           />
         )}
       </SheetContent>

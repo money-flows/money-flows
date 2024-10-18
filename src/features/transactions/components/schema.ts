@@ -10,6 +10,7 @@ export const formSchema = z.object({
   memo: z.string().optional(),
   accountId: z.string(),
   categoryId: z.string().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 export const apiSchema = insertTransactionSchema;

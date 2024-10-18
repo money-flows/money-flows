@@ -14,6 +14,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { MultiSelector } from "@/components/ui/multi-selector";
 import { SearchableSelect } from "@/components/ui/selector";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -30,6 +31,8 @@ interface TransactionFormProps {
   accountOptions: { label: string; value: string }[];
   incomeCategoryOptions: { label: string; value: string }[];
   expenseCategoryOptions: { label: string; value: string }[];
+  incomeTagOptions: { label: string; value: string }[];
+  expenseTagOptions: { label: string; value: string }[];
 }
 
 export const TransactionForm = ({
@@ -39,6 +42,8 @@ export const TransactionForm = ({
   accountOptions,
   incomeCategoryOptions,
   expenseCategoryOptions,
+  incomeTagOptions,
+  expenseTagOptions,
 }: TransactionFormProps) => {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
@@ -50,6 +55,7 @@ export const TransactionForm = ({
       memo: defaultValues?.memo,
       accountId: defaultValues?.accountId,
       categoryId: defaultValues?.categoryId,
+      tagIds: defaultValues?.tagIds,
     },
   });
 
@@ -63,6 +69,7 @@ export const TransactionForm = ({
       amount: parseInt(values.amount),
       memo: values.memo === "" ? null : values.memo,
       categoryId: values.categoryId === "" ? null : values.categoryId,
+      tagIds: values.tagIds ?? [],
     });
   };
 
@@ -133,6 +140,43 @@ export const TransactionForm = ({
               <FormItem className="flex flex-col">
                 <FormLabel>カテゴリー</FormLabel>
                 <SearchableSelect {...field} options={incomeCategoryOptions} />
+              </FormItem>
+            )}
+          />
+        )}
+        {isExpense ? (
+          <FormField
+            name="tagIds"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>タグ</FormLabel>
+                <MultiSelector
+                  {...field}
+                  value={field.value?.map((tag) => ({
+                    label: tag,
+                    value: tag,
+                  }))}
+                  options={expenseTagOptions}
+                />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <FormField
+            name="tagIds"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>タグ</FormLabel>
+                <MultiSelector
+                  {...field}
+                  value={field.value?.map((tag) => ({
+                    label: tag,
+                    value: tag,
+                  }))}
+                  options={incomeTagOptions}
+                />
               </FormItem>
             )}
           />

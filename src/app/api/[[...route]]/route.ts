@@ -5,6 +5,7 @@ import { accounts } from "./accounts";
 import { categories } from "./categories";
 import { chartLayouts } from "./chart-layout";
 import { summary } from "./summary";
+import { tags } from "./tags";
 import { transactions } from "./transactions";
 
 export const runtime = "edge";
@@ -15,6 +16,7 @@ const routes = app
   .route("/summary", summary)
   .route("/accounts", accounts)
   .route("/categories", categories)
+  .route("/tags", tags)
   .route("/transactions", transactions)
   .route("/chart-layouts", chartLayouts);
 
