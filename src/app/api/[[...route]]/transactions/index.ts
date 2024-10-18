@@ -214,14 +214,31 @@ export const transactions = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const [data] = await db
-        .insert(transaction)
-        .values({
-          id: createId(),
-          ...values,
-          date: new Date(values.date),
-        })
-        .returning();
+      const { tagIds, ...transactionValues } = values;
+
+      const transactionId = createId();
+
+      const data = await db.transaction(async (tx) => {
+        if (tagIds && tagIds.length > 0) {
+          const _ = await tx.insert(transactionTag).values(
+            tagIds.map((tagId) => ({
+              transactionId,
+              tagId,
+            })),
+          );
+        }
+
+        const [data] = await tx
+          .insert(transaction)
+          .values({
+            id: transactionId,
+            ...transactionValues,
+            date: new Date(values.date),
+          })
+          .returning();
+
+        return data;
+      });
 
       return c.json({ data });
     },

@@ -20,6 +20,7 @@ export const insertTransactionSchema = DBInsertTransactionSchema.omit({
   id: true,
 }).extend({
   date: z.string().date(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 export const insertChartLayoutSchema = DBInsertChartLayoutSchema.pick({
