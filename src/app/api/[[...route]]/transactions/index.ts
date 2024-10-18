@@ -388,7 +388,7 @@ export const transactions = new Hono()
     async (c) => {
       const auth = getAuth(c);
       const { id } = c.req.valid("param");
-      const values = c.req.valid("json");
+      const { tagIds, ...transactionValues } = c.req.valid("json");
 
       if (!id) {
         return c.json({ error: "Missing account ID" }, 400);
@@ -396,6 +396,20 @@ export const transactions = new Hono()
 
       if (!auth?.userId) {
         return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      // TODO: use transaction (neon-http driver does not support transaction...)
+      if (tagIds && tagIds.length > 0) {
+        await db
+          .delete(transactionTag)
+          .where(eq(transactionTag.transactionId, id));
+
+        await db.insert(transactionTag).values(
+          tagIds.map((tagId) => ({
+            transactionId: id,
+            tagId,
+          })),
+        );
       }
 
       const transactionsToUpdate = db.$with("transactions_to_update").as(
@@ -410,8 +424,8 @@ export const transactions = new Hono()
         .with(transactionsToUpdate)
         .update(transaction)
         .set({
-          ...values,
-          date: new Date(values.date),
+          ...transactionValues,
+          date: new Date(transactionValues.date),
         })
         .where(
           inArray(
