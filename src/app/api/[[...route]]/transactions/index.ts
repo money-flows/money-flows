@@ -218,6 +218,15 @@ export const transactions = new Hono()
 
       const transactionId = createId();
 
+      const [data] = await db
+        .insert(transaction)
+        .values({
+          id: transactionId,
+          ...transactionValues,
+          date: new Date(values.date),
+        })
+        .returning();
+
       // TODO: use transaction (neon-http driver does not support transaction...)
       if (tagIds && tagIds.length > 0) {
         const _ = await db.insert(transactionTag).values(
@@ -227,15 +236,6 @@ export const transactions = new Hono()
           })),
         );
       }
-
-      const [data] = await db
-        .insert(transaction)
-        .values({
-          id: transactionId,
-          ...transactionValues,
-          date: new Date(values.date),
-        })
-        .returning();
 
       return c.json({ data });
     },
