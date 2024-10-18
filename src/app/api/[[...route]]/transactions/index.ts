@@ -218,27 +218,24 @@ export const transactions = new Hono()
 
       const transactionId = createId();
 
-      const data = await db.transaction(async (tx) => {
-        if (tagIds && tagIds.length > 0) {
-          const _ = await tx.insert(transactionTag).values(
-            tagIds.map((tagId) => ({
-              transactionId,
-              tagId,
-            })),
-          );
-        }
+      // TODO: use transaction (neon-http driver does not support transaction...)
+      if (tagIds && tagIds.length > 0) {
+        const _ = await db.insert(transactionTag).values(
+          tagIds.map((tagId) => ({
+            transactionId,
+            tagId,
+          })),
+        );
+      }
 
-        const [data] = await tx
-          .insert(transaction)
-          .values({
-            id: transactionId,
-            ...transactionValues,
-            date: new Date(values.date),
-          })
-          .returning();
-
-        return data;
-      });
+      const [data] = await db
+        .insert(transaction)
+        .values({
+          id: transactionId,
+          ...transactionValues,
+          date: new Date(values.date),
+        })
+        .returning();
 
       return c.json({ data });
     },
