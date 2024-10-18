@@ -14,7 +14,7 @@ import { useGetTags } from "@/features/tags/api/use-get-tags";
 import { useCreateTransaction } from "../api/use-create-transaction";
 import { useNewTransaction } from "../hooks/use-new-transaction";
 import { TransactionApiFormValues } from "./schema";
-import { TransactionForm } from "./transaction-from";
+import { TransactionForm } from "./transaction-form";
 
 export function NewTransactionSheet() {
   const { isOpen, onClose } = useNewTransaction();

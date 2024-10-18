@@ -16,7 +16,7 @@ import { useEditTransaction } from "../api/use-edit-transaction";
 import { useGetTransaction } from "../api/use-get-transaction";
 import { useOpenTransaction } from "../hooks/use-open-transaction";
 import { TransactionApiFormValues } from "./schema";
-import { TransactionForm } from "./transaction-from";
+import { TransactionForm } from "./transaction-form";
 
 export function EditTransactionSheet() {
   const { isOpen, onClose, id } = useOpenTransaction();
