@@ -158,6 +158,9 @@ export const TransactionForm = ({
                     value: tag,
                   }))}
                   options={expenseTagOptions}
+                  onChange={(tags) =>
+                    field.onChange(tags.map((tag) => tag.value))
+                  }
                 />
               </FormItem>
             )}
@@ -176,6 +179,9 @@ export const TransactionForm = ({
                     value: tag,
                   }))}
                   options={incomeTagOptions}
+                  onChange={(tags) =>
+                    field.onChange(tags.map((tag) => tag.value))
+                  }
                 />
               </FormItem>
             )}
