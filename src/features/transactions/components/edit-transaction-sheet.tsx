@@ -106,6 +106,7 @@ export function EditTransactionSheet() {
               description: transactionQuery.data.description ?? "",
               counterparty: transactionQuery.data.counterparty ?? "",
               memo: transactionQuery.data.memo ?? "",
+              tagIds: transactionQuery.data.tags.map((tag) => tag.id),
             }}
             onSubmit={handleSubmit}
             accountOptions={accountOptions}

@@ -199,7 +199,25 @@ export const transactions = new Hono()
         return c.json({ error: "Account not found" }, 404);
       }
 
-      return c.json({ data });
+      const tags = await db
+        .select({
+          transactionId: transactionTag.transactionId,
+          tagId: transactionTag.tagId,
+          tag: tag.name,
+        })
+        .from(transactionTag)
+        .innerJoin(tag, eq(transactionTag.tagId, tag.id))
+        .where(eq(transactionTag.transactionId, id));
+
+      const dataWithTags = {
+        ...data,
+        tags: tags.map((tag) => ({
+          id: tag.tagId,
+          name: tag.tag,
+        })),
+      };
+
+      return c.json({ data: dataWithTags });
     },
   )
   .post(

@@ -153,9 +153,10 @@ export const TransactionForm = ({
                 <FormLabel>タグ</FormLabel>
                 <MultiSelector
                   {...field}
-                  value={field.value?.map((tag) => ({
-                    label: tag,
-                    value: tag,
+                  value={field.value?.map((tagId) => ({
+                    label: expenseTagOptions.find((t) => t.value === tagId)!
+                      .label,
+                    value: tagId,
                   }))}
                   options={expenseTagOptions}
                   onChange={(tags) =>
@@ -174,9 +175,10 @@ export const TransactionForm = ({
                 <FormLabel>タグ</FormLabel>
                 <MultiSelector
                   {...field}
-                  value={field.value?.map((tag) => ({
-                    label: tag,
-                    value: tag,
+                  value={field.value?.map((tagId) => ({
+                    label: incomeTagOptions.find((t) => t.value === tagId)!
+                      .label,
+                    value: tagId,
                   }))}
                   options={incomeTagOptions}
                   onChange={(tags) =>
