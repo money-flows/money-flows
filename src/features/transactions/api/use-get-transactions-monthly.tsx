@@ -34,7 +34,10 @@ export function useGetTransactionsMonthly({
           types: types ? types.join(",") : undefined,
           years: years ? years.join(",") : undefined,
           yearly_cumulative: yearlyCumulative ? "true" : "false",
-          category_ids: categoryIds ? categoryIds.join(",") : undefined,
+          category_ids:
+            categoryIds && categoryIds.length > 0
+              ? categoryIds.join(",")
+              : undefined,
         },
       });
 

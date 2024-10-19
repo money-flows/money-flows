@@ -36,7 +36,10 @@ export function useGetTransactionsDaily({
             ? months.map(({ year, month }) => `${year}-${month}`).join(",")
             : undefined,
           monthly_cumulative: monthlyCumulative ? "true" : "false",
-          category_ids: categoryIds ? categoryIds.join(",") : undefined,
+          category_ids:
+            categoryIds && categoryIds.length > 0
+              ? categoryIds.join(",")
+              : undefined,
         },
       });
 
