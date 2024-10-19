@@ -14,6 +14,10 @@ const routes = [
     href: "/settings/categories",
     label: "カテゴリー",
   },
+  {
+    href: "/settings/tags",
+    label: "タグ",
+  },
 ];
 
 export default function SettingsLayout({
