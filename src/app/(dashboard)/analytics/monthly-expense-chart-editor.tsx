@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelector, Option } from "@/components/ui/multi-selector";
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
+import { useGetTags } from "@/features/tags/api/use-get-tags";
 
 import { LayoutItem } from "./types";
 
 interface MonthlyExpenseChartEditorPresenterProps {
   item: LayoutItem;
   categoryOptions: Option[];
+  tagOptions: Option[];
   onChange: (item: LayoutItem) => void;
   onClose: () => void;
 }
@@ -20,6 +22,7 @@ interface MonthlyExpenseChartEditorPresenterProps {
 function MonthlyExpenseChartEditorPresenter({
   item,
   categoryOptions,
+  tagOptions,
   onChange,
   onClose,
 }: MonthlyExpenseChartEditorPresenterProps) {
@@ -72,6 +75,20 @@ function MonthlyExpenseChartEditorPresenter({
     onChange(newItem);
   };
 
+  const handleTagsChange = (options?: Option[]) => {
+    const newItem: LayoutItem = {
+      ...item,
+      component: {
+        name: "MonthlyExpenseChart",
+        props: {
+          ...component.props,
+          tagIds: options ? options.map((option) => option.value) : undefined,
+        },
+      },
+    };
+    onChange(newItem);
+  };
+
   return (
     <Card className="w-96">
       <CardHeader className="flex flex-row items-center justify-between font-semibold">
@@ -108,6 +125,16 @@ function MonthlyExpenseChartEditorPresenter({
             onChange={handleCategoriesChange}
           />
         </div>
+        <div className="space-y-1">
+          <Label>タグ</Label>
+          <MultiSelector
+            value={tagOptions.filter((option) =>
+              component.props.tagIds?.includes(option.value),
+            )}
+            options={tagOptions}
+            onChange={handleTagsChange}
+          />
+        </div>
       </CardContent>
     </Card>
   );
@@ -128,11 +155,15 @@ export function MonthlyExpenseChartEditor({
     types: ["expense"],
   });
 
-  if (categoriesQuery.isPending) {
+  const tagsQuery = useGetTags({
+    types: ["expense"],
+  });
+
+  if (categoriesQuery.isPending || tagsQuery.isPending) {
     return <p>読み込み中...</p>;
   }
 
-  if (categoriesQuery.isError) {
+  if (categoriesQuery.isError || tagsQuery.isError) {
     return <p>エラーが発生しました</p>;
   }
 
@@ -141,10 +172,16 @@ export function MonthlyExpenseChartEditor({
     value: category.id,
   }));
 
+  const tagOptions = tagsQuery.data.map((tag) => ({
+    label: tag.name,
+    value: tag.id,
+  }));
+
   return (
     <MonthlyExpenseChartEditorPresenter
       item={item}
       categoryOptions={categoryOptions}
+      tagOptions={tagOptions}
       onChange={onChange}
       onClose={onClose}
     />

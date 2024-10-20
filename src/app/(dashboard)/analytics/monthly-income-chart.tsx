@@ -26,12 +26,14 @@ interface MonthlyIncomeChartProps {
   title: React.ReactNode;
   cumulative?: boolean;
   categoryIds?: string[];
+  tagIds?: string[];
 }
 
 export function MonthlyIncomeChart({
   title,
   cumulative = false,
   categoryIds,
+  tagIds,
 }: MonthlyIncomeChartProps) {
   const [years] = useState([
     new Date().getFullYear(),
@@ -43,6 +45,7 @@ export function MonthlyIncomeChart({
     years,
     yearlyCumulative: cumulative,
     categoryIds,
+    tagIds,
   });
 
   const chartConfig = years.reduce((acc, year, index) => {

@@ -7,7 +7,7 @@ import groupBy from "lodash/groupBy";
 import { z } from "zod";
 
 import { db } from "@/db/drizzle";
-import { account, category, transaction } from "@/db/schema";
+import { account, category, transaction, transactionTag } from "@/db/schema";
 
 export const aggregations = new Hono()
   .get(
@@ -35,17 +35,23 @@ export const aggregations = new Hono()
             .optional()
             .transform((value) => value?.split(","))
             .pipe(z.array(z.string()).optional()),
+          tag_ids: z
+            .string()
+            .optional()
+            .transform((value) => value?.split(","))
+            .pipe(z.array(z.string()).optional()),
         })
         .transform((query) => ({
           types: query.types,
           years: query.years,
           yearlyCumulative: query.yearly_cumulative,
           categoryIds: query.category_ids,
+          tagIds: query.tag_ids,
         })),
     ),
     async (c) => {
       const auth = getAuth(c);
-      const { types, years, yearlyCumulative, categoryIds } =
+      const { types, years, yearlyCumulative, categoryIds, tagIds } =
         c.req.valid("query");
 
       if (!auth?.userId) {
@@ -64,6 +70,10 @@ export const aggregations = new Hono()
         })
         .from(transaction)
         .innerJoin(account, eq(transaction.accountId, account.id))
+        .leftJoin(
+          transactionTag,
+          eq(transaction.id, transactionTag.transactionId),
+        )
         .where(
           and(
             eq(account.userId, auth.userId),
@@ -79,6 +89,7 @@ export const aggregations = new Hono()
             categoryIds
               ? inArray(transaction.categoryId, categoryIds)
               : undefined,
+            tagIds ? inArray(transactionTag.tagId, tagIds) : undefined,
           ),
         )
         .groupBy(

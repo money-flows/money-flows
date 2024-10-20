@@ -8,11 +8,13 @@ export function useGetTransactionsMonthly({
   years,
   yearlyCumulative,
   categoryIds,
+  tagIds,
 }: {
   types?: ("income" | "expense")[];
   years?: number[];
   yearlyCumulative?: boolean;
   categoryIds?: string[];
+  tagIds?: string[];
 }) {
   const user = useUser();
 
@@ -26,6 +28,7 @@ export function useGetTransactionsMonthly({
         years,
         yearlyCumulative,
         categoryIds,
+        tagIds,
       },
     ],
     queryFn: async () => {
@@ -38,6 +41,7 @@ export function useGetTransactionsMonthly({
             categoryIds && categoryIds.length > 0
               ? categoryIds.join(",")
               : undefined,
+          tag_ids: tagIds && tagIds.length > 0 ? tagIds.join(",") : undefined,
         },
       });
 

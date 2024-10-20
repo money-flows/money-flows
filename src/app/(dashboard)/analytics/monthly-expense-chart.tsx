@@ -26,12 +26,14 @@ interface MonthlyExpenseChartProps {
   title: React.ReactNode;
   cumulative?: boolean;
   categoryIds?: string[];
+  tagIds?: string[];
 }
 
 export function MonthlyExpenseChart({
   title,
   cumulative = false,
   categoryIds,
+  tagIds,
 }: MonthlyExpenseChartProps) {
   const [years] = useState([
     new Date().getFullYear(),
@@ -43,6 +45,7 @@ export function MonthlyExpenseChart({
     years,
     yearlyCumulative: cumulative,
     categoryIds,
+    tagIds,
   });
 
   const chartConfig = years.reduce((acc, year, index) => {

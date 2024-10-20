@@ -11,6 +11,7 @@ export type LayoutComponent =
         title: string;
         cumulative?: boolean;
         categoryIds?: string[];
+        tagIds?: string[];
       };
     }
   | {
@@ -19,6 +20,7 @@ export type LayoutComponent =
         title: string;
         cumulative?: boolean;
         categoryIds?: string[];
+        tagIds?: string[];
       };
     };
 
