@@ -59,29 +59,15 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: "amount",
     header: "金額",
     cell: ({ row }) => (
-      <span className={cn("tabular-nums tracking-tighter")}>
-        {formatCurrency(Math.abs(row.original.amount))}
-      </span>
+      <div
+        className={cn(
+          "tabular-nums tracking-tighter text-right",
+          row.original.amount > 0 ? "text-emerald-600" : "text-rose-600",
+        )}
+      >
+        {formatCurrency(row.original.amount)}
+      </div>
     ),
-  },
-  {
-    id: "type",
-    header: "種別",
-    cell: ({ row }) => {
-      const isIncome = row.original.amount > 0;
-      if (isIncome) {
-        return (
-          <span className="line-clamp-1 inline whitespace-nowrap rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-600">
-            収入
-          </span>
-        );
-      }
-      return (
-        <span className="line-clamp-1 inline whitespace-nowrap rounded-md bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600">
-          支出
-        </span>
-      );
-    },
   },
   {
     accessorKey: "category",
@@ -99,11 +85,6 @@ export const columns: ColumnDef<Transaction>[] = [
         ))}
       </div>
     ),
-  },
-  {
-    accessorKey: "counterparty",
-    header: "取引先",
-    minSize: 96,
   },
   {
     accessorKey: "account",
