@@ -72,6 +72,10 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "category",
     header: "カテゴリー",
+    cell: ({ row }) =>
+      row.original.category ? (
+        <Badge variant="outline">{row.original.category}</Badge>
+      ) : null,
   },
   {
     accessorKey: "tags",
