@@ -96,7 +96,7 @@ function MonthlyIncomeChartEditorPresenter({
     const newItem: LayoutItem = {
       ...item,
       component: {
-        name: "MonthlyExpenseChart",
+        name: "MonthlyIncomeChart",
         props: {
           ...component.props,
           years: options,
