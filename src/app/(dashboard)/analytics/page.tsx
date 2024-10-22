@@ -42,6 +42,7 @@ const defaultLayout: LayoutItem[] = [
       name: "MonthlyIncomeChart",
       props: {
         title: "収入の推移（年間）",
+        years: [2024, 2023, 2022],
       },
     },
   },
@@ -55,6 +56,7 @@ const defaultLayout: LayoutItem[] = [
       name: "MonthlyExpenseChart",
       props: {
         title: "支出の推移（年間）",
+        years: [2024, 2023, 2022],
       },
     },
   },

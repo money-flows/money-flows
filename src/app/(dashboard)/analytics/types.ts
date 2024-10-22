@@ -12,6 +12,7 @@ export type LayoutComponent =
         cumulative?: boolean;
         categoryIds?: string[];
         tagIds?: string[];
+        years?: number[];
       };
     }
   | {
@@ -21,6 +22,7 @@ export type LayoutComponent =
         cumulative?: boolean;
         categoryIds?: string[];
         tagIds?: string[];
+        years?: number[];
       };
     };
 

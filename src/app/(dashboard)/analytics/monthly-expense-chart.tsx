@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +27,7 @@ interface MonthlyExpenseChartProps {
   cumulative?: boolean;
   categoryIds?: string[];
   tagIds?: string[];
+  years?: number[];
 }
 
 export function MonthlyExpenseChart({
@@ -34,12 +35,8 @@ export function MonthlyExpenseChart({
   cumulative = false,
   categoryIds,
   tagIds,
+  years = [],
 }: MonthlyExpenseChartProps) {
-  const [years] = useState([
-    new Date().getFullYear(),
-    new Date().getFullYear() - 1,
-    new Date().getFullYear() - 2,
-  ]);
   const { data, isPending, isError } = useGetTransactionsMonthly({
     types: ["expense"],
     years,

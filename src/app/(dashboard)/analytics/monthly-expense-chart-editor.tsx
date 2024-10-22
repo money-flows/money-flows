@@ -9,7 +9,10 @@ import { MultiSelector, Option } from "@/components/ui/multi-selector";
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
 import { useGetTags } from "@/features/tags/api/use-get-tags";
 
+import { MultiYearSelector } from "./multi-year-selector";
 import { LayoutItem } from "./types";
+
+const yearOptions = [2024, 2023, 2022, 2021, 2020];
 
 interface MonthlyExpenseChartEditorPresenterProps {
   item: LayoutItem;
@@ -89,6 +92,20 @@ function MonthlyExpenseChartEditorPresenter({
     onChange(newItem);
   };
 
+  const handleYearsChange = (options: number[]) => {
+    const newItem: LayoutItem = {
+      ...item,
+      component: {
+        name: "MonthlyExpenseChart",
+        props: {
+          ...component.props,
+          years: options,
+        },
+      },
+    };
+    onChange(newItem);
+  };
+
   return (
     <Card className="w-96">
       <CardHeader className="flex flex-row items-center justify-between font-semibold">
@@ -133,6 +150,16 @@ function MonthlyExpenseChartEditorPresenter({
             )}
             options={tagOptions}
             onChange={handleTagsChange}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label>年間</Label>
+          <MultiYearSelector
+            value={yearOptions.filter((option) =>
+              component.props.years?.includes(option),
+            )}
+            options={yearOptions}
+            onChange={handleYearsChange}
           />
         </div>
       </CardContent>
