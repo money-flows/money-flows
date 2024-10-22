@@ -72,7 +72,6 @@ export const transactions = new Hono()
           id: transaction.id,
           amount: transaction.amount,
           description: transaction.description,
-          counterparty: transaction.counterparty,
           date: transaction.date,
           memo: transaction.memo,
           account: account.name,
@@ -90,7 +89,6 @@ export const transactions = new Hono()
             q
               ? or(
                   like(transaction.description, `%${q}%`),
-                  like(transaction.counterparty, `%${q}%`),
                   like(transaction.memo, `%${q}%`),
                   like(category.name, `%${q}%`),
                 )
@@ -121,7 +119,6 @@ export const transactions = new Hono()
             q
               ? or(
                   like(transaction.description, `%${q}%`),
-                  like(transaction.counterparty, `%${q}%`),
                   like(transaction.memo, `%${q}%`),
                   like(category.name, `%${q}%`),
                 )
@@ -185,7 +182,6 @@ export const transactions = new Hono()
           id: transaction.id,
           amount: transaction.amount,
           description: transaction.description,
-          counterparty: transaction.counterparty,
           date: transaction.date,
           memo: transaction.memo,
           accountId: transaction.accountId,

@@ -104,7 +104,6 @@ export function EditTransactionSheet() {
               amount: transactionQuery.data.amount.toString(),
               date: new Date(transactionQuery.data.date),
               description: transactionQuery.data.description ?? "",
-              counterparty: transactionQuery.data.counterparty ?? "",
               memo: transactionQuery.data.memo ?? "",
               tagIds: transactionQuery.data.tags.map((tag) => tag.id),
             }}

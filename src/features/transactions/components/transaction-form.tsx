@@ -13,7 +13,6 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { MultiSelector } from "@/components/ui/multi-selector";
 import { SearchableSelect } from "@/components/ui/selector";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,7 +50,6 @@ export const TransactionForm = ({
       date: defaultValues?.date ?? new Date(),
       description: defaultValues?.description,
       amount: defaultValues?.amount,
-      counterparty: defaultValues?.counterparty,
       memo: defaultValues?.memo,
       accountId: defaultValues?.accountId,
       categoryId: defaultValues?.categoryId,
@@ -189,18 +187,6 @@ export const TransactionForm = ({
             )}
           />
         )}
-        <FormField
-          name="counterparty"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>取引先</FormLabel>
-              <FormControl>
-                <Input disabled={disabled} {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
         <FormField
           name="accountId"
           control={form.control}

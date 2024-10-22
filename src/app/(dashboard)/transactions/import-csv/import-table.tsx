@@ -57,10 +57,6 @@ const OPTIONS = [
     value: "date",
   },
   {
-    label: "取引先",
-    value: "counterparty",
-  },
-  {
     label: "カテゴリー",
     value: "category",
   },

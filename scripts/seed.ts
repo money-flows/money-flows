@@ -76,7 +76,6 @@ function generateDailyTransactions(
       date: day,
       amount,
       description: "内容",
-      counterparty: "商人",
       categoryId: category.id,
       memo: "初期データ",
     };
