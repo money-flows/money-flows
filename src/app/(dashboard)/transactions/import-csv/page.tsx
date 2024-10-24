@@ -15,6 +15,11 @@ export default function ImportCsvPage() {
         </Link>
       </Button>
       <Separator>カンタン取り込み</Separator>
+      <div className="flex flex-col gap-4">
+        <Button asChild variant="outline">
+          <Link href="/transactions/import-csv/zaim">ZaimのCSVを取り込む</Link>
+        </Button>
+      </div>
     </div>
   );
 }
