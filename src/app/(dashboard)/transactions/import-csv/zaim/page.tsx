@@ -1,11 +1,15 @@
 "use client";
 
+import { InferResponseType } from "hono";
+import { useRouter } from "next/navigation";
 import Papa from "papaparse";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { FileUploader } from "@/components/ui/file-uploader";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -13,6 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
+import { useBulkCreateTransactions } from "@/features/transactions/api/use-bulk-create-transactions";
+import { client } from "@/lib/hono";
 
 import { columns } from "./columns";
 import { PreviewTable } from "./preview-table";
@@ -46,6 +53,7 @@ function parsedCsvToTableData(
   data: Papa.ParseResult<Record<string, string>>,
 ): Data[] {
   return data.data
+    .filter((row) => row["集計の設定"] !== "集計に含めない")
     .filter((row) => ["income", "payment"].includes(row["方法"]))
     .map((row) => {
       return {
@@ -62,14 +70,25 @@ function parsedCsvToTableData(
     });
 }
 
-export default function Page() {
+interface PagePresenterProps {
+  accounts: InferResponseType<typeof client.api.accounts.$get, 200>["data"];
+}
+
+function PagePresenter({ accounts }: PagePresenterProps) {
+  const router = useRouter();
+
   const [data, setData] = useState<Data[]>();
-  const [content, setContent] = useState<string>();
+
+  const [selectedAccountId, setSelectedAccountId] = useState<string>(
+    accounts[0].id,
+  );
 
   const [uploadedFile, setUploadedFile] = useState<File>();
   const [characterEncoding, setCharacterEncoding] = useState<CharacterEncoding>(
     DEFAULT_CHARACTER_ENCODING,
   );
+
+  const createTransactionsMutation = useBulkCreateTransactions();
 
   const readUploadedFile = (
     file: File,
@@ -91,7 +110,7 @@ export default function Page() {
   const handleUpload = (files: File[]) => {
     if (files.length === 0) {
       setUploadedFile(undefined);
-      setContent(undefined);
+      setData(undefined);
       return;
     }
 
@@ -105,6 +124,36 @@ export default function Page() {
     if (uploadedFile) {
       readUploadedFile(uploadedFile, value);
     }
+  };
+
+  const submit = () => {
+    if (data === undefined) {
+      return;
+    }
+
+    const importedTransactions = data.map((row) => {
+      return {
+        ...row,
+        category: row.category
+          ? {
+              name: row.category,
+            }
+          : undefined,
+        tags: row.tags.map((tag) => ({
+          name: tag,
+        })),
+        accountId: selectedAccountId,
+      };
+    });
+
+    createTransactionsMutation.mutate(importedTransactions, {
+      onSuccess: () => {
+        router.push("/transactions");
+      },
+      onError: () => {
+        toast.error("取り込みに失敗しました");
+      },
+    });
   };
 
   return (
@@ -132,14 +181,47 @@ export default function Page() {
             </SelectContent>
           </Select>
         </div>
+        <div className="w-80">
+          <Label>取り込み先の口座</Label>
+          <Select
+            value={selectedAccountId}
+            defaultValue={accounts[0].id}
+            onValueChange={setSelectedAccountId}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {accounts.map((account) => (
+                <SelectItem key={account.id} value={account.id}>
+                  {account.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div>
           <Label htmlFor="preview">プレビュー</Label>
-          {data && <PreviewTable data={data} columns={columns} />}
+          <ScrollArea className="h-[32rem] rounded-md border">
+            <PreviewTable data={data ?? []} columns={columns} />
+          </ScrollArea>
         </div>
       </div>
       <div className="flex items-center justify-end">
-        <Button disabled={!content}>取り込む</Button>
+        <Button disabled={!data} onClick={submit}>
+          取り込む
+        </Button>
       </div>
     </div>
   );
+}
+
+export default function Page() {
+  const { data: accounts, isPending, isError } = useGetAccounts();
+
+  if (isPending || isError) {
+    return null;
+  }
+
+  return <PagePresenter accounts={accounts} />;
 }
