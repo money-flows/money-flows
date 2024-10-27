@@ -63,7 +63,11 @@ export function ChartLayout({
   };
 
   useEffect(() => {
-    gridRef.current = gridRef.current ?? GridStack.init();
+    gridRef.current =
+      gridRef.current ??
+      GridStack.init({
+        resizable: { handles: "all" },
+      });
     const grid = gridRef.current;
     grid.batchUpdate();
     grid.removeAll(false);
