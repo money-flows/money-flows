@@ -28,11 +28,11 @@ const chartConfig = {
   },
   expense: {
     label: "支出",
-    color: `hsl(var(--chart-5))`,
+    color: `hsl(var(--chart-6))`,
   },
   remaining: {
     label: "残高",
-    color: `hsl(var(--chart-3))`,
+    color: `hsl(var(--chart-5))`,
   },
 };
 
