@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <>
       <header className="bg-gradient-to-b from-blue-700 to-blue-500">
-        <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4 sm:px-10">
+        <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4 sm:px-8">
           <div className="flex items-center sm:gap-x-8">
             <HeaderLogo />
             <Navigation />
