@@ -22,12 +22,12 @@ export function useBulkDeleteTransactions() {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success("取引を削除しました");
+      toast.success("収支を削除しました");
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       // TODO: Invalidate summary
     },
     onError: () => {
-      toast.error("取引の削除に失敗しました");
+      toast.error("収支の削除に失敗しました");
     },
   });
 

@@ -29,7 +29,7 @@ export function NewAccountSheet() {
         <SheetHeader>
           <SheetTitle>口座の追加</SheetTitle>
           <SheetDescription>
-            取引を管理するために、新しい口座を追加します。
+            収支を管理するために、新しい口座を追加します。
           </SheetDescription>
         </SheetHeader>
         <AccountForm onSubmit={handleSubmit} disabled={false} />

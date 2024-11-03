@@ -23,7 +23,7 @@ export function Actions({ id }: ActionsProps) {
   const deleteMutation = useDeleteAccount(id);
   const [ConfirmDialog, confirm] = useConfirm(
     "本当に削除しますか？",
-    "この操作は取り消せません。この口座に関連する取引の情報も削除されます。",
+    "この操作は取り消せません。この口座に関連する収支の情報も削除されます。",
   );
 
   const handleDelete = async () => {

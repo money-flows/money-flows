@@ -80,9 +80,9 @@ export function NewTransactionSheet() {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="space-y-4">
         <SheetHeader>
-          <SheetTitle>取引の追加</SheetTitle>
+          <SheetTitle>収支の追加</SheetTitle>
           <SheetDescription>
-            新しい取引を追加します。取引の情報を入力してください。
+            新しい収支を追加します。収支の情報を入力してください。
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (

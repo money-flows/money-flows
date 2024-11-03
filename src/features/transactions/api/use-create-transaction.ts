@@ -18,12 +18,12 @@ export function useCreateTransaction() {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success("取引を追加しました");
+      toast.success("収支を追加しました");
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       // TODO: Invalidate summary
     },
     onError: () => {
-      toast.error("取引の追加に失敗しました");
+      toast.error("収支の追加に失敗しました");
     },
   });
 

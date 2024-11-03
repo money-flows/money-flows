@@ -87,8 +87,8 @@ export function EditTransactionSheet() {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="space-y-4">
         <SheetHeader>
-          <SheetTitle>取引の編集</SheetTitle>
-          <SheetDescription>取引の情報を変更します。</SheetDescription>
+          <SheetTitle>収支の編集</SheetTitle>
+          <SheetDescription>収支の情報を変更します。</SheetDescription>
         </SheetHeader>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">

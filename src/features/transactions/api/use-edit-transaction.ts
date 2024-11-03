@@ -23,13 +23,13 @@ export function useEditTransaction(id?: string) {
       return await response.json();
     },
     onSuccess: () => {
-      toast.success("取引の情報を更新しました");
+      toast.success("収支の情報を更新しました");
       queryClient.invalidateQueries({ queryKey: ["transaction", { id }] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       // TODO: Invalidate summary
     },
     onError: () => {
-      toast.error("取引の情報の更新に失敗しました");
+      toast.error("収支の情報の更新に失敗しました");
     },
   });
 
