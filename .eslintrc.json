@@ -22,7 +22,6 @@
     "import/newline-after-import": "error",
     "import/no-duplicates": "error"
   },
-  "ignorePatterns": ["next/**/*"],
   "overrides": [
     {
       "files": ["src/**/*.tsx"],
